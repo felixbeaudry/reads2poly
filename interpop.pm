@@ -15,8 +15,9 @@ elsif $line ~ "pop2" {--ditto--}
 
 sub interPopStats
 {my($filename) = @_;
-
+#option to calculate interpopstats
 #take in pop numbers to compare
+print "Calculating inter-population statistics";
 
 #Fst
 #dxy
