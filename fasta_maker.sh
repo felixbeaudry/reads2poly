@@ -15,10 +15,11 @@ while read ind
 do
 while read loc
 do
-python /ohta/felix.beaudry/scripts/fasta_cleaner.py -i ${ind}/${loc}.fasta | cat >> $outDir/${loc}.fasta
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta | cat >> $outDir/${loc}.fasta
+#perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl
+#align to outgroup, in frame, with PRANK
+#send in to polymorphurama
 done < $loc_list
 done < $ind_list
 
-#align to outgroup, in frame (?)
 
-#send in to polymorphurama
