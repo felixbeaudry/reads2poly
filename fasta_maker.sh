@@ -22,9 +22,14 @@ echo "Adding sequences from $ind"
 while read loc
 do
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
-#perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl
-#align to outgroup, in frame, with PRANK
+#find outgroup sequence using BLAST
+#add frame to outgroup sequence
+#perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl $outDir/${loc}.fasta
+#align to outgroup, in frame - using codon model -, with PRANK
+#/ohta/felix.beaudry/scripts/prank/bin/prank -d=.fasta -o=prank/.fasta -codon -F
 #send in to polymorphurama
+#perl /ohta/felix.beaudry/scripts/polymorphurama_FM_xyy.pl fasta allFasta/
+#send into PAML
 done < $loc_list
 done < $ind_list
 
