@@ -9,14 +9,13 @@ ind_list=$1
 loc_list=$2
 
 outDir=$3
-#rm $outDir/*
+rm $outDir/*
 
 while read ind 
 do
 while read loc
 do
-python /ohta/felix.beaudry/scripts/fasta_cleaner.py -i ${ind}/${loc}.fasta 
-#| cat >> outDir/${loc}.fasta
+python /ohta/felix.beaudry/scripts/fasta_cleaner.py -i ${ind}/${loc}.fasta | cat >> $outDir/${loc}.fasta
 done < $loc_list
 done < $ind_list
 

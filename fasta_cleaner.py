@@ -27,7 +27,9 @@ for line in infile:
 		x += 1
 
 		values = line.split('_')
-		ind = values[0]
+		ind = str(values[0])
+		for w in range(1,len(values)-1):	
+			ind = ind + "_" + str(values[w])
 		sequence[x][0] = values[(len(values)-1)]
 	else:
 	 	sequence[x][1] = line.count('N') + sequence[x][1] 
@@ -40,9 +42,10 @@ x=int(0)
 
 for x in range(0, 2):
 	if (sequence[x][3] >0) & ((sequence[x][1]/sequence[x][3]) < 0.6) & ((sequence[x][2]/sequence[x][3]) < 0.6):
-		print ind+"_"+str(int(sequence[x][0]))
+		print str(ind)+"_"+str(int(sequence[x][0]))
 		print alignment[x]
 		x += 1
 	else:
 	 	x += 1
+
 
