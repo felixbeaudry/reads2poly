@@ -1,3 +1,22 @@
+
+
+
+sub popIDarray{
+ =@;
+
+return $counter;
+}
+
+
+
+
+sub popCount{
+
+
+
+}
+
+
 sub popIDs
 {my($filename) = @_;
 
