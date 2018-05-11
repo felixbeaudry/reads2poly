@@ -1415,8 +1415,8 @@ foreach $file (@files){
 
 		else {
 			if ($pop != 1 | $outpop ==0 ){
-				#print OUT2 "0";
 				for ($y=0; $y<2; ++$y){
+					print OUT2 "0";
 					for($z=0;$z<6;++$z){
 						print OUT2 "0\t";		
 					}
