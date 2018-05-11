@@ -1325,7 +1325,7 @@ foreach $file (@files){
 					$y=0;
 				}
 				else{
-					$thetaS=0; $thetaR=0; $thetS=0; $thetR=0; $pi_s=0; $pi_r=0;	$TajD_syn=0; $TajD_rep=0; chomp($file); $totsnps=0; $y=0;
+					$thetaS="NA"; $thetaR="NA"; $thetS="NA"; $thetR="NA"; $pi_s="NA"; $pi_r="NA";	$TajD_syn="NA"; $TajD_rep="NA"; chomp($file); $totsnps=0; $y=0;
 				}
 				for ($x=1; $x<scalar(@data); ++$x){
 					$data1[$y]=$data[$x];
@@ -1346,10 +1346,10 @@ foreach $file (@files){
 				print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
 				
 				if (defined $TajD_syn){}
-				else {$TajD_syn = 0;}
+				else {$TajD_syn = "NA";}
 
 				if (defined $TajD_rep){}
-				else {$TajD_rep = 0;}
+				else {$TajD_rep = "NA";}
 
 				print OUT2  
 					$numseqs-1, "\t", 
@@ -1416,9 +1416,9 @@ foreach $file (@files){
 		else {
 			if ($pop != 1 | $outpop ==0 ){
 				for ($y=0; $y<2; ++$y){
-					print OUT2 "0";
+					print OUT2 "NA";
 					for($z=0;$z<6;++$z){
-						print OUT2 "0\t";		
+						print OUT2 "NA\t";		
 					}
 				}
 			}
@@ -1439,26 +1439,35 @@ foreach $file (@files){
 
 	} # loop for each pop
 
-	my $Fst = 0;
-	if ($pi_syn_within[0] != 0){
+	my $Fst_syn = 0;
+	if ($pi_syn_within[0] != 0 & $pi_syn_within[1] != 0 & $pi_syn_within[2] != 0){
 		
-		$Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
-		if($Fst < 0){$Fst = 0;}
+		$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+		if($Fst_syn < 0){$Fst_syn = 0;}
 	}
-	else{$Fst = 0;}
+	else{$Fst_syn = "NA";}
+
+	my $Fst_rep = 0;
+	if ($pi_rep_within[0] != 0 & $pi_rep_within[1] != 0 & $pi_rep_within[2] != 0){
+		
+		$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
+		if($Fst_rep < 0){$Fst_rep = 0;}
+	}
+	else{$Fst_rep = "NA";}
+
 
 	if (scalar(@{ $position_array[2] }) != 0){
 		$dxy_syn_final = $dxy_syn_tot / @{ $position_array[2] };
 		$dxy_rep_final = $dxy_rep_tot / @{ $position_array[2] };
 	}
 	else{
-		$dxy_rep_final = 0;
-		$dxy_syn_final = 0;
+		$dxy_rep_final = "NA";
+		$dxy_syn_final = "NA";
 	}
 
-	print "\nBetween populations 1 & 2\tFst: ",$Fst,"\tDxy: ",$dxy_syn_final;
+	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_syn_final;
 
-	print OUT5 $Fst, "\t", $dxy_syn_final, "\n";
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\n";
 
 
 	print "\n";
