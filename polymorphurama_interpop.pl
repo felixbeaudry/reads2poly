@@ -1344,7 +1344,13 @@ foreach $file (@files){
 
 				print "\npop: ",$pop,"\t";
 				print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
-		
+				
+				if (defined $TajD_syn){}
+				else {$TajD_syn = 0;}
+
+				if (defined $TajD_rep){}
+				else {$TajD_rep = 0;}
+
 				print OUT2  
 					$numseqs-1, "\t", 
 					$no_syn_codons,"\t", 
@@ -1408,13 +1414,14 @@ foreach $file (@files){
 				}
 
 		else {
-			
+			if ($pop != 1 | $outpop ==0 ){
 				print OUT2 "0";
 				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<6;++$z){
+					for($z=0;$z<7;++$z){
 						print OUT2 "0\t";		
 					}
 				}
+			}
 			
 		} # if less than two seqs
 
