@@ -144,7 +144,7 @@ foreach $file (@files){
 
 	chomp $file;	
 
-	print "\n", $file, "\tnumseqs: ", $numseqs, "\toutgroup used: ", $sequence_names[0];
+	print "\n", $file, "\tnumseqs: ", $numseqs;
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
@@ -1440,8 +1440,14 @@ foreach $file (@files){
 	}
 	else{$Fst = 0;}
 
-	$dxy_syn_final = $dxy_syn_tot / @{ $position_array[2] };
-	$dxy_rep_final = $dxy_rep_tot / @{ $position_array[2] };
+	if (scalar(@{ $position_array[2] }) != 0){
+		$dxy_syn_final = $dxy_syn_tot / @{ $position_array[2] };
+		$dxy_rep_final = $dxy_rep_tot / @{ $position_array[2] };
+	}
+	else{
+		$dxy_rep_final = 0;
+		$dxy_syn_final = 0;
+	}
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst,"\tDxy: ",$dxy_syn_final;
 
