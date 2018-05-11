@@ -1,5 +1,5 @@
 ##!perl 
-##edited by Felix Beaudry, May 9 2018requency_cut_off
+##edited by Felix Beaudry, May 9 2018
 ## run with: perl polymorphurama_interpop.pl file_extension directory 
 
 print "\n\n***Polymorphurama***\n\n";
@@ -141,10 +141,7 @@ foreach $file (@files){
 			##empty data set
 			@data=();
 			##set outgroup as first sequence
-			
-
 			$data[0]=$totdata[0];
-
 			##for each string
 			$r=1;
 			for ($y=0; $y < $number_of_columns; $y++){
@@ -207,7 +204,7 @@ foreach $file (@files){
 
 							if ($aa[$ind][$k] eq '_')
 							{
-								print "STOP codon found at position $j individual $sequence_names[$ind] in locus $file \n";
+								#print "STOP codon found at position $j individual $sequence_names[$ind] in locus $file \n";
 							}
 
 							if (substr($data[$ind],$j,3) =~ tr/://)  # if no gaps returs a zero (symbol for gap "-")
@@ -1407,10 +1404,11 @@ foreach $file (@files){
 
 	} # loop for each pop
 
-	if ($pi_syn_within[0] > 0){
-		my $Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+	my $Fst = 0;
+	if ($pi_syn_within[0] != 0){
+		$Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
 	}
-	else{my $Fst = 0;}
+	else{$Fst = 0;}
 
 
 	print "\nBetween populations\tFst: ",$Fst;
