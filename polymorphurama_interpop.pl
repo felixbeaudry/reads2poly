@@ -1407,7 +1407,10 @@ foreach $file (@files){
 
 	} # loop for each pop
 
-	my $Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+	if ($pi_syn_within[0] > 0){
+		my $Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+	}
+	else{my $Fst = 0;}
 
 
 	print "\nBetween populations\tFst: ",$Fst;
