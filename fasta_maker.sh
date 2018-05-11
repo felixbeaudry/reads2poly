@@ -21,7 +21,11 @@ do
 echo "Adding sequences from $ind"
 while read loc
 do
-python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
+#if seq exists
+	python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
+# if not, skip
+
+
 #find outgroup sequence using BLAST
 #add frame to outgroup sequence
 #perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl $outDir/${loc}.fasta

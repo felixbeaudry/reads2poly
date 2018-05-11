@@ -1,8 +1,13 @@
 ##!perl 
 ##edited by Felix Beaudry, May 9 2018
-## run with: perl polymorphurama_interpop.pl file_extension directory 
+## run with: perl polymorphurama_interpop.pl file_extension directory _Xchrom
 
-print "\n\n***Polymorphurama***\n\n";
+my $chrom = $ARGV[2];
+
+
+
+
+print "\n\n***Polymorphurama",$chrom,"***\n\n";
 
 use BeginPerlBioinfoB_1;
 use Text::CSV;
@@ -14,12 +19,13 @@ my $d2 = $ARGV[1] . "/";
 my $ext = "$ARGV[1]";
 my $pop_file = $ARGV[1] . "/pop";
 
-open (OUT, '>', ($ext . '/' . $ext .'_frequencies.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($ext . '/' . $ext .'_summarystats.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($ext . '/' . $ext .'_interpop.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons.txt')) or die "Could not open outfile\n";
+
+open (OUT, '>', ($ext . '/' . $ext .'_frequencies' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($ext . '/' . $ext .'_summarystats' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($ext . '/' . $ext .'_interpop' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons' . $chrom . '.txt')) or die "Could not open outfile\n";
 
 
 ##ind array
@@ -74,7 +80,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tFst_1_2\n";
+print OUT5 "locus\tFst_1_2\tDxy_1_2\n";
 
 @file=&read_dir($d2,$pattern);
 $poly_set=0;
@@ -97,6 +103,27 @@ foreach $file (@files){
 	@data = extract_sequence_from_fasta_data (@file_data);
 
 	$numseqs=scalar(@data);
+	@totdata=@data;
+
+	@position_array = ();
+
+	for ($pop=0; $pop<$number_of_pops; ++$pop){
+		$number_of_columns = @{ $pop_array[$pop] };
+		my $r = 0;
+		
+		for ($y=0; $y < $number_of_columns; $y++){
+			##go through names
+			for ($x=0; $x<scalar(@sequence_names); ++$x){
+				##if name matches string
+				
+				if ( ($sequence_names[$x] =~ $pop_array[$pop][$y]) & ($sequence_names[$x] =~ $chrom )){
+						#print $pop_array[$pop][$y], "\t", $sequence_names[$x], "\n";
+					$position_array[$pop][$r] = $x ;
+
+					$r+=1;
+					
+	}	}	}	}
+
 
     my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 							  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
@@ -121,53 +148,38 @@ foreach $file (@files){
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
-	@totdata=@data;
-
 	#interpop stats
 	my @pi_syn_within = ();
 	my @pi_rep_within = ();
+	my $dxy_syn_final = 0;
+	my $dxy_rep_final = 0;
+	my $outpop = 0;
 
-	#for length of first row, rerun with different outgroup
-	for ($pop=0; $pop<$number_of_pops; ++$pop){
-		
+	##for length of first row, rerun with different outgroup
+	
+	#for ($pop=0; $pop<$number_of_pops; ++$pop){
+	my $pop = 0;
+	while ($pop<$number_of_pops){
+	
 
-		#if between = 0, run 
-		$number_of_columns = @{ $pop_array[$pop] };
-		print "\npop: ",$pop,"\t";
-		
+		@data=();
+		$data[0]=$totdata[0];
+		$number_of_individuals = @{ $position_array[$pop] };
 
-		##use subset of data specified in pop file
-		if ($pop>0){ 
-			##empty data set
-			@data=();
-			##set outgroup as first sequence
-			$data[0]=$totdata[0];
-			##for each string
-			$r=1;
-			for ($y=0; $y < $number_of_columns; $y++){
-			##go through names
-			for ($x=0; $x<scalar(@sequence_names); ++$x){
-				##if name matches string
-					if ( $sequence_names[$x] =~ $pop_array[$pop][$y] ){
-						#print $pop_array[$pop][$y], "\t", $sequence_names[$x], "\n";
-						$data[$r]=$totdata[$x];
-						$r+=1;
-					}
-				}
-			}
-
+		for ($y=0; $y < $number_of_individuals; $y++){
+			$in_position = $position_array[$pop][$y];
+			$data[$y]=$totdata[$in_position];
 		}
+	
+	##limit output loops to 1
+	##stop outer loop at last pop - only run this type of loop once - if pop = 1, run this goofy dxy loop - one time run both ways to see if =
+	if ($pop == 1 ){
+	#for($outpop=0;$outpop < @{ $position_array[($pop + 1)] };++$outpop){               
 		
-
-
-		#for $x=0;$x < $pop_array[1][$length of pop array 1] {
-			#$data[0]=$pop_array[2][$y] 
-			#for $y=0; $y < $pop_array[2][$y] {
-				
-		#	}
-		#}
-
-
+		#change outgroup sequences to pop2 sequences
+		$out_position = $position_array[($pop +1)][$outpop];
+		$data[0]=$totdata[$out_position];
+	}	                                    
 
 		$numseqs=scalar(@data);
 		if ($numseqs>2){
@@ -383,8 +395,8 @@ foreach $file (@files){
 
 					# print "complex : $complex \n";
 
-						if ($unique_codons==2) # send data to subroutine codon_processor and get codon_processed 
-						{
+						if ($unique_codons==2) {# send data to subroutine codon_processor and get codon_processed 
+						
 								$complex = 'nein';
 								@codon_array_processed = codon_processor(@codon_array, $complex);          # if codon is complicated ($complex = ja) -- return a long list	
 							    # print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
@@ -1328,6 +1340,9 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
+				if ($pop != 1 | $outpop ==0 ){
+
+				print "\npop: ",$pop,"\t";
 				print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
 		
 				print OUT2  
@@ -1350,6 +1365,7 @@ foreach $file (@files){
 				$pi_syn_within[$pop] = $pi_syn_site;
 				$pi_rep_within[$pop] = $pi_rep_site;
 
+				##consider removing dxy within each loop
 
 				if ($third_pos_count>0){
 					$GC_three=$GC_three/$third_pos_count;
@@ -1388,31 +1404,48 @@ foreach $file (@files){
 
 				$samplesize[$poly_set]=$numseqs;
 				$poly_set++;
-
+				}
 				}
 
 		else {
-			for ($x=0; $x<($pop_cnt+3); ++$x){
+			
 				print OUT2 "0";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<6;++$z){
 						print OUT2 "0\t";		
 					}
 				}
-			}
+			
 		} # if less than two seqs
+
+	if ($pop == 1 ){
+		if ($outpop < @{ $position_array[($pop + 1)] }){
+
+		#sum over dxy's and divide by the number of inds.
+			$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+			$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+			++$outpop;
+		}
+		else{++$pop;}
+	}
+	else{++$pop;}
 
 	} # loop for each pop
 
 	my $Fst = 0;
 	if ($pi_syn_within[0] != 0){
+		
 		$Fst = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+		if($Fst < 0){$Fst = 0;}
 	}
 	else{$Fst = 0;}
 
+	$dxy_syn_final = $dxy_syn_tot / @{ $position_array[2] };
+	$dxy_rep_final = $dxy_rep_tot / @{ $position_array[2] };
 
-	print "\nBetween populations\tFst: ",$Fst;
-	print OUT5 $Fst, "\n";
+	print "\nBetween populations 1 & 2\tFst: ",$Fst,"\tDxy: ",$dxy_syn_final;
+
+	print OUT5 $Fst, "\t", $dxy_syn_final, "\n";
 
 
 	print "\n";
