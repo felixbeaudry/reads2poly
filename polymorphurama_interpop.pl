@@ -80,7 +80,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tFst_1_2\tDxy_1_2\n";
+print OUT5 "locus\tFst_1_2\tDxy_1_2\tdnds\talpha_1\talpha_2\n";
 
 @file=&read_dir($d2,$pattern);
 $poly_set=0;
@@ -151,8 +151,15 @@ foreach $file (@files){
 	#interpop stats
 	my @pi_syn_within = ();
 	my @pi_rep_within = ();
+	
 	my $dxy_syn_final = 0;
 	my $dxy_rep_final = 0;
+	my $dxy_syn_tot = 0;
+	my $dxy_rep_tot = 0;
+	my $dnds = 0;
+
+	my @alpha = ();
+
 	my $outpop = 0;
 
 	##for length of first row, rerun with different outgroup
@@ -1457,17 +1464,30 @@ foreach $file (@files){
 
 
 	if (scalar(@{ $position_array[2] }) != 0){
-		$dxy_syn_final = $dxy_syn_tot / @{ $position_array[2] };
-		$dxy_rep_final = $dxy_rep_tot / @{ $position_array[2] };
+		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[2] });
+		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[2] });
+		if( $dxy_syn_final != 0){
+			$dnds = $dxy_rep_final / $dxy_syn_final;
+		}
+		else $dnds = "NA";
+
 	}
 	else{
 		$dxy_rep_final = "NA";
 		$dxy_syn_final = "NA";
+		$dnds = "NA";
+	}
+
+	for ($a=1;$a < 3; ++$a){
+		if( $dxy_rep_final != 0 & $pi_syn_within[$a] = 0 ){
+			$alpha[$a] = 1 - ( ( $dxy_syn_final * $pi_rep_within[$a] ) / ( $dxy_rep_final * $pi_syn_within[$a] ) );
+		}
+		else $alpha[$a] = "NA";
 	}
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_syn_final;
 
-	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\n";
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dnds, "\t", $alpha[1], "\t", $alpha[2], "\n" ;
 
 
 	print "\n";

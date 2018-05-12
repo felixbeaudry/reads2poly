@@ -59,13 +59,15 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
 ####IMPORT####
 
 y <-
-  fread('summarystats_Y_mar21.xls')
+  fread('goodsex_summarystats_Ychrom.txt')
+
 x <-
-  fread('summarystats_X_mar15.xls')
-  #fread('summarystats_X_josh.txt')
+  fread('goodsex_summarystats_Xchrom.txt')
+x_inter <-
+  fread('goodsex_interpop_Xchrom.txt')
 
 a_raw <- 
-  fread('summarystats_A_all_mar23.xls')
+  fread('goodsites_summarystats.txt')
   #fread('summarystats_A_josh.txt')
 
 locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
@@ -80,8 +82,8 @@ ypols_comp <- ypols[complete.cases(ypols), ]
 ypols_comp$value <- as.numeric(ypols_comp$value)
 
 ypols_comp$pop[ypols_comp$pop == "pop0"] <- "y"
-ypols_comp$pop[ypols_comp$pop == "pop1"] <- "yNC"
-ypols_comp$pop[ypols_comp$pop == "pop2"] <- "yTX"
+ypols_comp$pop[ypols_comp$pop == "pop1"] <- "yTX"
+ypols_comp$pop[ypols_comp$pop == "pop2"] <- "yNC"
 
 ytgc <- summarySE(ypols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 yadf <- data.frame(ytgc)
@@ -128,8 +130,8 @@ xpols_comp <- xpols[complete.cases(xpols), ]
 xpols_comp$value <- as.numeric(xpols_comp$value)
 
 xpols_comp$pop[xpols_comp$pop == "pop0"] <- "X"
-xpols_comp$pop[xpols_comp$pop == "pop1"] <- "XNC"
-xpols_comp$pop[xpols_comp$pop == "pop2"] <- "XTX"
+xpols_comp$pop[xpols_comp$pop == "pop1"] <- "XTX"
+xpols_comp$pop[xpols_comp$pop == "pop2"] <- "XNC"
 
 xtgc <- summarySE(xpols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 xadf <- data.frame(xtgc)
@@ -171,8 +173,8 @@ pols_comp <- pols[complete.cases(pols), ]
 pols_comp$value <- as.numeric(pols_comp$value)
 
 pols_comp$pop[pols_comp$pop == "pop0"] <- "All"
-pols_comp$pop[pols_comp$pop == "pop1"] <- "NC"
-pols_comp$pop[pols_comp$pop == "pop2"] <- "TX"
+pols_comp$pop[pols_comp$pop == "pop1"] <- "TX"
+pols_comp$pop[pols_comp$pop == "pop2"] <- "NC"
 
 tgc <- summarySE(pols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 adf <- data.frame(tgc)
@@ -239,8 +241,8 @@ theta_all <- rbind(ytheta, Y2theta, xtheta, theta)
 theta_all["Location"] <- c("Y","Y","Ysub","Ysub","X","X","A","A")
 theta_all["Population"] <- c("XYY","XY","FL","SC","XYY","XY","XYY","XY")
 
-pi_all <- rbind(ypi, pi)
-pi_all["Location"] <- c("y","y","Autosome","Autosome")
+pi_all <- rbind(ypi, xpi)
+pi_all["Location"] <- c("y","y","x","x")
 pi_all["Population"] <- c("XYY","XY","XYY","XY")
 
 fst_all <- rbind(fst, xfst,  yfst)
@@ -293,7 +295,7 @@ title3 <- expression(paste(theta, ""[syn]))
   
   titlepi <- expression(paste(pi, ""[syn]))
   
-  ggplot(pi_ys, aes(x=Location, y=value, fill=Population)) + #guides(fill = FALSE) +
+  ggplot(pi_all, aes(x=Location, y=value, fill=Population)) + #guides(fill = FALSE) +
     geom_bar(position=position_dodge(), stat="identity" ) +
     geom_errorbar(aes(ymin=value-se, ymax=value+se),
                   width=.2,                    # Width of the error bars
