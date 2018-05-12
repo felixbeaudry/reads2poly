@@ -13,7 +13,11 @@ def arguments():
 
 args = arguments()
 inpath = args.input
-infile = open(inpath,'r')
+try:
+	infile = open(inpath,'r')
+except IOError:
+	print('There was an error opening the file!')
+    return
 
 sequence = array(
 	[
