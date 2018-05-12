@@ -1469,7 +1469,7 @@ foreach $file (@files){
 		if( $dxy_syn_final != 0){
 			$dnds = $dxy_rep_final / $dxy_syn_final;
 		}
-		else $dnds = "NA";
+		else {$dnds = "NA";}
 
 	}
 	else{
@@ -1482,7 +1482,7 @@ foreach $file (@files){
 		if( $dxy_rep_final != 0 & $pi_syn_within[$a] = 0 ){
 			$alpha[$a] = 1 - ( ( $dxy_syn_final * $pi_rep_within[$a] ) / ( $dxy_rep_final * $pi_syn_within[$a] ) );
 		}
-		else $alpha[$a] = "NA";
+		else {$alpha[$a] = "NA";}
 	}
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_syn_final;
