@@ -1479,7 +1479,7 @@ foreach $file (@files){
 	}
 
 	for ($a=1;$a < 3; ++$a){
-		if( $dxy_rep_final != 0 & $pi_syn_within[$a] = 0 ){
+		if( $dxy_rep_final != 0 & $pi_syn_within[$a] != 0 ){
 			$alpha[$a] = 1 - ( ( $dxy_syn_final * $pi_rep_within[$a] ) / ( $dxy_rep_final * $pi_syn_within[$a] ) );
 		}
 		else {$alpha[$a] = "NA";}
