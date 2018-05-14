@@ -167,8 +167,16 @@ foreach $file (@files){
 	#for ($pop=0; $pop<$number_of_pops; ++$pop){
 	my $pop = 0;
 	while ($pop<$number_of_pops){
-	
 
+		my @pi_syn = (); 
+		my @pi_rep = (); 
+
+		my @poly_freq_Syn = ();
+		my @poly_freq_Rep = ();
+
+		my @poly_freq_Syn_temp = ();
+		my @poly_freq_Syn_temp = ();
+		
 		@data=();
 		$data[0]=$totdata[0];
 		$number_of_individuals = @{ $position_array[$pop] };
@@ -1200,6 +1208,7 @@ foreach $file (@files){
 				# calculate pi
 
 				$pi_syn_total=$pi_rep_total=0;
+
 
 				for ($ind=1; $ind<$numseqs-1; $ind++){
 					$pi_syn[$ind]=(2*($ind/($numseqs-1))*(1-($ind/($numseqs-1))))*$poly_freq_Syn[$ind];

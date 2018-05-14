@@ -67,7 +67,7 @@ x_inter <-
   fread('goodsex_interpop_Xchrom.txt')
 
 a_raw <- 
-  fread('goodsites_summarystats.txt')
+  fread('goodsites_summarystats_may12.txt')
   #fread('summarystats_A_josh.txt')
 
 locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
@@ -155,7 +155,7 @@ a_all <- separate(a_raw, locus, c("1","locus","2"), sep = "_", remove = TRUE,
 joined <- data.frame(sqldf('select a_all.*, locInfo.* from a_all left join locInfo on a_all.locus = locInfo.hastatulus_transcript'))
 
 a <- joined[joined$TXjAuto == "1",]
-a <- a[,c(2,4:44)]
+a <- a[,c(2,4:42)]
 
 #calculating Ne from dadi output
 a_sites <- a[!is.na(a$pop0_sites_syn),]
@@ -212,6 +212,9 @@ yAtheta_syn_TX <- ytheta_syn_TX$value / theta_syn_TX$value
 yA <- data.frame(c(theta_syn_NC$value,theta_syn_TX$value),c(ytheta_syn_NC$value,ytheta_syn_TX$value),c(yAtheta_syn_NC,yAtheta_syn_TX),c("XYY","XY"))
 yA <- rename(yA, c("c.yAtheta_syn_NC..yAtheta_syn_TX."="yatheta", "c..XYY....XY.."="Populations"))
 
+
+ggplot()
+
 ####ViolinGraphs####
 
 a_pi_syn_popd <- pols_comp[pols_comp$var == 'pi' & pols_comp$cod == 'syn' & pols_comp$pop != "All", ,]
@@ -241,9 +244,9 @@ theta_all <- rbind(ytheta, Y2theta, xtheta, theta)
 theta_all["Location"] <- c("Y","Y","Ysub","Ysub","X","X","A","A")
 theta_all["Population"] <- c("XYY","XY","FL","SC","XYY","XY","XYY","XY")
 
-pi_all <- rbind(ypi, xpi)
-pi_all["Location"] <- c("y","y","x","x")
-pi_all["Population"] <- c("XYY","XY","XYY","XY")
+pi_all <- rbind(pi,ypi, xpi)
+pi_all["Location"] <- c("a","a","y","y","x","x")
+pi_all["Population"] <- c("XYY","XY","XYY","XY","XYY","XY")
 
 fst_all <- rbind(fst, xfst,  yfst)
 fst_all["Location"] <- c("A","X", "Y")
