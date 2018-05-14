@@ -1,4 +1,0 @@
-locus	Fst_1_2	Dxy_1_2
-Locus_1001_Transcript_3_Length_3058_genewise_newlength_3058_CDSlength_813.fasta.best.fas	1	0
-Locus_9199_Transcript_2_Length_601_getorf_CDSlength_471.fasta	0.523062825137971	0.00685871056241425
-Locus_9204_Transcript_7_Length_3152_genewise_newlength_3152_CDSlength_1440.fasta	

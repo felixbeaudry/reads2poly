@@ -1373,7 +1373,7 @@ foreach $file (@files){
 				else {$TajD_rep = "NA";}
 
 				print OUT2  
-					$numseqs-1, "\t", 
+					$numseqs, "\t", 
 					$no_syn_codons,"\t", 
 					$thetaS, "\t", 
 					$no_polyS, "\t", 
