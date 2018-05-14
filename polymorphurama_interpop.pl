@@ -149,6 +149,13 @@ foreach $file (@files){
 	print OUT5 $file, "\t";
 
 	#interpop stats
+	my @pi_syn = (); 
+	my @pi_rep = (); 
+	my @poly_freq_Syn = ();
+	my @poly_freq_Rep = ();
+	my @poly_freq_Syn_temp = ();
+	my @poly_freq_Syn_temp = ();
+
 	my @pi_syn_within = ();
 	my @pi_rep_within = ();
 	
@@ -168,14 +175,12 @@ foreach $file (@files){
 	my $pop = 0;
 	while ($pop<$number_of_pops){
 
-		my @pi_syn = (); 
-		my @pi_rep = (); 
-
-		my @poly_freq_Syn = ();
-		my @poly_freq_Rep = ();
-
-		my @poly_freq_Syn_temp = ();
-		my @poly_freq_Syn_temp = ();
+		@pi_syn = (); 
+		@pi_rep = (); 
+		@poly_freq_Syn = ();
+		@poly_freq_Rep = ();
+		@poly_freq_Syn_temp = ();
+		@poly_freq_Syn_temp = ();
 		
 		@data=();
 		$data[0]=$totdata[0];
