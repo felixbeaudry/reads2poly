@@ -2,7 +2,7 @@
 #script to cat fasta sequences
 #Felix Beaudry 15 May 2018
 
-import fileinput, argparse
+import fileinput, argparse, re
 from numpy import array, zeros
 
 def arguments():
