@@ -8,12 +8,12 @@ ind_list=$1
 loc_list=$2
 outgroup=$3
 
-ind_count = (wc -l $ind_list | awk '{print $1*2 +1}')
+ind_count = $(wc -l $ind_list | awk '{print $1*2 +1}')
 
 while read loc
 do
 
-loc_ind_count = (awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
+loc_ind_count = $(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
 
 ##check which loci have coverage in every individual
 if [$loc_ind_count -ge $ind_count]
