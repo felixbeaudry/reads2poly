@@ -35,7 +35,7 @@ else
 	echo "${loc} not added"
 fi
 
-done <$outgroup_loci.list
+done <outgroup_loci.list
 
 
 #while read ind
