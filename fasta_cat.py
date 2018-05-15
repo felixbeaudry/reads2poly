@@ -17,9 +17,10 @@ inpath = args.input
 infile = open(inpath,'r')
 indName = args.ind
 
-print('>',indName)
 #print ind name
+print('>',indName)
 
+string = ""
 for line in infile:
     if re.match(">",line):
         pass
