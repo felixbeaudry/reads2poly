@@ -44,9 +44,12 @@ while read ind
 do
 for hap in 1 2
 do
-python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_${hap}_cat.fasta -n ${ind}_${hap} >>abba.fasta
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_${hap}_cat.fasta -n ${ind}_${hap} >>sorted_abba.fasta
 done
 done <$ind_list
 
+#rename sequences to outgroup pop1 pop2 pop3
+
+#Rscript --vanilla patD.R abba.fasta >patD.txt
 #run through the patD script (.r?)
 
