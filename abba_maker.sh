@@ -10,6 +10,12 @@ outgroup=$2
 
 ls $outgroup/codon/prank/* | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}' >outgroup_loci.list
 
+echo "Removing Past Files"
+while read ind
+do
+rm ${ind}/${ind}_cat.fasta
+done<$ind_list
+
 ind_count = $(wc -l $loc_list | awk '{print $1*2 +1}')
 
 while read loc
@@ -20,10 +26,12 @@ loc_ind_count = $(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best
 ##check which loci have coverage in every individual
 if [$loc_ind_count -ge $ind_count]
 then
+	echo "Adding ${loc}"
 	while read ind
 	do
 	samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind} >>${ind}/${ind}_cat.fasta
 	done <$ind_list
+else echo "${loc} not added"
 fi
 
 done <$outgroup_loci.list
