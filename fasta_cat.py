@@ -18,7 +18,7 @@ infile = open(inpath,'r')
 indName = args.ind
 
 #print ind name
-print('>',indName)
+print ">", indName
 
 string = ""
 for line in infile:
@@ -27,4 +27,6 @@ for line in infile:
     else:
 		line = line.rstrip("\n")
 		string = string + line
-print (string)
+
+for i in range(0, len(string), 60):
+	print string[i:i+60]
