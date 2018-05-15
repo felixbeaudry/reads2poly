@@ -16,7 +16,7 @@ do
 rm ${ind}/${ind}_cat.fasta
 done<$ind_list
 
-ind_count = $(wc -l $loc_list | awk '{print $1*2 +1}')
+ind_count = $(wc -l $ind_list | awk '{print $1*2 +1}')
 
 while read loc
 do
