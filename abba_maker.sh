@@ -8,9 +8,9 @@ ind_list=$1
 
 outgroup=$2
 
-loc_list= $(ls $outgroup/codon/prank/* | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}')
+ls $outgroup/codon/prank/* | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}' >outgroup_loci.list
 
-ind_count = $(wc -l $ind_list | awk '{print $1*2 +1}')
+ind_count = $(wc -l $loc_list | awk '{print $1*2 +1}')
 
 while read loc
 do
@@ -26,7 +26,7 @@ then
 	done <$ind_list
 fi
 
-done <$loc_list
+done <$outgroup_loci.list
 
 
 #while read ind
