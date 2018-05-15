@@ -24,6 +24,6 @@ for line in infile:
     if re.match(">",line):
         pass
     else:
- 		line = line.rstrip("\n")
-        string = string + line
+		line = line.rstrip("\n")
+		string = string + line
 print (string)
