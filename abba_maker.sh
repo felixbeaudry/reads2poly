@@ -2,11 +2,13 @@
 #script to abba-baba files from single locus fastas
 #Felix Beaudry 14 May 2018
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/abba_maker.sh inds.list loci.list roth 
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/abba_maker.sh inds.list roth 
 
 ind_list=$1
-loc_list=$2
-outgroup=$3
+
+outgroup=$2
+
+loc_list= $(ls $outgroup/codon/prank/* | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}')
 
 ind_count = $(wc -l $ind_list | awk '{print $1*2 +1}')
 
