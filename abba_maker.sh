@@ -13,7 +13,8 @@ ls $outgroup/codon/prank/* | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}
 echo "Removing Past Files"
 while read ind
 do
-rm ${ind}/${ind}_cat.fasta
+rm ${ind}/${ind}_1_cat.fasta
+rm ${ind}/${ind}_2_cat.fasta
 done<$ind_list
 
 while read loc
@@ -41,10 +42,13 @@ done <outgroup_loci.list
 
 #while read ind
 #do
-# send to python script
-	#add locus name
-	#remove lines with >
-	#remove end of line
+## send to python script
+#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}_1_cat.fasta -n ${ind}_1
+#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_2_cat.fasta -n ${ind}_2
+
+#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i OKBAC15/OKBAC15_2_cat.fasta -n OKBAC15_2
+
+
 ##cat add individual to abba.fasta in order of sequences to $ind_list
 
 #done <$ind_list
