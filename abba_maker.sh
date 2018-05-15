@@ -29,7 +29,10 @@ then
 	echo "Adding ${loc}"
 	while read ind
 	do
-	samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind} >>${ind}/${ind}_cat.fasta
+	for hap in 1 2
+	do
+	samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_cat.fasta
+	done
 	done <$ind_list
 else 
 	echo "${loc} not added"
