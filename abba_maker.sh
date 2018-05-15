@@ -24,14 +24,15 @@ do
 loc_ind_count = $(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
 
 ##check which loci have coverage in every individual
-if [$loc_ind_count -ge $ind_count]
+if ["$loc_ind_count" -ge "$ind_count"]
 then
 	echo "Adding ${loc}"
 	while read ind
 	do
 	samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind} >>${ind}/${ind}_cat.fasta
 	done <$ind_list
-else echo "${loc} not added"
+else 
+	echo "${loc} not added"
 fi
 
 done <$outgroup_loci.list
