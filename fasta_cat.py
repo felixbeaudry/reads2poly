@@ -14,6 +14,7 @@ def arguments():
 
 args = arguments()
 inpath = args.input
+infile = open(inpath,'r')
 indName = args.ind
 
 print('>',indName)
