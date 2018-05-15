@@ -36,10 +36,10 @@ done <$ind_list
 else 
 echo "${loc} not added"
 fi
-
 done <outgroup_loci.list
 
-rm abba.fasta
+rm sorted_abba.fasta
+echo "Collapsing fastas"
 while read ind
 do
 for hap in 1 2
