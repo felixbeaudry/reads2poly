@@ -39,19 +39,14 @@ fi
 
 done <outgroup_loci.list
 
-
-#while read ind
-#do
-## send to python script
-#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}_1_cat.fasta -n ${ind}_1
-#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_2_cat.fasta -n ${ind}_2
-
-#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i OKBAC15/OKBAC15_2_cat.fasta -n OKBAC15_2
-
-
-##cat add individual to abba.fasta in order of sequences to $ind_list
-
-#done <$ind_list
+rm abba.fasta
+while read ind
+do
+for hap in 1 2
+do
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_${hap}_cat.fasta -n ${ind}_${hap} >>abba.fasta
+done
+done <$ind_list
 
 #run through the patD script (.r?)
 

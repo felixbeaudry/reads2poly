@@ -18,7 +18,7 @@ infile = open(inpath,'r')
 indName = args.ind
 
 #print ind name
-print ">", indName
+print ">",indName
 
 string = ""
 for line in infile:
