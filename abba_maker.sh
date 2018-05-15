@@ -25,7 +25,7 @@ locindcount=$(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas
 echo "number of sequences: $locindcount"
 
 ##check which loci have coverage in every individual
-if ["$locindcount" -ge "$indcount"]
+if [$locindcount -ge $indcount]
 then
 	echo "Adding ${loc}"
 	while read ind
