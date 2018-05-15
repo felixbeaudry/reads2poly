@@ -22,7 +22,8 @@ print('>',indName)
 
 for line in infile:
     if re.match(">",line):
-         pass
+        pass
     else:
-		line.rstrip()
-		print line
+ 		line = line.rstrip("\n")
+        string = string + line
+print (string)
