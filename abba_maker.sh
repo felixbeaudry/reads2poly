@@ -16,18 +16,17 @@ do
 rm ${ind}/${ind}_cat.fasta
 done<$ind_list
 
-indcount=$(wc -l $ind_list | awk '{print $1*2 +1}')
-echo "number of individuals: $indcount"
-
 while read loc
 do
+
+indcount=$(wc -l $ind_list | awk '{print $1*2 +1}')
+echo "number of individuals: $indcount"
 
 locindcount=$(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
 echo "number of sequences: $locindcount"
 
 ##check which loci have coverage in every individual
-if [[$locindcount = $indcount]];
-then
+if [[$locindcount = $indcount]]; then
 	echo "Adding ${loc}"
 	while read ind
 	do
