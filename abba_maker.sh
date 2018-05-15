@@ -20,10 +20,7 @@ while read loc
 do
 
 indcount=$(wc -l $ind_list | awk '{print $1*2 +1}')
-echo "number of individuals: $indcount"
-
 locindcount=$(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
-echo "number of sequences: $locindcount"
 
 ##check which loci have coverage in every individual
 if [[ $locindcount = $indcount ]]; then
@@ -32,7 +29,7 @@ while read ind
 do
 for hap in 1 2
 do
-samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_cat.fasta
+samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_${hap}_cat.fasta
 done
 done <$ind_list
 else 
