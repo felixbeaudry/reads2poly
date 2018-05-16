@@ -2,10 +2,11 @@
 #script to abba-baba files from single locus fastas
 #Felix Beaudry 14 May 2018
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/abba_maker.sh inds.list roth 
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/abba_maker.sh inds.list roth abba_file.txt
 
 ind_list=$1
 outgroup=$2
+abba_file=$3
 
 ls ${outgroup}/codon/prank/*.fas | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}' >${outgroup}_loci.list
 #ls roth/codon/prank/*.fas | awk 'split($1,a,".") split(a[1],b,"/") {print b[4]}' >roth_loci.list
@@ -52,23 +53,17 @@ do
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_${hap}_cat.fasta -n ${ind}_${hap} >${ind}/${ind}_${hap}_collapse.fasta
 done
 done <$ind_list
-
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${outgroup}/${outgroup}_cat.fasta -n ${outgroup} >${outgroup}/${outgroup}_collapse.fasta
 
 rm abba_input.fasta
-samtools faidx sorted_abba.fasta NCROS7/NCROS7_2_collapse.fasta | wc -c
-samtools faidx sorted_abba.fasta NCROS7/NCROS7_2_collapse.fasta >>abba_input.fasta
-samtools faidx sorted_abba.fasta FLJAS13/FLJAS13_2_collapse.fasta | wc -c
-samtools faidx sorted_abba.fasta FLJAS13/FLJAS13_2_collapse.fasta  >>abba_input.fasta
-samtools faidx sorted_abba.fasta TXROS24/TXROS24_2_collapse.fasta | wc -c
-samtools faidx sorted_abba.fasta TXROS24/TXROS24_2_collapse.fasta >>abba_input.fasta
-samtools faidx sorted_abba.fasta roth/roth_collapse.fasta | wc -c
-samtools faidx sorted_abba.fasta roth/roth_collapse.fasta >>abba_input.fasta
-
-##rename sequences to P1, P2, P3, OUTGROUP
-#sed ':a;N;$!ba;s/>NCROS7_2/>pop1/g' abba_input.fasta | sed ':a;N;$!ba;s/>FLJAS13_2/>pop2/g' 
+##P1, P2, P3, OUTGROUP
+while read abba
+do
+samtools faidx ${abba}/${abba}_2_collapse.fasta ${abba}_2 >>abba_input.fasta
+done <$abba_file
+samtools faidx ${outgroup}/${outgroup}_collapse.fasta ${outgroup} >>abba_input.fasta
 
 #run through the patD script
 echo "Calculating Patterson's D"
-Rscript --vanilla /ohta/felix.beaudry/scripts/reads2poly/patd.R abba_input.fasta #>patD.txt
+Rscript --vanilla /ohta/felix.beaudry/scripts/reads2poly/patd.R abba_input.fasta >patD.txt
 
