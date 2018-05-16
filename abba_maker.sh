@@ -56,7 +56,7 @@ done <$ind_list
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${outgroup}/${outgroup}_cat.fasta -n ${outgroup} >${outgroup}/${outgroup}_collapse.fasta
 
 rm abba_input.fasta
-##P1, P2, P3, OUTGROUP
+##(((P1, P2), P3), OUTGROUP
 while read abba
 do
 samtools faidx ${abba}/${abba}_2_collapse.fasta ${abba}_2 >>abba_input.fasta

@@ -136,6 +136,8 @@ xpols_comp$pop[xpols_comp$pop == "pop2"] <- "XNC"
 xtgc <- summarySE(xpols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 xadf <- data.frame(xtgc)
 
+7.280047e-03
+
 xpi <- xadf[xadf$var == 'pi' & xadf$cod == "syn" & xadf$pop != "X",]
 xtaj <- xadf[xadf$var == 'TajD',]
 xtheta_syn_NC <- xadf[xadf$var == 'theta' & xadf$pop == "XNC" & xadf$cod == "syn",]
