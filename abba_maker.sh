@@ -23,17 +23,13 @@ rm ${ind}/${ind}_${hap}_collapse.fasta
 done
 done<$ind_list
 
-
+##check which loci have coverage in every individual
 echo "Adding Loci"
 while read loc
 do
-
 indcount=$(wc -l $ind_list | awk '{print $1*2 +1}')
 locindcount=$(awk '$1 ~ ">" {print}' ${outgroup}/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
-
-##check which loci have coverage in every individual
 if [[ $locindcount = $indcount ]]; then
-
 #echo "Adding ${loc}"
 samtools faidx ${outgroup}/codon/prank/${loc}.fasta.best.fas ${outgroup} >>${outgroup}/${outgroup}_cat.fasta
 while read ind
@@ -43,8 +39,7 @@ do
 samtools faidx ${outgroup}/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_${hap}_cat.fasta
 done
 done <${ind_list}
-
-else 
+#else 
 #echo "${loc} not added"
 fi
 done <${outgroup}_loci.list
