@@ -30,7 +30,7 @@ do
 indcount=$(wc -l $ind_list | awk '{print $1*2 +1}')
 locindcount=$(awk '$1 ~ ">" {print}' ${outgroup}/codon/prank/${loc}.fasta.best.fas | wc -l | awk '{print $1}')
 if [[ $locindcount = $indcount ]]; then
-#echo "Adding ${loc}"
+echo "Adding ${loc}"
 samtools faidx ${outgroup}/codon/prank/${loc}.fasta.best.fas ${outgroup} >>${outgroup}/${outgroup}_cat.fasta
 while read ind
 do
