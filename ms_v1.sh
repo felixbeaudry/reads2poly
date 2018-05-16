@@ -1,10 +1,17 @@
-ms nsam nreps -t θ
-#nsam is the number of copies of the locus in each sample, and 
-#nreps is the number of independent samples to generate.
-		#what is nsam and nreps
+#nsam is the number of samples you took
+#nreps is the number of times to replicate it
+#ms nsam nreps -t θ
 
-ms nsam nreps -t θ -I npop n1 n2 ...[4N0m]
 
-/ohta/felix.beaudry/scripts/msdir/ms 23 10 -t 0.006 -s 7
+#56 X-chroms; 2 pop, 26/30 m=0.64; pop2 0.9 of 1; @0.07t 1 shrinks; @0.07t 2 shrinks; @0.07t no mig; @0.3t 2 become 1
 
-		#how do I make my demographic model
+#/ohta/felix.beaudry/scripts/msdir/ms 56 100000 -t 0.00728 -I 2 26 30 0.64 -n 2 0.9 -en 0.07 1 0.93 -en 0.07 2 0.25 -eM 0.07 0 -ej 0.3 2 1
+
+#are my estimates scaled appropriately (eg. t and m)?
+
+#msstats
+/ohta/felix.beaudry/scripts/msdir/ms 56 100000 -t 0.00728 -I 2 26 30 0.64 -n 2 0.9 -en 0.07 1 0.93 -en 0.07 2 0.25 -eM 0.07 0 -ej 0.3 2 1 | ./src/msstats -I 2 26 30 > output_X.txt
+
+# "you should condition on the line of results for just one population"
+#x=read.table("output",header=T)
+#mean(x$hsm01[x$pop==0])

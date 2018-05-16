@@ -17,6 +17,8 @@ rm ${ind}/${ind}_1_cat.fasta
 rm ${ind}/${ind}_2_cat.fasta
 done<$ind_list
 
+$outgroup/$outgroup_cat.fasta
+
 while read loc
 do
 
@@ -26,11 +28,12 @@ locindcount=$(awk '$1 ~ ">" {print}' $outgroup/codon/prank/${loc}.fasta.best.fas
 ##check which loci have coverage in every individual
 if [[ $locindcount = $indcount ]]; then
 echo "Adding ${loc}"
+samtools faidx $outgroup/codon/prank/${loc}.fasta.best.fas $outgroup >>$outgroup/$outgroup_cat.fasta
 while read ind
 do
 for hap in 1 2
 do
-samtools faidx roth/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_${hap}_cat.fasta
+samtools faidx $outgroup/codon/prank/${loc}.fasta.best.fas ${ind}_${hap} >>${ind}/${ind}_${hap}_cat.fasta
 done
 done <$ind_list
 else 
@@ -47,9 +50,13 @@ do
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i ${ind}/${ind}_${hap}_cat.fasta -n ${ind}_${hap} >>sorted_abba.fasta
 done
 done <$ind_list
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cat.py -i $outgroup/$outgroup_cat.fasta -n ${ind} >>sorted_abba.fasta
 
-#rename sequences to outgroup pop1 pop2 pop3
+samtools faidx sorted_abba.fasta NCROS7_2 FLJAS13_2 TXROS24_2 roth >abba_input.fasta
 
-#Rscript --vanilla patD.R abba.fasta >patD.txt
-#run through the patD script (.r?)
+##rename sequences to P1, P2, P3, OUTGROUP
+#sed ':a;N;$!ba;s/>NCROS7_2/>pop1/g' abba_input.fasta | sed ':a;N;$!ba;s/>FLJAS13_2/>pop2/g' 
+
+#run through the patD script
+Rscript --vanilla patD.R abba_input.fasta >patD.txt
 
