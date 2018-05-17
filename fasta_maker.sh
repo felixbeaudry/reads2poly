@@ -33,7 +33,9 @@ python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.
 done < ${outDir}/${loc_list}
 done < $ind_list
 
-#send in to polymorphurama
-#perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl fasta $outDir
+##take inds_list and print as one line with commas, and output into directory
+sed -E -e ':a;N;$!ba;s/\n/,/g' $ind_list >${outDir}/pop
+##send in to polymorphurama
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl fasta ${outDir} pop 
 
 
