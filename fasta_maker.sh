@@ -10,17 +10,18 @@ loc_list=$2
 outDir=$3
 
 mkdir ${outDir}
+awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outDir}/${loc_list}
 echo "Removing Previous Fasta Files"
 while read loc
 do
 rm $outDir/$loc.fasta
-done < $loc_list
+done < ${outDir}/${loc_list}
 
 while read ind 
 do
 echo "Adding sequences"
 if [ -d "${ind}" ]; then
-echo "${ind} fastas exist"
+echo -e "${ind}\tfastas exist"
 else	
 perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v ${ind}.uni.vcf -o ${ind} -l ${ind}.logfile -a T 2>${ind}/errors.txt
 fi
@@ -29,7 +30,7 @@ do
 echo -e "${ind}\t${loc}"
 python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
 
-done < $loc_list
+done < ${outDir}/${loc_list}
 done < $ind_list
 
 #send in to polymorphurama
