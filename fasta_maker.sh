@@ -9,6 +9,7 @@ loc_list=$2
 
 outDir=$3
 
+mkdir ${outDir}
 echo "Removing Previous Fasta Files"
 while read loc
 do

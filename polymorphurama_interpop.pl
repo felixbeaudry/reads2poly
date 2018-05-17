@@ -5,7 +5,7 @@
 my $chrom = $ARGV[3];
 my $pop_file = $ARGV[1] . "/" . $ARGV[2];
 
-print "\n\n***Polymorphurama",$ARGV[2],$chrom,"***\n\n";
+print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
 
 use BeginPerlBioinfoB_1;
 use Text::CSV;
