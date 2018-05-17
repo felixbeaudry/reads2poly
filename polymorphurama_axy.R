@@ -136,7 +136,7 @@ xpols_comp$pop[xpols_comp$pop == "pop2"] <- "XNC"
 xtgc <- summarySE(xpols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 xadf <- data.frame(xtgc)
 
-7.280047e-03
+7.280047e-03 * sum(x$pop0_sites_syn)
 
 xpi <- xadf[xadf$var == 'pi' & xadf$cod == "syn" & xadf$pop != "X",]
 xtaj <- xadf[xadf$var == 'TajD',]

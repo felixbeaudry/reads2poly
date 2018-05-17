@@ -1,13 +1,11 @@
 ##!perl 
 ##edited by Felix Beaudry, May 9 2018
-## run with: perl polymorphurama_interpop.pl file_extension directory _Xchrom
+## run with: perl polymorphurama_interpop.pl file_extension directory TX_NC _Xchrom
 
-my $chrom = $ARGV[2];
+my $chrom = $ARGV[3];
+my $pop_file = $ARGV[1] . "/" . $ARGV[2];
 
-
-
-
-print "\n\n***Polymorphurama",$chrom,"***\n\n";
+print "\n\n***Polymorphurama",$ARGV[2],$chrom,"***\n\n";
 
 use BeginPerlBioinfoB_1;
 use Text::CSV;
@@ -17,15 +15,14 @@ use Text::CSV;
 my $pattern=$ARGV[0];
 my $d2 = $ARGV[1] . "/";
 my $ext = "$ARGV[1]";
-my $pop_file = $ARGV[1] . "/pop";
 
 
-open (OUT, '>', ($ext . '/' . $ext .'_frequencies' . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($ext . '/' . $ext .'_summarystats' . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias' . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias' . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($ext . '/' . $ext .'_interpop' . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons' . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ($ext . '/' . $ext .'_frequencies' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($ext . '/' . $ext .'_summarystats' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($ext . '/' . $ext .'_interpop' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 
 
 ##ind array
@@ -1461,6 +1458,9 @@ foreach $file (@files){
 	} # loop for each pop
 
 	my $Fst_syn = 0;
+	my $Fst_rep = 0;
+
+	
 	if ($pi_syn_within[0] != 0 & $pi_syn_within[1] != 0 & $pi_syn_within[2] != 0){
 		
 		$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
@@ -1468,7 +1468,7 @@ foreach $file (@files){
 	}
 	else{$Fst_syn = "NA";}
 
-	my $Fst_rep = 0;
+	
 	if ($pi_rep_within[0] != 0 & $pi_rep_within[1] != 0 & $pi_rep_within[2] != 0){
 		
 		$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
