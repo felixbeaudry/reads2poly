@@ -73,6 +73,8 @@ a_raw <-
 locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
 locInfo$buckwheat_position <- locInfo$buckwheat_position/1000000 
 
+
+
 ####Y####
 
 
@@ -153,10 +155,17 @@ xalpha <- xadf[xadf$var == 'alpha',]
 
 a_all <- separate(a_raw, locus, c("1","locus","2"), sep = "_", remove = TRUE,
                   convert = FALSE, extra = "merge", fill = "left")
+a_all <- data.frame(cbind(a_all,a_raw$locus))
 
 joined <- data.frame(sqldf('select a_all.*, locInfo.* from a_all left join locInfo on a_all.locus = locInfo.hastatulus_transcript'))
 
 a <- joined[joined$TXjAuto == "1",]
+auto_loci <- a$V2[!is.na(a$V2)]
+
+write.table(auto_loci, file = "auto_loci.list", append = FALSE, quote = FALSE, sep = " ", 
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, 
+            col.names = FALSE, qmethod = c("escape", "double")) 
+
 a <- a[,c(2,4:42)]
 
 #calculating Ne from dadi output

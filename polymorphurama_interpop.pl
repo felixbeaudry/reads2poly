@@ -17,12 +17,12 @@ my $d2 = $ARGV[1] . "/";
 my $ext = "$ARGV[1]";
 
 
-open (OUT, '>', ($ext . '/' . $ext .'_frequencies' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($ext . '/' . $ext .'_summarystats' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($ext . '/' . $ext .'_interpop' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ($ext . '/' . $ext .'_frequencies_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($ext . '/' . $ext .'_summarystats_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($ext . '/' . $ext .'_interpop_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 
 
 ##ind array
