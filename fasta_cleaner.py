@@ -15,11 +15,9 @@ def arguments():
 args = arguments()
 inpath = args.input
 perc = args.cutoff
-try:
-	infile = open(inpath,'r')
-except IOError:
-	print('There was an error opening the file!')
-    return
+
+infile = open(inpath,'r')
+
 
 sequence = array(
 	[
