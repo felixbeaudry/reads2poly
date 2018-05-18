@@ -22,8 +22,8 @@ do
 echo "Adding sequences"
 if [ -d "${ind}" ]; then
 echo -e "${ind}\tfastas exist"
-else	
-perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v ${ind}.uni.vcf -o ${ind} -l ${ind}.logfile -a T 2>${ind}/errors.txt
+else
+perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v ${ind}.uni.vcf -o ${ind} -l ${ind}.logfile -a T 2>${ind}_vcferrors.txt
 fi
 while read loc
 do
