@@ -2,12 +2,12 @@
 #script to make fastas of all sequences
 #Felix Beaudry 8 May 2018
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/fasta_maker.sh inds.list loci.list allFasta
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/fasta_maker.sh inds.list loci.list allFasta cutoff
 
 ind_list=$1
 loc_list=$2
-
 outDir=$3
+cutoff=$4
 
 mkdir ${outDir}
 awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outDir}/${loc_list}
@@ -28,7 +28,7 @@ fi
 while read loc
 do
 echo -e "${ind}\t${loc}"
-python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta -c ${cutoff} 2>$outDir/errors.txt | cat >> $outDir/${loc}.fasta
 
 done < ${outDir}/${loc_list}
 done < $ind_list

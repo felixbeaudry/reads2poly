@@ -8,11 +8,13 @@ from numpy import array, zeros
 def arguments():
         parser  = argparse.ArgumentParser(description="script to output only useful fasta sequences")
         parser.add_argument("-i","--input",help="input",required=True)
+        parser.add_argumnet("-c","--cutoff",help="percent missing data cutoff",required=True)
         args = parser.parse_args()
         return(args)
 
 args = arguments()
 inpath = args.input
+perc = args.cutoff
 try:
 	infile = open(inpath,'r')
 except IOError:
@@ -45,7 +47,7 @@ x=int(0)
 
 
 for x in range(0, 2):
-	if (sequence[x][3] >0) & ((sequence[x][1]/sequence[x][3]) < 0.6) & ((sequence[x][2]/sequence[x][3]) < 0.6):
+	if (sequence[x][3] >0) & ((sequence[x][1]/sequence[x][3]) < perc) & ((sequence[x][2]/sequence[x][3]) < perc):
 		print str(ind)+"_"+str(int(sequence[x][0]))
 		print alignment[x]
 		x += 1
