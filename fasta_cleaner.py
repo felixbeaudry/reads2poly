@@ -45,7 +45,7 @@ x=int(0)
 
 
 for x in range(0, 2):
-	if (sequence[x][3] >0) & ((sequence[x][1]/sequence[x][3]) < perc) & ((sequence[x][2]/sequence[x][3]) < perc):
+	if ((sequence[x][3] >0) & (( (sequence[x][1] + sequence[x][2]) /sequence[x][3]) < perc)) :
 		print str(ind)+"_"+str(int(sequence[x][0]))
 		print alignment[x]
 		x += 1
