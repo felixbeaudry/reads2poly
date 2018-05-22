@@ -8,7 +8,7 @@ from numpy import array, zeros
 def arguments():
         parser  = argparse.ArgumentParser(description="script to output only useful fasta sequences")
         parser.add_argument("-i","--input",help="input",required=True)
-        parser.add_argumnet("-c","--cutoff",help="percent missing data cutoff",required=True)
+        parser.add_argument("-c","--cutoff",help="percent missing data cutoff",required=True)
         args = parser.parse_args()
         return(args)
 

@@ -545,3 +545,70 @@ ggplot(AXY_pisyn_stats_7,aes(x=variable,y=value,fill=Position)) +
                               "#fa8775",
                               "#ea5f94"))
 
+####sub_sex_haplotypes####
+  
+goodsex <- fread('goodsex.list',header = FALSE)
+  
+tx_fl_x_interpop <- fread('goodsex_interpop_TX_FL_Xchrom.txt')
+tx_fl_y_interpop <- fread('goodsex_interpop_TX_FL_Ychrom.txt')
+
+tx_ncsub_y_interpop <- fread('goodsex_interpopTX_NCsub_Ychrom.txt')
+tx_ncsub_x_interpop <- fread('goodsex_interpopTX_NCsub_Xchrom.txt')
+
+tx_nc_y_interpop <- fread('goodsex_interpopTX_NC_Ychrom.txt')
+tx_nc_x_interpop <- fread('goodsex_interpopTX_NC_Xchrom.txt')
+
+fl_nc_y_interpop <- fread('goodsex_interpopFL_NC_Ychrom.txt')
+fl_nc_x_interpop <- fread('goodsex_interpopFL_NC_Xchrom.txt')
+
+
+goodsex_interpop <- data.frame(sqldf('select goodsex.*, 
+
+tx_fl_x_interpop.Fst_1_2 AS txfl_x_fst, tx_fl_x_interpop.Dxy_1_2 as txfl_x_dxy, 
+tx_ncsub_x_interpop.Fst_1_2 AS txncsub_x_fst, tx_ncsub_x_interpop.Dxy_1_2 as txncsub_x_dxy,
+tx_nc_x_interpop.Fst_1_2 AS txnc_x_fst,tx_nc_x_interpop.Dxy_1_2 as txnc_x_dxy,
+fl_nc_x_interpop.Fst_1_2 AS flncsub_x_fst,fl_nc_x_interpop.Dxy_1_2 as flncsub_x_dxy,
+tx_fl_y_interpop.Fst_1_2 AS txfl_y_fst,tx_fl_y_interpop.Dxy_1_2 as txfl_y_dxy,
+tx_nc_y_interpop.Fst_1_2 AS txnc_y_fst,tx_nc_y_interpop.Dxy_1_2 as txnc_y_dxy,
+tx_ncsub_y_interpop.Fst_1_2 AS txncsub_y_fst,tx_ncsub_y_interpop.Dxy_1_2 as txncsub_y_dxy,
+fl_nc_y_interpop.Fst_1_2 AS flncsub_y_fst,fl_nc_y_interpop.Dxy_1_2 as flncsub_y_dxy
+
+from goodsex 
+left join tx_fl_x_interpop on goodsex.V1 = tx_fl_x_interpop.locus
+left join tx_ncsub_x_interpop on goodsex.V1 = tx_ncsub_x_interpop.locus
+left join tx_nc_x_interpop on goodsex.V1 = tx_nc_x_interpop.locus
+left join fl_nc_x_interpop on goodsex.V1 = fl_nc_x_interpop.locus
+left join tx_fl_y_interpop on goodsex.V1 = tx_fl_y_interpop.locus
+left join tx_nc_y_interpop on goodsex.V1 = tx_nc_y_interpop.locus
+left join tx_ncsub_y_interpop on goodsex.V1 = tx_ncsub_y_interpop.locus
+left join fl_nc_y_interpop on goodsex.V1 = fl_nc_y_interpop.locus
+                             '))
+
+goodsex_interpop_melt <- melt(goodsex_interpop ,id.vars = "V1")
+goodsex_interpop_split <- separate(goodsex_interpop_melt, variable, c("pop","chrom","var"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+goodsex_interpop_comp <- goodsex_interpop_split[complete.cases(goodsex_interpop_split), ]
+goodsex_interpop_stats <- summarySE(goodsex_interpop_comp, measurevar="value", groupvars=c("pop","chrom","var"))
+
+interpop_dxy_plot <- 
+ggplot(goodsex_interpop_stats[goodsex_interpop_stats$var == "dxy",], aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  #facet_grid(. ~ var, scales = "free") +
+  theme_bw()  + theme_bw(base_size = 18) + 
+  labs(x = "Chromosome",y = "Dxy")   #+ scale_fill_manual(values=c('light blue','dark blue')) 
+
+  interpop_fst_plot <-
+  ggplot(goodsex_interpop_stats[goodsex_interpop_stats$var == "fst",], aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE) +
+    geom_bar(position=position_dodge(), stat="identity" ) +
+    geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9)) + 
+    #facet_grid(. ~ var, scales = "free") +
+    theme_bw()  + theme_bw(base_size = 18) + 
+  labs(x = "Chromosome",y = "Fst")   #+ scale_fill_manual(values=c('light blue','dark blue')) 
+  
+  
+  multiplot(interpop_dxy_plot,interpop_fst_plot)
+  
