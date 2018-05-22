@@ -166,6 +166,10 @@ write.table(auto_loci, file = "auto_loci.list", append = FALSE, quote = FALSE, s
             eol = "\n", na = "NA", dec = ".", row.names = FALSE, 
             col.names = FALSE, qmethod = c("escape", "double")) 
 
+NC_hemizygous
+
+
+
 a <- a[,c(2,4:42)]
 
 #calculating Ne from dadi output
