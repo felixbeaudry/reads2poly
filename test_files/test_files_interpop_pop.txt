@@ -1,0 +1,2 @@
+locus	Fst_1_2	Dxy_1_2	dnds	alpha_1	alpha_2
+Locus_1203_Transcript_4_Length_2258_genewise_newlength_2258_CDSlength_1284.fasta.best.fas	0.0022839191775273	0.0107568055304948	0.0713307848390372	0.221530419451418	-0.243138725010648

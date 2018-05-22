@@ -1,9 +1,10 @@
 ##!perl 
 ##edited by Felix Beaudry, May 9 2018
-## run with: perl polymorphurama_interpop.pl file_extension directory TX_NC _Xchrom
+## run with: perl polymorphurama_interpop.pl file_extension directory TX_NC outgroup _Xchrom
 
-my $chrom = $ARGV[3];
+my $chrom = $ARGV[4];
 my $pop_file = $ARGV[1] . "/" . $ARGV[2];
+my $outgroup_string = $ARGV[3];
 
 print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
 
@@ -104,15 +105,24 @@ foreach $file (@files){
 
 	@position_array = ();
 
+	my $outgroup_position = 0;
+
+	for ($x=0; $x<scalar(@sequence_names); ++$x){
+		if ( $sequence_names[$x] =~ $outgroup_string ){
+				$outgroup_position = $x ;
+	}	}
+
+
 	for ($pop=0; $pop<$number_of_pops; ++$pop){
 		$number_of_columns = @{ $pop_array[$pop] };
 		my $r = 0;
 		
 		for ($y=0; $y < $number_of_columns; $y++){
 			##go through names
+
 			for ($x=0; $x<scalar(@sequence_names); ++$x){
 				##if name matches string
-				
+
 				if ( ($sequence_names[$x] =~ $pop_array[$pop][$y]) & ($sequence_names[$x] =~ $chrom )){
 						#print $pop_array[$pop][$y], "\t", $sequence_names[$x], "\n";
 					$position_array[$pop][$r] = $x ;
@@ -120,6 +130,8 @@ foreach $file (@files){
 					$r+=1;
 					
 	}	}	}	}
+
+	#run above loop (at same time?) for outgroup, which is arg (5?), then check if empty, if empty set to 0
 
 
     my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
@@ -141,7 +153,7 @@ foreach $file (@files){
 
 	chomp $file;	
 
-	print "\n", $file, "\tnumseqs: ", $numseqs;
+	print "\n", $file, "\tnumseqs: ", $numseqs, "\toutgroup: ", $sequence_names[$outgroup_position];
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
@@ -180,7 +192,7 @@ foreach $file (@files){
 		@poly_freq_Syn_temp = ();
 		
 		@data=();
-		$data[0]=$totdata[0];
+		$data[0]=$totdata[$outgroup_position];
 		$number_of_individuals = @{ $position_array[$pop] };
 
 		for ($y=0; $y < $number_of_individuals; $y++){
