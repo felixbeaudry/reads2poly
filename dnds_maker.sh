@@ -10,6 +10,7 @@ loc_list=$1
 outDir=$2
 outgroupName=$3
 outgroupTranscriptome=$4
+indList=$5
 
 ##make database
 #/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/makeblastdb -in RB1_transcriptome_ref.fa -dbtype nucl
@@ -27,7 +28,8 @@ awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outgroupName}/loc.list
 while read loc
 do
 echo "Aligning ${loc}"
-perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl ${outgroupName}/${loc}.fasta | cat ${outDir}/${loc}.fasta > ${outgroupName}/prank/${loc}.fasta
+perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl ${outgroupName}/${loc}.fasta >${outgroupName}/${loc}_cod.fasta
+perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl ${outDir}/${loc}.fasta | cat ${outgroupName}/${loc}_cod.fasta > ${outgroupName}/prank/${loc}.fasta
 ##align to outgroup, in frame - using codon model -, with PRANK
 /ohta/felix.beaudry/scripts/prank/bin/prank -d=${outgroupName}/prank/${loc}.fasta -o=${outgroupName}/prank/${loc} -codon -F
 done < ${outgroupName}/loc.list

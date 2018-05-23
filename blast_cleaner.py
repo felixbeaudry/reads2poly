@@ -45,7 +45,7 @@ for line in infile:
 
 	if "</Hit>" in line :
 		
-		file_name = outpath+locus_name+'.fasta'
+		file_name = outpath+'/'+locus_name+'.fasta'
 		file = open(file_name,'w') 
 		file.write(">roth\n")
 		for i in range(0, len(line_all), 60):

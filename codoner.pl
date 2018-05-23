@@ -10,6 +10,7 @@ while(my $line = <$info>){
 	
 	if($line =~ />/) {
 		print $line, "\n";
+		$dash_count = 0
 	} 
 	elsif(length($line) == 60){
 		my $count = () = $line =~ /-/g;
@@ -21,9 +22,9 @@ while(my $line = <$info>){
 		my $extra_ncl = (length($line) - $dash_count)  % 3;
 		my $x = 0;
 		if ($extra_ncl > 0){
-		for ($x=0; $x<(3-$extra_ncl);++$x){ 
-			print "N";
-		}}
+			for ($x=0; $x<(3-$extra_ncl);++$x){ 
+				print "N";
+		}	}
 		#print " ", length($line), " ", $extra_ncl, " ", $dash_count;	
 		print "\n";
 	}
