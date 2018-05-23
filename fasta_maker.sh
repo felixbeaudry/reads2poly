@@ -21,7 +21,7 @@ done < ${outDir}/${loc_list}
 while read ind 
 do
 echo "Adding sequences"
-perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.beaudry/alignment/NCF1_nostop/RNA/${ind}.uni.vcf -o ${ind} -l ${ind}.logfile -a T -m ${cutoff} 2>${ind}_vcferrors.txt
+perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/${ind}.uni.vcf -o ${ind} -l ${ind}.logfile -a T -m ${cutoff} 2>${ind}_vcferrors.txt
 while read loc
 do
 echo -e "${ind}\t${loc}"
