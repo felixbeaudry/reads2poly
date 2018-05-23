@@ -14,7 +14,7 @@ def arguments():
 
 args = arguments()
 inpath = args.input
-perc = float(args.cutoff)
+perc = ( float(args.cutoff) / 100)
 
 infile = open(inpath,'r')
 
