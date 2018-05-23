@@ -4,7 +4,7 @@
 
 #run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/goodsex.list goodsex buc /ohta/felix.beaudry/assemblies/bucephalophorusTranscriptome/RB1_transcriptome_ref.fa
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/auto_loci.list goodsex roth /ohta/felix.beaudry/assemblies/rothTranscriptome/roth_female_ref_genewise.fa
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/goodsex.list goodsex roth /ohta/felix.beaudry/assemblies/rothTranscriptome/roth_female_ref_genewise.fa
 
 loc_list=$1
 outDir=$2
