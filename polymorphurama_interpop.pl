@@ -1238,16 +1238,17 @@ foreach $file (@files){
 					$pi_syn_site=$pi_syn_total/$no_syn_codons;
 					$pi_rep_site=$pi_rep_total/$no_rep_codons;	
 
-					$pi_JC_syn= -0.75*log(1-(4/3)*$pi_syn_site);
-					$pi_JC_rep= -0.75*log(1-(4/3)*$pi_rep_site);
+
+					#$pi_JC_syn= -0.75*log(1-(4/3)*$pi_syn_site);
+					#$pi_JC_rep= -0.75*log(1-(4/3)*$pi_rep_site);
 				}
 
 				else{
-					$pi_syn_site=0;
-					$pi_rep_site=0;	
+					$pi_syn_site="NA";
+					$pi_rep_site="NA";	
 
-					$pi_JC_syn= 0;
-					$pi_JC_rep= 0;
+					#$pi_JC_syn= "NA";
+					#$pi_JC_rep="NA";
 				}
 
 				# calculate Dxy
