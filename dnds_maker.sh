@@ -20,10 +20,10 @@ do
 ##make match file
 mkdir ${outgroupName}/${loc}
 echo "Blasting ${loc}"
-/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query ${outDir}/${loc} -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/${loc}.blast 2>${loc}.err
+/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query ${outDir}/${loc} -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/${loc}.blast 2>${outgroupName}/${loc}.blast.err
 
 ##parse
-awk '$1 ~ "<Hit_def>" {print}' ${loc}.fasta.blast | sort | uniq | awk 'split($1,a,">") split(a[2],b,"<") {print b[1]}' >${loc}.fasta.hits
+awk '$1 ~ "<Hit_def>" {print}' ${outgroupName}/${loc}.blast | sort | uniq | awk 'split($1,a,">") split(a[2],b,"<") {print b[1]}' >${loc}.blast.hits
 done < $locList
 #echo "Parsing ${loc}"
 #python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${loc}.blast -o ${outgroupName}/${loc}
