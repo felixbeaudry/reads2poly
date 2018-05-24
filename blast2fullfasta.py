@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #python
 #blast_cleaner: script to take blast output and make into a best-hit fasta file
-#python blast2fullfasta.py -i <outgroup>.blast -o  
+#python blast2fullfasta.py -i <outgroup>.blast -o . -s <outgroup>
 
 #Felix Beaudry 22 May 2018
 
@@ -13,12 +13,14 @@ def arguments():
         parser  = argparse.ArgumentParser(description="take blast output and make into a best-hit fasta file")
         parser.add_argument("-i","--input",help="input",required=True)
         parser.add_argument("-o","--outdir",help="output directory",required=True)
+        parser.add_argument("-s","--outgroup",help="name for outgroup sequence",required=True)
         args = parser.parse_args()
         return(args)
 
 args = arguments()
 inpath = args.input
 outpath = args.outdir
+outgroup = args.outgroup
 infile = open(inpath,'r')
 
 def blastParser(incoming_line):
@@ -131,8 +133,9 @@ for line in infile:
 	if "</Hit>" in line :
 		if len(sequence) > 1:
 			file_name = outpath+'/'+locus_name+'.fasta'
-			file = open(file_name,'w') 
-			file.write(">roth\n")
+			file = open(file_name,'w')
+			outgroup_name = ">"+str(outgroup)+"\n"
+			file.write(outgroup_name)
 			#sys.stdout.write('\n')
 			for i in range(0, len(sequence), 1):
 				file.write(sequence[i])

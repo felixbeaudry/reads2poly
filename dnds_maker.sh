@@ -18,14 +18,14 @@ mkdir ${outgroupName}
 echo "Blasting ${outgroupName}"
 /ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/${outgroupName}.blast 2>${outgroupName}/${outgroupName}.blast.err
 echo "Parsing ${outgroupName}"
-python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${outgroupName}.blast -o ${outgroupName} 2>${outgroupName}/${outgroupName}.err
+python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${outgroupName}.blast -o ${outgroupName} -s ${outgroupName} 2>${outgroupName}/${outgroupName}.err
 
 awk 'split($1,a,"."){print a[1]}' ${locList} >${outgroupName}/loc.list
 
 mkdir ${outDir}/${outgroupName}
 while read loc
 do
-cat ${outDir}/${loc}.fasta ${outgroupName}/${loc}.fasta >>${outDir}/${outgroupName}/${loc}.fasta
+cat ${outgroupName}/${loc}.fasta ${outgroupName}/${loc}.fasta >>${outDir}/${outgroupName}/${loc}.fasta
 done < ${outgroupName}/loc.list
 
 
