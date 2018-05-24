@@ -17,9 +17,9 @@ mkdir ${outgroupName}/perlocus
 mkdir ${outgroupName}/overall
 
 echo "Blasting ${outgroupName}"
-/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/overall/${loc}.blast 2>${outgroupName}/overall/${loc}.blast.err
+/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/overall/${outgroupName}.blast 2>${outgroupName}/overall/${outgroupName}.blast.err
 echo "Parsing ${outgroupName}"
-python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/overall/${loc}.blast -o ${outgroupName}/overall/${loc} 2>${outgroupName}/overall/${loc}.err
+python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/overall/${outgroupName}.blast -o ${outgroupName}/overall/${outgroupName} 2>${outgroupName}/overall/${outgroupName}.err
 
 while read loc
 do
