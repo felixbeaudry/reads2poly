@@ -197,6 +197,7 @@ adf <- data.frame(tgc)
 pi <- adf[adf$var == 'pi' & adf$cod == 'syn' & adf$pop != "All", ,]
 taj <- adf[adf$var == 'TajD',]
 theta <- adf[adf$var == 'theta' & adf$pop != "All" & adf$cod == "syn",]
+theta_all <- adf[adf$var == 'theta' & adf$pop == "All" & adf$cod == "syn",]
 
 
 theta_syn_NC <- adf[adf$var == 'theta' & adf$pop == "NC" & adf$cod == "syn",]
