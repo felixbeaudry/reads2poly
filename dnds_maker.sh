@@ -20,12 +20,14 @@ do
 ##make match file
 mkdir ${outgroupName}/${loc}
 echo "Blasting ${loc}"
-/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query ${outDir}/${loc} -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/${loc}.blast
+/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/blastn -task megablast -query ${outDir}/${loc} -db ${outgroupTranscriptome} -num_threads 10 -max_target_seqs 1 -outfmt 5 -dust no -gapopen 0 -gapextend 0 >${outgroupName}/${loc}.blast 2>${loc}.err
 
 ##parse
-echo "Parsing ${loc}"
-python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${loc}.blast -o ${outgroupName}/${loc}
+awk '$1 ~ "<Hit_def>" {print}' ${loc}.fasta.blast | sort | uniq | awk 'split($1,a,">") split(a[2],b,"<") {print b[1]}' >${loc}.fasta.hits
 done < $locList
+#echo "Parsing ${loc}"
+#python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${loc}.blast -o ${outgroupName}/${loc}
+
 
 #awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outgroupName}/loc.list
 
@@ -34,13 +36,6 @@ done < $locList
 #cat ${outDir}/${loc} >>${outgroupName}/${loc}
 #done < ${outgroupName}/loc.list
 
-#while read loc
-#do
-#echo "Aligning ${loc}"
-#perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl ${outgroupName}/${loc}.fasta >${outgroupName}/prank/${loc}.fasta
-#perl /ohta/felix.beaudry/scripts/reads2poly/codoner.pl ${outDir}/${loc}.fasta  >> ${outgroupName}/prank/${loc}.fasta
-##align to outgroup, in frame - using codon model -, with PRANK
-#/ohta/felix.beaudry/scripts/prank/bin/prank -d=${outgroupName}/prank/${loc}.fasta -o=${outgroupName}/prank/${loc} -codon -F
-#done < ${outgroupName}/loc.list
+
 
 
