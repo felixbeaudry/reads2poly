@@ -2,14 +2,14 @@
 #script to get dnds from outgroup
 #Felix Beaudry 14 May 2018
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh goodsex buc /ohta/felix.beaudry/assemblies/bucephalophorusTranscriptome/RB1_transcriptome_ref.fa goodsex.fasta.list
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh bucephalophorus /ohta/felix.beaudry/assemblies/bucephalophorusTranscriptome/RB1_transcriptome_ref.fa 
+#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh rothschildianus /ohta/felix.beaudry/assemblies/rothTranscriptome/roth_female_ref_genewise.fa 
 
-#run with: bash /ohta/felix.beaudry/scripts/reads2poly/dnds_maker.sh goodsex roth /ohta/felix.beaudry/assemblies/rothTranscriptome/roth_female_ref_genewise.fa goodsex.fasta.list
 
-outDir=$1
-outgroupName=$2
-outgroupTranscriptome=$3
-locList=$4
+outgroupName=$1
+outgroupTranscriptome=$2
+#locList=$4
+#outDir=$1
 
 ##make database
 #/ohta/aplatts/data/apps/ncbi-blast-2.6.0+/bin/makeblastdb -in ${outgroupTranscriptome} -dbtype nucl
@@ -20,13 +20,12 @@ echo "Blasting ${outgroupName}"
 echo "Parsing ${outgroupName}"
 python /ohta/felix.beaudry/scripts/reads2poly/blast2fullfasta.py -i ${outgroupName}/${outgroupName}.blast -o ${outgroupName} -s ${outgroupName} 2>${outgroupName}/${outgroupName}.err
 
-awk 'split($1,a,"."){print a[1]}' ${locList} >${outgroupName}/loc.list
-
-mkdir ${outDir}/${outgroupName}
-while read loc
-do
-cat ${outgroupName}/${loc}.fasta ${outgroupName}/${loc}.fasta >>${outDir}/${outgroupName}/${loc}.fasta
-done < ${outgroupName}/loc.list
+#awk 'split($1,a,"."){print a[1]}' ${locList} >${outgroupName}/loc.list
+#mkdir ${outDir}/${outgroupName}
+#while read loc
+#do
+#cat ${outgroupName}/${loc}.fasta ${outgroupName}/${loc}.fasta >>${outDir}/${outgroupName}/${loc}.fasta
+#done < ${outgroupName}/loc.list
 
 
 
