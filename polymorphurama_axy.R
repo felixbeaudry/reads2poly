@@ -62,9 +62,9 @@ y <-
   fread('goodsex_summarystats_Ychrom.txt')
 
 x <-
-  fread('goodsex_summarystats_Xchrom.txt')
+  fread('XYphased_rothschildianus_summarystats_pop_Ychrom.txt')
 x_inter <-
-  fread('goodsex_interpop_Xchrom.txt')
+  fread('XYphased_rothschildianus_interpop_pop_Ychrom.txt')
 
 a_raw <- 
   fread('goodsites_summarystats_may12.txt')
@@ -76,8 +76,6 @@ locInfo$buckwheat_position <- locInfo$buckwheat_position/1000000
 
 
 ####Y####
-
-
 ypol <- melt(y,id.vars = "locus")
 ypols <- separate(ypol, variable, c("pop","var","cod"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
 ypols_comp <- ypols[complete.cases(ypols), ]
@@ -138,16 +136,32 @@ xpols_comp$pop[xpols_comp$pop == "pop2"] <- "XNC"
 xtgc <- summarySE(xpols_comp, measurevar="value", groupvars=c("var","pop","cod"))
 xadf <- data.frame(xtgc)
 
-7.280047e-03 * sum(x$pop0_sites_syn)
+#7.280047e-03 * sum(x$pop0_sites_syn)
 
 xpi <- xadf[xadf$var == 'pi' & xadf$cod == "syn" & xadf$pop != "X",]
 xtaj <- xadf[xadf$var == 'TajD',]
 xtheta_syn_NC <- xadf[xadf$var == 'theta' & xadf$pop == "XNC" & xadf$cod == "syn",]
 xtheta_syn_TX <- xadf[xadf$var == 'theta' & xadf$pop == "XTX" & xadf$cod == "syn",]
 xtheta <- xadf[xadf$var == 'theta' & xadf$cod == "syn" & xadf$pop != "X",]
+xdxy <- xadf[xadf$var == 'dxy'& xadf$cod == "syn",]
+
+x_inter_melt <- melt(x_inter,id.vars = "locus")
+x_inter_melt <- x_inter_melt[complete.cases(x_inter_melt), ]
+x_inter_summary <- summarySE(x_inter_melt, measurevar="value", groupvars=c("variable"))
+all_dxy <- rbind( xdxy[,-c(1,3)],rename( x_inter_summary[x_inter_summary$variable == 'Dxy_1_2',],c("variable"="pop")))
+
+x_buc_dxy <- cbind(all_dxy[,-c(1)],"chrom"=c("Y","Y","Y","Y"),
+      "pop"=c("hastatulus","XYY","XY","XY-XYY"), 
+      "outgroup"=c("rothschildianus","rothschildianus","rothschildianus","XY-XYY"))
+
+y_buc_dxy <- cbind(all_dxy[,-c(1)],"chrom"=c("Y","Y","Y","Y"),
+                   "pop"=c("hastatulus","XYY","XY","XY-XYY"), 
+                   "outgroup"=c("bucephalophorus","bucephalophorus","bucephalophorus","XY-XYY"))
+
+sex_buc_dxy <- rbind(x_buc_dxy[,-c(8:10)],y_buc_dxy[,-c(1)])
+sex_dxy_norx <- rbind(sex_buc_dxy,x_buc_dxy[,-c(1)])
 
 xfst <- xadf[xadf$var == 'fst'& xadf$cod == "syn",]
-xdxy <- xadf[xadf$var == 'Dxy'& xadf$cod == "syn",]
 xmk <- xadf[xadf$var == 'MK',]
 xalpha <- xadf[xadf$var == 'alpha',]
 
@@ -175,9 +189,13 @@ a <- a[,c(2,4:42)]
 #calculating Ne from dadi output
 a_sites <- a[!is.na(a$pop0_sites_syn),]
 sum(a_sites$pop0_sites_syn)
-2508.81/sum(a_sites$pop0_sites_syn)
+(2508.81/sum(a_sites$pop0_sites_syn))*mean(a_sites$pop0_sites_syn)
+(2508.81/sum(a_sites$pop0_sites_syn))*mean(a_sites$pop0_sites_syn)*0.75
+
 2508.81/(sum(a_sites$pop0_sites_syn)*7.5e-9*4)
 (2508.81/(sum(a_sites$pop0_sites_syn)*7.5e-9*4))*0.3
+
+
 ##
 
 pol <- melt(a,id.vars = "locus")
@@ -303,6 +321,14 @@ title3 <- expression(paste(theta, ""[syn]))
                   position=position_dodge(.9)) + 
     theme_bw()  + theme_bw(base_size = 30) 
   
+  ggplot(sex_dxy_norx, aes(x=outgroup, y=value, fill=pop)) + #guides(fill = FALSE) +
+    geom_bar(position=position_dodge(), stat="identity" ) +
+    geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9)) + 
+    theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
+    theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
+    facet_grid(. ~ chrom, scales = "free")
   
   
   
@@ -465,9 +491,10 @@ a_plot <-
   ggplot(a_pisyn_melt7,aes(x=buckwheat_position,y=value)) + 
   geom_point(aes(color=variable) ) +
   geom_smooth(aes(color=variable,alpha=0.7),se = FALSE,method="loess",span=1.5,size=2) + 
-  facet_grid(. ~ buckwheat_chromosome, scales = "free") +
+  
   labs(x = "",y = title,title="Autosomal") + #ylim(-0,1) +
   theme_bw(base_size = 18)  + theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  facet_grid(. ~ buckwheat_chromosome, scales = "free") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) +
   guides(size=FALSE,alpha=FALSE) #+ scale_color_manual(values=c( "#009E73",    "#E69F00","#56B4E9"))
 

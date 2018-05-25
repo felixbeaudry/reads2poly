@@ -10,3 +10,8 @@ cat XYphased/goodsex/${loc}.fasta ${outgroup}/${loc}.fasta >subsets/XYphased_${o
 done <subsets/XYphased_${outgroup}/goodsex.list
 done
 
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl fasta XYphased_rothschildianus pop rothschildianus _Ychrom
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl fasta XYphased_rothschildianus pop rothschildianus _Xchrom
+
+
+
