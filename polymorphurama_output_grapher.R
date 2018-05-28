@@ -79,22 +79,31 @@ summaryStatsInter <- function(inter=NULL,chrom=NULL){
 ####import####
 
 pops <- c("All","TX","NC")
-within <-
+wIn_roth_y <-
   fread('XYphased_rothschildianus_summarystats_pop_Ychrom.txt')
-between <-
+btw_roth_y <-
   fread('XYphased_rothschildianus_interpop_pop_Ychrom.txt')
 
 XYph_r_Y_within <- summaryStats(in_mat=within,pops=pops,chrom="Y")
 XYph_r_Y_inter <- summaryStatsInter(inter=between,chrom="Y")
 
 ####DXY####
-XYph_r_Y_k <- XYph_r_Y_within[XYph_r_Y_within$var == "dxy",]
+XYph_r_Y_k <- XYph_r_Y_within[XYph_r_Y_within$var == "dxy" & XYph_r_Y_within$cod == "syn",]
 XYph_r_Y_dxy <- XYph_r_Y_inter[XYph_r_Y_inter$variable == "Dxy_1_2",]
 
-all_dxy <- rbind( XYph_r_Y_k[,-c(1,3)],rename( XYph_r_Y_dxy,c("variable"="pop")))
+all_dxy <- rbind( XYph_r_Y_k[,-c(1,3)],
+                  rename( XYph_r_Y_dxy,c("variable"="pop"))
+                  )
+all_dxy_out <- cbind(all_dxy,outgroup="rothschildianus")
 
-
-
+ggplot(all_dxy_out, aes(x=outgroup, y=value, fill=pop)) + #guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
+  facet_grid(. ~ chrom, scales = "free")
 
 
 
