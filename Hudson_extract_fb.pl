@@ -36,8 +36,6 @@ foreach my $line (@file_data) {
 			$fst = ( $pi_tot - ( ($pi_one + $pi_two) / 2 )) / $pi_tot;
 			if ($fst < 0 ){$fst=0;}
 			print $rep-1, "\t", $pi_tot / 1000, "\t", $fst, "\n";
-
-
 			#reset
 			my $pi_tot = 0;
 			my $pi_one = 0;

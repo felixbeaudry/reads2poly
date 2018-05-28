@@ -78,7 +78,7 @@ for line in infile:
 	if on == "T":
 		sequence[i]=line
 		#print i
-		print sequence[i]
+		#print sequence[i]
 		if i < popSplit:
 			sequence_one[i]=line
 		else :
