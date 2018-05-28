@@ -2,7 +2,7 @@
 ##Perl script for extracting Hudson data (from ms), edited from S. Wright
 
 
-use hudsonsubsrho_fb;
+use Hudsonsubsrho_fb;
 my $dirfile=$ARGV[0];
 my $popSplit=int($ARGV[1]);
 
