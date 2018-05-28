@@ -23,7 +23,7 @@ popEnd = int(args.end)
 def calculate_pi(seqs):
 	diffs=0
 	comps=0
-	if seqs[0] == 0:
+	if len(seqs) > 0:
 		for i in range(0,len(seqs),1):
 			for t in range((i+1),len(seqs),1):
 				comps+=1
@@ -56,9 +56,17 @@ for line in infile:
 	if not line.strip():
 		on = "F"
 
+	if "segsites" in line:
+		segsite = line.split(': ')
+		#print segsite[1]
+
 	if "//"  in line:
 		if rep == 0:
 			rep+=1
+		elif int(segsite[1]) == 0:
+			rep+=1
+			sys.stdout.write(str(rep-1)+"\tNA\tNA\n")
+
 		else:
 			rep+=1
  			pi_tot = calculate_pi(sequence)
@@ -84,7 +92,7 @@ for line in infile:
 	if on == "T":
 		sequence[i]=line
 		#print i
-		print sequence[i]
+		#print sequence[i]
 		if i < popSplit:
 			sequence_one[i]=line
 		else :
