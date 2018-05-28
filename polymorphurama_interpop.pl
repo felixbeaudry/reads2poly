@@ -2,21 +2,17 @@
 ##edited by Felix Beaudry, May 9 2018
 ## run with: perl polymorphurama_interpop.pl file_extension directory TX_NC outgroup _Xchrom
 
-my $chrom = $ARGV[4];
-my $pop_file = $ARGV[1] . "/" . $ARGV[2];
-my $outgroup_string = $ARGV[3];
-
-print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
-
 use BeginPerlBioinfoB_1;
 use Text::CSV;
 
-#use interpop;
-
+my $chrom = $ARGV[4];
+my $pop_file = $ARGV[1] . "/" . $ARGV[2];
+my $outgroup_string = $ARGV[3];
 my $pattern=$ARGV[0];
 my $d2 = $ARGV[1] . "/";
 my $ext = "$ARGV[1]";
 
+print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
 
 open (OUT, '>', ($ext . '/' . $ext .'_frequencies_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 open (OUT2, '>', ($ext . '/' . $ext .'_summarystats_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
@@ -25,8 +21,7 @@ open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias_' . $ARGV[2] . $chrom . '.t
 open (OUT5, '>', ($ext . '/' . $ext .'_interpop_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 
-
-##ind array
+####Start Population Array Input####
 
 my @pop_array;   # 2D array for CSV data
 #[row][col]
@@ -51,8 +46,8 @@ for ($x=0;$x<$number_of_pops;$x++){
 }
 print "\n";
 
+####Print Headers for stats files####
 
-##within summarystats header
 my @vars= ();
 $vars[0] = "sites";
 $vars[1] = "theta";
@@ -80,6 +75,9 @@ print OUT2 "\n";
 
 print OUT5 "locus\tFst_1_2\tDxy_1_2\tdnds\talpha_1\talpha_2\n";
 
+
+#####Start Calculating Statistics####
+
 @file=&read_dir($d2,$pattern);
 $poly_set=0;
 
@@ -104,7 +102,6 @@ foreach $file (@files){
 	@totdata=@data;
 
 	@position_array = ();
-
 	my $outgroup_position = 0;
 
 	for ($x=0; $x<scalar(@sequence_names); ++$x){
@@ -195,7 +192,7 @@ foreach $file (@files){
 		$data[0]=$totdata[$outgroup_position];
 		$number_of_individuals = @{ $position_array[$pop] };
 
-		for ($y=0; $y < $number_of_individuals; $y++){
+		for ($y=1; $y < $number_of_individuals+1; $y++){
 			$in_position = $position_array[$pop][$y];
 			$data[$y]=$totdata[$in_position];
 		}
