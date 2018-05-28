@@ -54,15 +54,8 @@ foreach my $line (@file_data) {
 	elsif ($line =~ /positions/) {next;}
 	else { 
 	  $sequence[$i] = $line; 
-	  
-	  if ($i < $popSplit){
-	  	$sequence_one[$i] = $line;
-
-	  }  
-	  else{
-	  	$sequence_two[$i - $popSplit] = $line;
-
-	  }
+	  if ($i < $popSplit){$sequence_one[$i] = $line; }  
+	  else{$sequence_two[$i - $popSplit] = $line;}
 	  $i+=1;
 	}
 }  
