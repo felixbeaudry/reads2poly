@@ -23,7 +23,7 @@ popEnd = int(args.end)
 def calculate_pi(seqs):
 	diffs=0
 	comps=0
-	if len(seqs) > 0:
+	if len(seqs[0]) > 0:
 		for i in range(0,len(seqs),1):
 			for t in range((i+1),len(seqs),1):
 				comps+=1
