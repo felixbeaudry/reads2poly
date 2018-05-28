@@ -64,7 +64,10 @@ for line in infile:
  			pi_tot = calculate_pi(sequence)
  			pi_one = calculate_pi(sequence_one)
  			pi_two = calculate_pi(sequence_two)
- 			fst = (pi_tot - ((pi_one + pi_two) / 2)) / pi_tot
+ 			if pi_tot > 0:
+ 				fst = (pi_tot - ((pi_one + pi_two) / 2)) / pi_tot
+ 			else: 
+ 				fst = 0
  			if fst < 0:
  				fst = 0
  			sys.stdout.write(str(rep-1)+"\t"+str(pi_tot / 1000)+"\t"+str(fst)+"\n")
