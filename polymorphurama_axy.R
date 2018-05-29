@@ -1,4 +1,3 @@
-#### TOP ####
 setwd('~/Google Drive/Research/Data/')
 library(data.table)
 library(ggplot2)

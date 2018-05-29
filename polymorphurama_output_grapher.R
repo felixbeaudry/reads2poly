@@ -79,24 +79,82 @@ summaryStatsInter <- function(inter=NULL,chrom=NULL){
 ####import####
 
 pops <- c("All","TX","NC")
+
 wIn_roth_y <-
   fread('XYphased_rothschildianus_summarystats_pop_Ychrom.txt')
 btw_roth_y <-
   fread('XYphased_rothschildianus_interpop_pop_Ychrom.txt')
+wIn_roth_y <- summaryStats(in_mat=wIn_roth_y,pops=pops,chrom="Y")
+btw_roth_y <- summaryStatsInter(inter=btw_roth_y,chrom="Y")
 
-XYph_r_Y_within <- summaryStats(in_mat=within,pops=pops,chrom="Y")
-XYph_r_Y_inter <- summaryStatsInter(inter=between,chrom="Y")
+wIn_roth_x <-
+  fread('XYphased_rothschildianus_summarystats_pop_Xchrom.txt')
+btw_roth_x <-
+  fread('XYphased_rothschildianus_interpop_pop_Xchrom.txt')
+wIn_roth_x <- summaryStats(in_mat=wIn_roth_x,pops=pops,chrom="X")
+btw_roth_x <- summaryStatsInter(inter=btw_roth_x,chrom="X")
+
+wIn_buc_y <-
+  fread('XYphased_bucephalophorus_summarystats_pop_Ychrom.txt')
+btw_buc_y <-
+  fread('XYphased_bucephalophorus_interpop_pop_Ychrom.txt')
+wIn_buc_y <- summaryStats(in_mat=wIn_buc_y,pops=pops,chrom="Y")
+btw_buc_y <- summaryStatsInter(inter=btw_buc_y,chrom="Y")
+
+
+wIn_buc_x <-
+  fread('XYphased_bucephalophorus_summarystats_pop_Xchrom.txt')
+btw_buc_x <-
+  fread('XYphased_bucephalophorus_interpop_pop_Xchrom.txt')
+wIn_buc_x <- summaryStats(in_mat=wIn_buc_x,pops=pops,chrom="X")
+btw_buc_x <- summaryStatsInter(inter=btw_buc_x,chrom="X")
+
+
 
 ####DXY####
-XYph_r_Y_k <- XYph_r_Y_within[XYph_r_Y_within$var == "dxy" & XYph_r_Y_within$cod == "syn",]
-XYph_r_Y_dxy <- XYph_r_Y_inter[XYph_r_Y_inter$variable == "Dxy_1_2",]
+#rothY
+XYph_r_Y_k <- wIn_roth_y[wIn_roth_y$var == "dxy" & wIn_roth_y$cod == "syn" & wIn_roth_y$pop == "All",]
+XYph_r_Y_dxy <- btw_roth_y[btw_roth_y$variable == "Dxy_1_2",]
 
-all_dxy <- rbind( XYph_r_Y_k[,-c(1,3)],
+XYph_r_Y_dxy <- rbind( XYph_r_Y_k[,-c(1,3)],
                   rename( XYph_r_Y_dxy,c("variable"="pop"))
                   )
-all_dxy_out <- cbind(all_dxy,outgroup="rothschildianus")
+XYph_r_Y_dxy <- cbind(XYph_r_Y_dxy,outgroup=c("rothschildianus","hastatulus"))
 
-ggplot(all_dxy_out, aes(x=outgroup, y=value, fill=pop)) + #guides(fill = FALSE) +
+
+#rothX
+XYph_r_X_k <- wIn_roth_x[wIn_roth_x$var == "dxy" & wIn_roth_x$cod == "syn" & wIn_roth_x$pop == "All",]
+XYph_r_X_dxy <- btw_roth_x[btw_roth_x$variable == "Dxy_1_2",]
+
+XYph_r_X_dxy <- rbind( XYph_r_X_k[,-c(1,3)],
+                       rename( XYph_r_X_dxy,c("variable"="pop"))
+)
+XYph_r_X_dxy <- cbind(XYph_r_X_dxy,outgroup=c("rothschildianus","hastatulus"))
+
+#bucY
+XYph_b_Y_k <- wIn_buc_y[wIn_buc_y$var == "dxy" & wIn_buc_y$cod == "syn" & wIn_buc_y$pop == "All",]
+XYph_b_Y_dxy <- btw_buc_y[btw_buc_y$variable == "Dxy_1_2",]
+
+XYph_b_Y_dxy <- rbind( XYph_b_Y_k[,-c(1,3)]
+                       #,rename( XYph_b_Y_dxy,c("variable"="pop"))
+                      )
+XYph_b_Y_dxy <- cbind(XYph_b_Y_dxy,outgroup="bucephalophorus")
+
+#bucX
+XYph_b_X_k <- wIn_buc_x[wIn_buc_x$var == "dxy" & wIn_buc_x$cod == "syn" & wIn_buc_x$pop == "All",]
+#XYph_b_X_dxy <- btw_buc_x[btw_buc_x$variable == "Dxy_1_2",]
+
+XYph_b_X_dxy <- rbind( XYph_b_X_k[,-c(1,3)]
+                       #,rename( XYph_b_X_dxy,c("variable"="pop"))
+                       )
+
+XYph_b_X_dxy <- cbind(XYph_b_X_dxy,outgroup="bucephalophorus")
+
+all_dxy <- rbind(XYph_b_X_dxy,XYph_b_Y_dxy,XYph_r_X_dxy,XYph_r_Y_dxy)
+
+all_dxy$outgroup[all_dxy$pop == "Dxy_1_2" ] <- as.factor("hastatulus")
+
+ggplot(all_dxy, aes(x=outgroup, y=value, fill=pop)) + #guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
@@ -105,5 +163,11 @@ ggplot(all_dxy_out, aes(x=outgroup, y=value, fill=pop)) + #guides(fill = FALSE) 
   theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
   facet_grid(. ~ chrom, scales = "free")
 
-
+ggplot(all_dxy, aes(x=outgroup, y=value, colour=chrom)) + #guides(fill = FALSE) +
+  geom_point() +
+  geom_line(aes()) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2) + 
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Dxy") +
+  scale_x_discrete(limits=c("hastatulus","rothschildianus","bucephalophorus"))
 
