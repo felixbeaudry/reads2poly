@@ -69,9 +69,17 @@ summaryStats <- function(in_mat=NULL,pops=NULL,chrom=NULL){
   cbind(summary, "chrom" = chrom)
 }
 
-summaryStatsInter <- function(inter=NULL,chrom=NULL){
+summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL){
   inter_melt <- melt(inter,id.vars = "locus")
-  inter_comp <- inter_melt[complete.cases(inter_melt), ]
+  inter_sep <- separate(inter_melt, variable, c("pop","var","cod"), 
+                      sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+  inter_comp <- inter_sep[complete.cases(inter_sep), ]
+  
+  for (i in 1:(length(pops))){
+    popCount = paste("pop",(i-1),sep="") 
+    inter_comp$pop[inter_comp$pop == popCount] <- pops[i]
+  }
+  
   inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("variable"))
   cbind(inter_summary, "chrom" = chrom)
 }
@@ -80,12 +88,35 @@ summaryStatsInter <- function(inter=NULL,chrom=NULL){
 
 pops <- c("All","TX","NC")
 
+for (outgroup in c("rothschildianus","bucephalophorus")){
+  for (set in c("rna","rna_felix","rna_josh","rna_josh_males","rna_josh_fem")){
+    for (chrom in c("auto","hemi","X","Y")){
+      filename_wIn <- paste(set,"_",outgroup,"_summarystats_pop_",chrom,"chrom.txt",sep="")
+      filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
+      stats_wIn <- summaryStats(in_mat=fread(filename_wIn),pops=pops,chrom="Y")
+      stats_btw <- summaryStatsInter(inter=fread(filename_btw),chrom="Y")
+    }
+  }
+}
+
+for (outgroup in c("rothschildianus","bucephalophorus")){
+  for (set in c("XYphased")){
+    for (chrom in c("X","Y")){
+      filename_wIn <- paste(set,"_",outgroup,"_summarystats_pop_",chrom,"chrom.txt",sep="")
+      filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
+      stats_wIn <- summaryStats(in_mat=fread(filename_wIn),pops=pops,chrom="Y")
+      stats_btw <- summaryStatsInter(inter=fread(filename_btw),chrom="Y")
+
+    }
+  }
+}
+
 wIn_roth_y <-
   fread('XYphased_rothschildianus_summarystats_pop_Ychrom.txt')
 btw_roth_y <-
   fread('XYphased_rothschildianus_interpop_pop_Ychrom.txt')
 wIn_roth_y <- summaryStats(in_mat=wIn_roth_y,pops=pops,chrom="Y")
-btw_roth_y <- summaryStatsInter(inter=btw_roth_y,chrom="Y")
+btw_roth_y <- summaryStatsInter(inter=btw_roth_y,pops=pops,chrom="Y")
 
 wIn_roth_x <-
   fread('XYphased_rothschildianus_summarystats_pop_Xchrom.txt')

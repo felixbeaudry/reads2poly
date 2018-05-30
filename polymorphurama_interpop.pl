@@ -14,13 +14,6 @@ my $ext = "$ARGV[1]";
 
 print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
 
-open (OUT, '>', ($ext . '/' . $ext .'_frequencies_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($ext . '/' . $ext .'_summarystats_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($ext . '/' . $ext .'_interpop_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-
 ####Start Population Array Input####
 
 my @pop_array;   # 2D array for CSV data
@@ -46,7 +39,14 @@ for ($x=0;$x<$number_of_pops;$x++){
 }
 print "\n";
 
-####Print Headers for stats files####
+####Output files###
+
+open (OUT, '>', ($ext . '/' . $ext .'_frequencies_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($ext . '/' . $ext .'_summarystats_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($ext . '/' . $ext .'_interpop_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
@@ -86,52 +86,17 @@ $poly_set=0;
 my @poly_freq_Syn_ALL = ();	  
 my @poly_freq_Rep_ALL = ();         
 
-print "\nLoci:";
 foreach $file (@files){
 
+	#reset file 
+	#empty locus
     $dirfile=$d2.$file;
 	my @file_data=();
 	my @data = ();
 	my @sequence_names = ();
 
-	@file_data = get_file_data ($dirfile);
-	@sequence_names= extract_names_from_fasta_data (@file_data);
-	@data = extract_sequence_from_fasta_data (@file_data);
-
-	$numseqs=scalar(@data);
-	@totdata=@data;
-
-	@position_array = ();
-	my $outgroup_position = 0;
-
-	for ($x=0; $x<scalar(@sequence_names); ++$x){
-		if ( $sequence_names[$x] =~ $outgroup_string ){
-				$outgroup_position = $x ;
-	}	}
-
-
-	for ($pop=0; $pop<$number_of_pops; ++$pop){
-		$number_of_columns = @{ $pop_array[$pop] };
-		my $r = 0;
-		
-		for ($y=0; $y < $number_of_columns; $y++){
-			##go through names
-
-			for ($x=0; $x<scalar(@sequence_names); ++$x){
-				##if name matches string
-
-				if ( ($sequence_names[$x] =~ $pop_array[$pop][$y]) & ($sequence_names[$x] =~ $chrom )){
-						#print $pop_array[$pop][$y], "\t", $sequence_names[$x], "\n";
-					$position_array[$pop][$r] = $x ;
-
-					$r+=1;
-					
-	}	}	}	}
-
-	#run above loop (at same time?) for outgroup, which is arg (5?), then check if empty, if empty set to 0
-
-
-    my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
+	#empty within stats
+	my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 							  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
 	my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 
@@ -148,13 +113,6 @@ foreach $file (@files){
 	my @freqR_AT_AT = (); # changes AT to AT
 	my @freqR_GC_GC = (); # changes GC to GC
 
-	chomp $file;	
-
-	print "\n", $file, "\tnumseqs: ", $numseqs, "\toutgroup: ", $sequence_names[$outgroup_position];
-	print OUT2 $file, "\t";
-	print OUT5 $file, "\t";
-
-	#interpop stats
 	my @pi_syn = (); 
 	my @pi_rep = (); 
 	my @poly_freq_Syn = ();
@@ -164,7 +122,8 @@ foreach $file (@files){
 
 	my @pi_syn_within = ();
 	my @pi_rep_within = ();
-	
+
+	#empty interpop stats
 	my $dxy_syn_final = 0;
 	my $dxy_rep_final = 0;
 	my $dxy_syn_tot = 0;
@@ -174,15 +133,51 @@ foreach $file (@files){
 	my $dnds = 0;
 
 	my @alpha = ();
-
 	my $outpop = 0;
 
-	##for length of first row, rerun with different outgroup
-	
-	#for ($pop=0; $pop<$number_of_pops; ++$pop){
+	#fill locus memory
+	@file_data = get_file_data ($dirfile);
+	@sequence_names= extract_names_from_fasta_data (@file_data);
+	@data = extract_sequence_from_fasta_data (@file_data);
+
+	$numseqs=scalar(@data);
+	@totdata=@data;
+
+	#find outgroup
+	my $outgroup_position = 0;
+	for ($x=0; $x<scalar(@sequence_names); ++$x){
+		if ( $sequence_names[$x] =~ $outgroup_string ){
+				$outgroup_position = $x ;
+	}	}
+
+	#make array of which sequences are part of which requested population
+	@position_array = ();
+	for ($pop=0; $pop<$number_of_pops; ++$pop){
+		$number_of_columns = @{ $pop_array[$pop] };
+		my $r = 0;
+		##go through names in population
+		for ($y=0; $y < $number_of_columns; $y++){
+			
+			##go through names in locus
+			for ($x=0; $x<scalar(@sequence_names); ++$x){
+				
+				##if name matches string
+				if ( ($sequence_names[$x] =~ $pop_array[$pop][$y]) & ($sequence_names[$x] =~ $chrom )){
+					#print $pop_array[$pop][$y], "\t", $sequence_names[$x], "\n";
+					$position_array[$pop][$r] = $x ;
+					$r+=1;
+					
+	}	}	}	}
+
+	chomp $file;
+	print "\n", $file, "\tnumseqs: ", $numseqs, "\toutgroup: ", $sequence_names[$outgroup_position];
+	print OUT2 $file, "\t";
+	print OUT5 $file, "\t";
+
 	my $pop = 0;
 	while ($pop<$number_of_pops){
 
+		#empty within stats with each pop loop
 		@pi_syn = (); 
 		@pi_rep = (); 
 		@poly_freq_Syn = ();
@@ -191,23 +186,25 @@ foreach $file (@files){
 		@poly_freq_Syn_temp = ();
 		
 		@data=();
-		$data[0]=$totdata[$outgroup_position];
-		$number_of_individuals = @{ $position_array[$pop] };
 
+		#insert outgroup sequence as subset position 0
+		$data[0]=$totdata[$outgroup_position];
+
+		#input individuals from correct population into set
+		$number_of_individuals = @{ $position_array[$pop] };
 		for ($y=1; $y < $number_of_individuals+1; $y++){
 			$in_position = $position_array[$pop][$y];
 			$data[$y]=$totdata[$in_position];
 		}
 	
-	##limit output loops to 1
-	##stop outer loop at last pop - only run this type of loop once - if pop = 1, run this goofy dxy loop - one time run both ways to see if =
-	if ($pop == 1 ){
-	#for($outpop=0;$outpop < @{ $position_array[($pop + 1)] };++$outpop){               
-		
-		#change outgroup sequences to pop2 sequences
-		$out_position = $position_array[($pop +1)][$outpop];
-		$data[0]=$totdata[$out_position];
-	}	                                    
+		#run dxy loop one time  
+		if ($pop == 1 ){
+		#for($outpop=0;$outpop < @{ $position_array[($pop + 1)] };++$outpop){               
+			
+			#change outgroup sequences to pop2 sequences
+			$out_position = $position_array[($pop +1)][$outpop];
+			$data[0]=$totdata[$out_position];
+		}	                                    
 
 		$numseqs=scalar(@data);
 		if ($numseqs>2){
