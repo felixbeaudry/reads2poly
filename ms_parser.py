@@ -89,7 +89,7 @@ for line in infile:
 			rep+=1
 		elif int(segsite[1]) == 0:
 			rep+=1
-			sys.stdout.write(str(rep-1)+"\tNA\tNA\n")
+			sys.stdout.write(str(rep-1)+"\tNA\tNA\tNA\n")
 
 		else:
 			rep+=1
