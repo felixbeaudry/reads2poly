@@ -19,11 +19,12 @@ localdf <- fread("GBSlocations.txt")
 GBS <- fread("GBS.spotless.012_popd.txt")
 GBSID<-fread('gbsnames.txt',header=T)
 #GBSs <- data.frame(c(GBSID,GBS[,-1]), row.names=1)
-GBSs <- data.frame(c(GBSIDXYY[-c(53)],GBS[-c(53),-1]), row.names=1) #OKRAT_17 
 #GBSs <- data.frame(c(GBSID[-c(30:32,46:51,53)],GBS[-c(30:32,46:51,53),-1]), row.names=1) #OKRAT_17 + LABEN + OKBAC
 
 GBSIDXYY<-fread('gbsnames2.txt',header=T)
 GBSXYY <- data.frame(c(GBSIDXYY[-c(30:32,46:57,76:92)],GBS[-c(30:32,46:57,76:92),-1]), row.names=1) #XY removed
+GBSs <- data.frame(c(GBSIDXYY[-c(53)],GBS[-c(53),-1]), row.names=1) #OKRAT_17 
+
 
 pwGBS<-dist.gene(GBS,method = "pairwise")
 GBStree<-nj(as.dist(pwGBS))
@@ -46,10 +47,25 @@ GBSpca <- PCA(GBSs[,-(1:4)], graph = FALSE)
  GBSeig <- GBSpca$eig
  
 XYXYYPCAplot <- 
-   ggplot(GBScoordsN,aes(x=-(Dim.1), y=Dim.2, label=pop,color=state)) + geom_text(size=10) + 
+   ggplot(GBScoordsN,aes(x=-(Dim.1), y=Dim.2, label=state,color=state)) + geom_text(size=10) + 
    theme_bw(base_size = 18) + guides(color = FALSE) +
-   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + labs(x = "PCA1 (4.98%)",y = "PCA2 (2.74%)")
- 
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+     labs(x = "PCA1 (4.98%)",y = "PCA2 (2.74%)") +
+     scale_color_manual(values=c( 
+       '#add8e6','#acbdd7','#aba0c6','#ad81b4','#b35f9e','#c12571','#ac0231','#8b0000'))
+    #      AL       FL       GA          LA        NC      OK          SC        TX
+
+##for illustrative purposes
+name_colors <- cbind(dim1 = c(1,2,3,4,5,6,7,8),dim2 = c(1,2,3,4,5,6,7,8),state=c("AL","FL","GA", "LA", "NC","OK","SC","TX"))
+ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(size=10) + 
+  theme_bw(base_size = 18) + guides(color = FALSE) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  labs(x = "PCA1 (4.98%)",y = "PCA2 (2.74%)") +
+  scale_color_manual(values=c( 
+    '#add8e6','#acbdd7','#aba0c6','#ad81b4','#b35f9e','#c12571','#ac0231','#8b0000'))
+#      AL       FL       GA          LA        NC      OK          SC        TX
+
+
 
 ####XYY####
  GBSXYYpca <- PCA(GBSXYY[,-(1:4)], graph = FALSE)
@@ -63,10 +79,15 @@ XYXYYPCAplot <-
  
  GBSXYYeig <- GBSXYYpca$eig
  
- #XYYPCAplot <- 
-   ggplot(GBSXYYcoordsN,aes(x=Dim.2, y=Dim.1, label=pop,color=state)) + geom_text(size=10) + 
+ XYYPCAplot <- 
+   ggplot(GBSXYYcoordsN,aes(x=Dim.2, y=Dim.1, label=state,color=state)) + geom_text(size=10) + 
  theme_bw(base_size = 18) + guides(color = FALSE) +
-   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + labs(x = "PCA2 (3.17%)",y = "PCA1 (3.31%)")
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+     labs(x = "PCA2 (3.17%)",y = "PCA1 (3.31%)") +
+     scale_color_manual(values=c( 
+       '#add8e6','#acbdd7','#aba0c6','#b35f9e','#ac0231'))
+   #      AL       FL       GA          NC          SC               
+   
 
    locDimXYY <- data.frame(sqldf('select localdf.Latitude, localdf.Longitude, GBSXYYcoordsN.* 
                            from GBSXYYcoordsN 
@@ -93,10 +114,15 @@ XYXYYPCAplot <-
  GBSXYeig <- GBSXYpca$eig
 
  
- #XYPCAplot <- 
-   ggplot(GBSXYcoordsN,aes(x=Dim.1, y=Dim.2, label=pop,color=state)) + geom_text(size=10) + 
+ XYPCAplot <- 
+   ggplot(GBSXYcoordsN,aes(x=Dim.1, y=Dim.2, label=state,color=state)) + geom_text(size=10) + 
    theme_bw(base_size = 18) + guides(color = FALSE) +
-   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + labs(x = "PCA1 (5.95%)",y = "PCA2 (5.03%)")
+   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+     labs(x = "PCA1 (5.95%)",y = "PCA2 (5.03%)") +
+     scale_color_manual(values=c( 
+       '#ad81b4','#c12571','#8b0000'))
+   #       LA       OK          TX
+     
  
  locDimXY <- data.frame(sqldf('select localdf.Latitude, localdf.Longitude, GBSXYcoordsN.* 
                            from GBSXYcoordsN 

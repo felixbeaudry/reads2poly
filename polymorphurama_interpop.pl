@@ -169,6 +169,8 @@ foreach $file (@files){
 	my $dxy_rep_final = 0;
 	my $dxy_syn_tot = 0;
 	my $dxy_rep_tot = 0;
+	my $dxy_tot = 0;
+	my $dxy_tot_final = 0;
 	my $dnds = 0;
 
 	my @alpha = ();
@@ -1459,6 +1461,7 @@ foreach $file (@files){
 		#sum over dxy's and divide by the number of inds.
 			$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 			$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+			$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
 			++$outpop;
 		}
 		else{++$pop;}
@@ -1490,6 +1493,7 @@ foreach $file (@files){
 	if (scalar(@{ $position_array[2] }) != 0){
 		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[2] });
 		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[2] });
+		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[2] });
 		if( $dxy_syn_final != 0){
 			$dnds = $dxy_rep_final / $dxy_syn_final;
 		}
@@ -1499,6 +1503,7 @@ foreach $file (@files){
 	else{
 		$dxy_rep_final = "NA";
 		$dxy_syn_final = "NA";
+		$dxy_tot_final = "NA";
 		$dnds = "NA";
 	}
 
@@ -1509,9 +1514,9 @@ foreach $file (@files){
 		else {$alpha[$a] = "NA";}
 	}
 
-	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_syn_final;
+	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final;
 
-	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dnds, "\t", $alpha[1], "\t", $alpha[2], "\n" ;
+	print OUT5 $Fst_syn, "\t", $dxy_tot_final, "\t", $dnds, "\t", $alpha[1], "\t", $alpha[2], "\n" ;
 
 
 	print "\n";
