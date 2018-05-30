@@ -23,6 +23,7 @@ popEnd = int(args.end)
 def calculate_pi(seqs):
 	diffs=0
 	comps=0
+	pi=0
 	if len(seqs) > 0:
 		for i in range(0,len(seqs),1):
 			for t in range((i+1),len(seqs),1):
@@ -40,6 +41,29 @@ def calculate_pi(seqs):
 		pi = 0
 	return pi
 
+def calculate_dxy(seqOne,seqTwo):
+	diffs=0
+	comps=0
+	dxy=0
+	if (len(seqOne) + len(seqTwo)) > 0:
+		for i in range(0,len(seqOne),1):
+			sqO = list(seqOne[i])
+			for t in range(0,len(seqTwo),1):
+				sqT = list(seqTwo[t])
+				comps+=1
+				for j in range(0,len(seqOne[0]),1):
+					if sqO[j] != sqT[j]:
+						diffs+=1
+		if comps>0:
+			dxy= float(diffs)/float(comps)
+		else :
+			dxy = 0
+	else:
+		dxy = 0
+	return dxy
+
+
+
 sequence = [0]*popEnd
 sequence_one = [0]*popSplit
 sequence_two = [0]*(popEnd-popSplit)
@@ -50,7 +74,7 @@ pi_two = 0
 fst = 0
 rep = 0
 on = "F"
-print "rep\tpi_tot\tfst\n"; 
+print "rep\tpi_tot\tfst\tdxy\n"; 
 
 for line in infile:
 	if not line.strip():
@@ -78,7 +102,8 @@ for line in infile:
  				fst = 0
  			if fst < 0:
  				fst = 0
- 			sys.stdout.write(str(rep-1)+"\t"+str(pi_tot / 1000)+"\t"+str(fst)+"\n")
+ 			dxyRep = calculate_dxy(sequence_one,sequence_two)
+ 			sys.stdout.write(str(rep-1)+"\t"+str(pi_tot / 1000)+"\t"+str(fst)+"\t"+str(dxyRep / 1000)+"\n")
 
 			sequence = [0]*popEnd
 			sequence_one = [0]*popSplit

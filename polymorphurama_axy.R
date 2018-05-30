@@ -72,7 +72,29 @@ a_raw <-
 locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
 locInfo$buckwheat_position <- locInfo$buckwheat_position/1000000 
 
+locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
+loc <- fread('loci.list',header=FALSE)
+loc_split <- separate(loc, V1, c("Locus","number","transcript"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+loc_bind <- data.frame(cbind(loc_split$number,loc$V1))
 
+loc_list <- data.frame(sqldf('select loc_bind.X2,
+                           locInfo.* 
+                           from loc_bind
+                           left join locInfo on loc_bind.X1 = locInfo.hastatulus_transcript'))
+
+auto_list <- data.frame(loc_list$X2[loc_list$TXjAuto == 1])
+auto_list_comp <- auto_list[complete.cases(auto_list), ]
+
+write.table(auto_list_comp, file = "auto.list", append = FALSE, quote = FALSE, sep = " ", 
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, 
+            col.names = FALSE, qmethod = c("escape", "double")) 
+
+hemi_list <- data.frame(loc_list$X2[loc_list$NC_SNP == "NC_hemizygous" | loc_list$TX_SNP == "TX_hemizygous" ]  )
+hemi_list_comp <- hemi_list[complete.cases(hemi_list), ]
+
+write.table(hemi_list_comp, file = "auto.list", append = FALSE, quote = FALSE, sep = " ", 
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, 
+            col.names = FALSE, qmethod = c("escape", "double")) 
 
 ####Y####
 ypol <- melt(y,id.vars = "locus")
