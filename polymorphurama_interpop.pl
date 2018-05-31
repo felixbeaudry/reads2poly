@@ -140,7 +140,7 @@ foreach $file (@files){
 	my $kxy = 0;
 	my $knks = 0;
 
-	my $popOnek = "T";
+	my $popOnek = 0;
 
 	#fill locus memory
 	@file_data = get_file_data ($dirfile);
@@ -207,7 +207,7 @@ foreach $file (@files){
 	
 		#run dxy loop one time  
 		if ($pop == 1 ){
-			if ($popOnek == "T"){             
+			if ($popOnek == 0){             
 				$data[0]= $data[0]=$totdata[$outgroup_position];
 			}
 			else{
@@ -1378,7 +1378,8 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
-				if ($pop != 1 | $popOnek == "T" ){
+				if ($pop != 1 | $popOnek == 0 ){
+
 
 					print "\npop: ",$pop,"\t";
 					print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
@@ -1472,7 +1473,7 @@ foreach $file (@files){
 				}
 
 		else {
-			if ($pop != 1 | $outpop ==0 ){
+			if ($pop != 1 | $outpop == 0 ){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<6;++$z){
@@ -1485,8 +1486,9 @@ foreach $file (@files){
 		} # if less than two seqs
 
 	if ($pop == 1 ){
-		if ($popOnek == "T"){ 
-			$popOnek = "F";
+
+		if ($popOnek == 0){ 
+			$popOnek = 1;
 		}
 		elsif ($outpop < @{ $position_array[($pop + 1)] }){
 
