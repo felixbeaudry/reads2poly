@@ -53,8 +53,8 @@ $vars[0] = "sites";
 $vars[1] = "theta";
 $vars[2] = "S";
 $vars[3] = "pi";
-$vars[4] = "dxy";
-$vars[5] = "tajD";
+$vars[4] = "tajD";
+$vars[5] = "k";
 
 my @synrep = ();
 $synrep[0] = "syn";
@@ -62,7 +62,7 @@ $synrep[1] = "rep";
 
 print OUT2 "locus\t";
 for ($x=0; $x<$number_of_pops; ++$x){ 
-	print OUT2 "pop",$x,"_seqs\t";
+	print OUT2 "pop",$x,"_seqs_NA\t";
 	for ($y=0; $y<2; ++$y){
 		for($z=0;$z<6;++$z){
 			print OUT2 "pop",$x;
@@ -70,11 +70,13 @@ for ($x=0; $x<$number_of_pops; ++$x){
 			print OUT2 "_$synrep[$y]\t";
 		}
 	}
+	print OUT2 "pop",$x,"_kaks_NA\t";
+	print OUT2 "pop",$x,"_kxy_NA\t";
+	print OUT2 "pop",$x,"_alpha_NA\t";
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tFst_1_2\tDxy_1_2\tdnds\talpha_1\talpha_2\n";
-
+print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop0_dxy_NA\n";
 
 #####Start Calculating Statistics####
 
@@ -131,9 +133,14 @@ foreach $file (@files){
 	my $dxy_tot = 0;
 	my $dxy_tot_final = 0;
 	my $dnds = 0;
+	my $nei_dxy = 0;
 
-	my @alpha = ();
+	my $alpha = 0;
 	my $outpop = 0;
+	my $kxy = 0;
+	my $knks = 0;
+
+	my $popOnek = "T";
 
 	#fill locus memory
 	@file_data = get_file_data ($dirfile);
@@ -174,6 +181,7 @@ foreach $file (@files){
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
+	#start pop subloops
 	my $pop = 0;
 	while ($pop<$number_of_pops){
 
@@ -199,11 +207,14 @@ foreach $file (@files){
 	
 		#run dxy loop one time  
 		if ($pop == 1 ){
-		#for($outpop=0;$outpop < @{ $position_array[($pop + 1)] };++$outpop){               
-			
-			#change outgroup sequences to pop2 sequences
-			$out_position = $position_array[($pop +1)][$outpop];
-			$data[0]=$totdata[$out_position];
+			if ($popOnek == "T"){             
+				$data[0]= $data[0]=$totdata[$outgroup_position];
+			}
+			else{
+				#change outgroup sequences to pop2 sequences
+				$out_position = $position_array[($pop+1)][$outpop];
+				$data[0]=$totdata[$out_position];
+			}
 		}	                                    
 
 		$numseqs=scalar(@data);
@@ -1367,76 +1378,96 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
-				if ($pop != 1 | $outpop ==0 ){
+				if ($pop != 1 | $popOnek == "T" ){
 
-				print "\npop: ",$pop,"\t";
-				print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
-				
-				if (defined $TajD_syn){}
-				else {$TajD_syn = "NA";}
+					print "\npop: ",$pop,"\t";
+					print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
+					
+					if (defined $TajD_syn){}
+					else {$TajD_syn = "NA";}
 
-				if (defined $TajD_rep){}
-				else {$TajD_rep = "NA";}
+					if (defined $TajD_rep){}
+					else {$TajD_rep = "NA";}
 
-				print OUT2  
-					$numseqs, "\t", 
-					$no_syn_codons,"\t", 
-					$thetaS, "\t", 
-					$no_polyS, "\t", 
-					$pi_syn_site, "\t", 
-					$Dxy_syn, "\t", 
-					$TajD_syn, "\t",  
-
-					$no_rep_codons,"\t",
-					$thetaR, "\t", 
-					$no_polyR, "\t",  
-					$pi_rep_site, "\t", 
-					$Dxy_rep, "\t", 																	   
-					$TajD_rep, "\t" 
-					;
-
-				$pi_syn_within[$pop] = $pi_syn_site;
-				$pi_rep_within[$pop] = $pi_rep_site;
-
-				##consider removing dxy within each loop
-
-				if ($third_pos_count>0){
-					$GC_three=$GC_three/$third_pos_count;
-					$FOP = $FOP/($FOP+$FNOP);
-				}
-				else {
-					$GC_three=0;
-					$FOP = 0;
-				}
-
-				# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
-				# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
+					if ($Dxy_syn != 0){
+						$knks = $Dxy_rep / $Dxy_syn;
+						$kxy = $Dxy_rep + $Dxy_syn;
+					}
+					else{
+						$knks= "NA";
+						$kxy = "NA";
+					}
 
 
-				print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-				print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					if( $Dxy_rep != 0 & $pi_syn_site != 0 ){
+						$alpha = 1 - ( ( $Dxy_syn * $pi_rep_site ) / ( $Dxy_rep  * $pi_syn_site ) );
+					}
+					else {$alpha = "NA";}
+		
 
-				print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
-				print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
-				print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
-				print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
+					print OUT2  
+						$numseqs, "\t", 
+						$no_syn_codons,"\t", 
+						$thetaS, "\t", 
+						$no_polyS, "\t", 
+						$pi_syn_site, "\t", 
+						$TajD_syn, "\t",
+						$Dxy_syn, "\t", 
 
-				print OUT4 $file, "_GC3 \t", $GC_three, "\t";
-				print OUT4 $file, "_FOP \t", $FOP, "\t";
-				print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
-				print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
-				print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
-				print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
-				print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
-				print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
-				print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
-				print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
+						$no_rep_codons,"\t",
+						$thetaR, "\t", 
+						$no_polyR, "\t",  
+						$pi_rep_site, "\t", 
+						$TajD_rep, "\t",
+						$Dxy_rep, "\t",																	   
+						
+						$knks, "\t",
+						$kxy, "\t",
+						$alpha, "\t"
+						;
 
-				push @poly_freq_Syn_ALL; @poly_freq_Syn;
-				push @poly_freq_Rep_ALL; @poly_freq_Rep;
+					$pi_syn_within[$pop] = $pi_syn_site;
+					$pi_rep_within[$pop] = $pi_rep_site;
 
-				$samplesize[$poly_set]=$numseqs;
-				$poly_set++;
+					##consider removing dxy within each loop
+
+					if ($third_pos_count>0){
+						$GC_three=$GC_three/$third_pos_count;
+						$FOP = $FOP/($FOP+$FNOP);
+					}
+					else {
+						$GC_three=0;
+						$FOP = 0;
+					}
+
+					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
+					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
+
+
+					print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+					print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+
+					print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
+					print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
+					print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
+					print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
+
+					print OUT4 $file, "_GC3 \t", $GC_three, "\t";
+					print OUT4 $file, "_FOP \t", $FOP, "\t";
+					print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
+					print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
+					print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
+					print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
+					print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
+					print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
+					print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
+					print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
+
+					push @poly_freq_Syn_ALL; @poly_freq_Syn;
+					push @poly_freq_Rep_ALL; @poly_freq_Rep;
+
+					$samplesize[$poly_set]=$numseqs;
+					$poly_set++;
 				}
 				}
 
@@ -1448,12 +1479,16 @@ foreach $file (@files){
 						print OUT2 "NA\t";		
 					}
 				}
+				print OUT2 "NA\tNA\tNA\t";
 			}
 			
 		} # if less than two seqs
 
 	if ($pop == 1 ){
-		if ($outpop < @{ $position_array[($pop + 1)] }){
+		if ($popOnek == "T"){ 
+			$popOnek = "F";
+		}
+		elsif ($outpop < @{ $position_array[($pop + 1)] }){
 
 		#sum over dxy's and divide by the number of inds.
 			$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
@@ -1493,8 +1528,12 @@ foreach $file (@files){
 		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[2] });
 		if( $dxy_syn_final != 0){
 			$dnds = $dxy_rep_final / $dxy_syn_final;
+			$nei_dxy = $dxy_rep_final + $dxy_syn_final;
 		}
-		else {$dnds = "NA";}
+		else {
+			$dnds = "NA";
+			$dxy = "NA";
+		}
 
 	}
 	else{
@@ -1504,16 +1543,11 @@ foreach $file (@files){
 		$dnds = "NA";
 	}
 
-	for ($a=1;$a < 3; ++$a){
-		if( $dxy_rep_final != 0 & $pi_syn_within[$a] != 0 ){
-			$alpha[$a] = 1 - ( ( $dxy_syn_final * $pi_rep_within[$a] ) / ( $dxy_rep_final * $pi_syn_within[$a] ) );
-		}
-		else {$alpha[$a] = "NA";}
-	}
+
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final;
 
-	print OUT5 $Fst_syn, "\t", $dxy_tot_final, "\t", $dnds, "\t", $alpha[1], "\t", $alpha[2], "\n" ;
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_syn_final, "\t", $dnds, "\t", $nei_dxy, "\n" ;
 
 
 	print "\n";
