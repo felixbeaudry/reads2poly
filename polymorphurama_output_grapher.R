@@ -73,13 +73,13 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
   
   summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL){
     inter_melt <- melt(inter,id.vars = "locus")
-    inter_sep <- separate(inter_melt, variable, c("var","pop","cod"), 
+    inter_sep <- separate(inter_melt, variable, c("pop","var","cod"), 
                           sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
     inter_comp <- inter_sep[complete.cases(inter_sep), ]
     
     for (i in 1:(length(pops))){
-      
-      inter_comp$pop[inter_comp$pop == i] <- pops[i]
+      popCount = paste("pop",(i-1),sep="") 
+      pol_sep_comp$pop[pol_sep_comp$pop == popCount] <- pops[i]
     }
     
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))

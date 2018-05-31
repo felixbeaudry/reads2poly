@@ -132,14 +132,15 @@ foreach $file (@files){
 	my $dxy_rep_tot = 0;
 	my $dxy_tot = 0;
 	my $dxy_tot_final = 0;
-	my $dnds = 0;
-	my $nei_dxy = 0;
+	my $dnds_tot_final = 0;
+	my $dnds_tot = 0;
 
 	my $alpha = 0;
 	my $outpop = 0;
 	my $kxy = 0;
 	my $knks = 0;
 
+	#count for counting k before d on pop==1
 	my $popOnek = 0;
 
 	#fill locus memory
@@ -1496,6 +1497,9 @@ foreach $file (@files){
 			$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 			$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 			$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+			if ($Dxy_syn != 0){
+				$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+			}
 			++$outpop;
 		}
 		else{++$pop;}
@@ -1528,28 +1532,21 @@ foreach $file (@files){
 		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[2] });
 		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[2] });
 		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[2] });
-		if( $dxy_syn_final != 0){
-			$dnds = $dxy_rep_final / $dxy_syn_final;
-			$nei_dxy = $dxy_rep_final + $dxy_syn_final;
-		}
-		else {
-			$dnds = "NA";
-			$dxy = "NA";
-		}
+		$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[2] });
 
 	}
 	else{
 		$dxy_rep_final = "NA";
 		$dxy_syn_final = "NA";
 		$dxy_tot_final = "NA";
-		$dnds = "NA";
+		$dnds_tot_final = "NA";
 	}
 
 
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final;
 
-	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_syn_final, "\t", $dnds, "\t", $nei_dxy, "\n" ;
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\n" ;
 
 
 	print "\n";
