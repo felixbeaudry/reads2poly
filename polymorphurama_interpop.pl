@@ -197,13 +197,18 @@ foreach $file (@files){
 		@data=();
 
 		#insert outgroup sequence as subset position 0
+		#print $sequence_names[$outgroup_position],"\n";
+		#print $totdata[$outgroup_position], "\n";
 		$data[0]=$totdata[$outgroup_position];
+
 
 		#input individuals from correct population into set
 		$number_of_individuals = @{ $position_array[$pop] };
-		for ($y=1; $y < $number_of_individuals+1; $y++){
+		for ($y=0; $y < $number_of_individuals; $y++){
 			$in_position = $position_array[$pop][$y];
-			$data[$y]=$totdata[$in_position];
+			$data[$y+1]=$totdata[$in_position];
+			#print $sequence_names[$in_position],"\n";
+			#print $totdata[$in_position], "\n";
 		}
 	
 		#run dxy loop one time  

@@ -20,7 +20,6 @@ do
 rm ${outDir}/${loc}.fasta
 done < ${outDir}/${loc_list}
 
-mkdir ${outDir}/${outgroup}
 while read ind 
 do
 echo "Adding ${ind} sequences"

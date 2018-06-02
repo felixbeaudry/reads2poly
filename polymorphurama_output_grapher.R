@@ -79,7 +79,7 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
     
     for (i in 1:(length(pops))){
       popCount = paste("pop",(i-1),sep="") 
-      pol_sep_comp$pop[pol_sep_comp$pop == popCount] <- pops[i]
+      inter_comp$pop[inter_comp$pop == popCount] <- pops[i]
     }
     
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
@@ -101,12 +101,16 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
 
 pops <- c("hastatulus","Y1","Y1Y2")
 
+r_xy_y <- stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pops)
+
 xyphased <- rbind(
 stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pops),
 stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pops),
 stats_table(outgroup="bucephalophorus",set="XYphased",chrom="X",pops=pops),
 stats_table(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pops)
 )
+
+r_xy_y[r_xy_y$var == "kxy" | r_xy_y$var == "dxy",]
 
 
 ####charts####
