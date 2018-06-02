@@ -1,2 +1,0 @@
-locus	pop0_Fst_syn	pop0_neid_syn	pop0_neid_rep	pop0_dnds_NA	pop0_dxy_NA
-Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta	NA	0.0131133308590691	0.00115602927066116	0.0645352484028626	0.0142693601297302

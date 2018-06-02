@@ -1,3 +1,0 @@
-Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Syn	4	1	0	0	0	0	0	0	0	0	2	0	0	0	2	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Rep	6	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	0	0	0	0	0
-Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Syn	7	0	0	0	0	0	0	0	0	0	0	0	0	0	Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Rep	7	0	0	0	0	0	0	0	0	0	0	0	0	0
-Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Syn	6	1	0	0	0	0	0	0	2	0	2	0	0	0	0	0	0	0	Locus_9598_Transcript_3_Length_2027_genewise_newlength_2027_CDSlength_1398.fasta_Rep	9	0	0	0	0	0	0	0	1	0	1	0	0	0	0	0	0	0
