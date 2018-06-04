@@ -282,8 +282,6 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) +
 
 all_data_fst <- all_data[all_data$var == "Fst" & all_data$cod == "syn"  ,]
 
-
-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
