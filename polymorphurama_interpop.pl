@@ -1332,23 +1332,31 @@ foreach $file (@files){
 					if ($no_syn_fourfold_codons>0){
 						$D_fourfold = $no_syn_fourfold_div/$no_syn_fourfold_codons;
 					}
-						else {$D_fourfold = 0;}
-					if ((1-(4/3)*$Dxy_syn)>0){
+					else {$D_fourfold = 0;}
+
+					if ((1-(4/3)*$Dxy_syn)!=0){
 						$Dxy_JC_syn=  -0.75*log(1-(4/3)*$Dxy_syn);
 					}
+					else{$Dxy_JC_syn="NA";}
+
+					if ((1-(4/3)*$Dxy_rep)!=0){
 						$Dxy_JC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
-					if ((1-(4/3)*$D_fourfold)>0){
+					}
+					else{$Dxy_JC_rep="NA";}
+
+					if ((1-(4/3)*$D_fourfold)!=0){
 						$D_JC_fourfold=  -0.75*log(1-(4/3)*$D_fourfold);
 					}
+					else{$D_JC_fourfold="NA";}
 				}
 
 				else{
-					$Dxy_syn = 0;
-					$Dxy_rep = 0;
-					$D_fourfold = 0;
-					$Dxy_JC_syn=  0;
-					$Dxy_JC_rep= 0;
-					$D_JC_fourfold=  0;
+					$Dxy_syn = "NA";
+					$Dxy_rep = "NA";
+					$D_fourfold = "NA";
+					$Dxy_JC_syn=  "NA";
+					$Dxy_JC_rep= "NA";
+					$D_JC_fourfold=  "NA";
 				}
 
 				#**************** calculate TajD
