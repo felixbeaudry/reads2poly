@@ -276,8 +276,6 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) +
   ))
 
 
-
-
 ####FST####
 
 all_data_fst <- all_data[all_data$var == "Fst" & all_data$cod == "syn"  ,]
@@ -335,8 +333,8 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
 
 
 ms_dxy <- rbind(
-  ms_stat(chrom="X",var="dxy"),
-  ms_stat(chrom="A",var="dxy"),
+  ms_stat(chrom="X",var="dxy",sitemean=2.50881),
+  ms_stat(chrom="A",var="dxy",sitemean=2.50881),
   cbind(dxy[,-c(2,3)],"state"="empirical")
 )
 
