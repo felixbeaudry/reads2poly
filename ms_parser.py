@@ -103,7 +103,7 @@ for line in infile:
  			if fst < 0:
  				fst = 0
  			dxyRep = calculate_dxy(sequence_one,sequence_two)
- 			sys.stdout.write(str(rep-1)+"\t"+str(pi_tot / 1000)+"\t"+str(fst)+"\t"+str(dxyRep / 1000)+"\n")
+ 			sys.stdout.write(str(rep-1)+"\t"+str(pi_tot )+"\t"+str(fst)+"\t"+str(dxyRep )+"\n")
 
 			sequence = [0]*popEnd
 			sequence_one = [0]*popSplit

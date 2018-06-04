@@ -4,15 +4,64 @@
 
 use BeginPerlBioinfoB_1;
 use Text::CSV;
+use Getopt::Long qw(:config no_ignore_case);
 
-my $chrom = $ARGV[4];
-my $pop_file = $ARGV[1] . "/" . $ARGV[2];
-my $outgroup_string = $ARGV[3];
-my $pattern=$ARGV[0];
-my $d2 = $ARGV[1] . "/";
-my $ext = "$ARGV[1]";
+my %opts;
+GetOptions(\%opts, "f:s", "i:s", "p:s", "S:s", "o:s", "c:s");
+my $usage = <<USAGE;
 
-print "\n\n***Polymorphurama ",$ARGV[2],$chrom,"***\n\n";
+    Program: $0
+    Version: 2.0
+    Contact: Felix Beaudry(felix.beaudry\@utoronto.ca)
+
+    Usage:	$0 -i intake_directory [-p pop -f file_pattern -S [subset] -o [outgroup_string] -c [chrom]]
+
+    			-i directory containing alignment files
+    			-p file of strings identifying individuals in each population
+    			-f extension of the alignment files (eg. fasta)
+    			-S name of the subset to add to file output name [empty]
+    			-o string identifying outgroup [first line in file]
+    			-c type of chromosome [A]
+
+ 	Example $0 -f fasta -i test_files/ -p pop -S hemizygous -o rothschildianus 
+
+
+USAGE
+# add parameters for the low quality cutoff.
+
+die $usage unless ($opts{i});
+
+my $d2 = $opts{i};
+
+my $pop_file = $opts{i} . "pop";
+if ($opts{p}) {
+	$pop_file = $opts{i} . $opts{p};
+}
+
+
+my $pattern="fasta";
+if ($opts{f}){
+	$pattern=$opts{f};
+}
+
+my $outgroup_string;
+if ($opts{o}){
+	$outgroup_string = $opts{o};
+}
+
+my $ext;
+if ($opts{S}){
+	$ext = $opts{S}.'_';
+}
+
+my $chrom_file = "Achrom";
+my $chrom;
+if ($opts{c}){
+    $chrom_file = ($opts{c});
+    $chrom = ($opts{c});
+}
+
+print "\n\n***Polymorphurama ",$ext,$chrom_file,"***\n\n";
 
 ####Start Population Array Input####
 
@@ -41,12 +90,12 @@ print "\n";
 
 ####Output files###
 
-open (OUT, '>', ($ext . '/' . $ext .'_frequencies_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($ext . '/' . $ext .'_summarystats_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($ext . '/' . $ext .'_codon_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($ext . '/' . $ext .'_mutation_bias_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($ext . '/' . $ext .'_interpop_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($ext . '/' . $ext .'_out_diff_codons_' . $ARGV[2] . $chrom . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ($d2 . $ext . $outgroup_string . '_frequencies_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
@@ -72,7 +121,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 	}
 	print OUT2 "pop",$x,"_kaks_NA\t";
 	print OUT2 "pop",$x,"_kxy_NA\t";
-	print OUT2 "pop",$x,"_alpha_NA\t";
+	print OUT2 "pop",$x,"_mk_NA\t";
 }
 print OUT2 "\n";
 
@@ -1406,10 +1455,22 @@ foreach $file (@files){
 					}
 
 
-					if( $Dxy_rep != 0 & $pi_syn_site != 0 ){
-						$alpha = 1 - ( ( $Dxy_syn * $pi_rep_site ) / ( $Dxy_rep  * $pi_syn_site ) );
+					if( $Dxy_syn != 0 & $pi_syn_site != 0 ){
+						if (  ($pi_rep_site / $pi_syn_site) != 0 ) {
+							$alpha =  ( ( $Dxy_rep / $Dxy_syn  ) / (  $pi_rep_site / $pi_syn_site ) );
+						}
+						else {$alpha = "NA";}
 					}
 					else {$alpha = "NA";}
+
+					if ( $sequence_names[$outgroup_position] !~ $outgroup_string ){
+				 		$Dxy_syn = "NA";
+						$Dxy_rep = "NA";
+						$knks = "NA";
+						$kxy = "NA";
+						$alpha = "NA";
+					}	
+
 		
 
 					print OUT2  
@@ -1479,7 +1540,7 @@ foreach $file (@files){
 				}
 
 		else {
-			if ($pop != 1 | $outpop == 0 ){
+			if ($pop != 1 | $popOnek == 0  ){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<6;++$z){
@@ -1517,7 +1578,7 @@ foreach $file (@files){
 	my $Fst_rep = 0;
 
 	
-	if ($pi_syn_within[0] != 0 & $pi_syn_within[1] != 0 & $pi_syn_within[2] != 0){
+	if ($pi_syn_within[0] != 0 ){
 		
 		$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
 		if($Fst_syn < 0){$Fst_syn = 0;}
@@ -1525,7 +1586,7 @@ foreach $file (@files){
 	else{$Fst_syn = "NA";}
 
 	
-	if ($pi_rep_within[0] != 0 & $pi_rep_within[1] != 0 & $pi_rep_within[2] != 0){
+	if ($pi_rep_within[0] != 0 ){
 		
 		$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
 		if($Fst_rep < 0){$Fst_rep = 0;}
