@@ -23,7 +23,7 @@ done < ${outDir}/${loc_list}
 while read ind 
 do
 echo "Adding ${ind} sequences"
-#perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/${ind}.uni.vcf -o $outDir/${ind} -l $outDir/${ind}.logfile -a T -m ${cutoff} 2>$outDir/${ind}_vcferrors.txt
+perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/${ind}.uni.vcf -o $outDir/${ind} -l $outDir/${ind}.logfile -a T -m ${cutoff} -d 10 -g 30 2>$outDir/${ind}_vcferrors.txt
 while read loc
 do
 #echo -e "${ind}\t${loc}"

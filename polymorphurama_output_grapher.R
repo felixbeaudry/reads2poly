@@ -115,8 +115,9 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
   filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
 
   in_read <- fread(filename_wIn)
+  in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 50]
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -162,15 +163,18 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
   stats_bind <- cbind(rbind(stats_wIn,stats_btw),outgroup=outgroup,stringsAsFactors=FALSE)
   return(stats_bind)
 }
-ms_stat <- function(chrom=NULL,var=NULL){
+ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
   filename <- paste('ms_',chrom,'_stat.txt',sep="")
   ms <- fread(filename)
   ms_melt <- melt(ms,id.vars = "rep")
   ms_comp <- ms_melt[complete.cases(ms_melt), ]
   ms_sum <- summarySE(ms_comp, measurevar="value", groupvars="variable")
   #chrom_name <- paste(chrom,'_sim',sep="")
-  ms_bind <- cbind(rename(ms_sum, c("variable" = "var")),"chrom"=chrom,"outgroup"="simulation","state"="simulation")
+  ms_bind <- cbind(rename(ms_sum, c("variable" = "var")),"chrom"=chrom,"outgroup"="exp","state"="exp")
   ms_out <- ms_bind[ms_bind$var == var,]
+  if (var == "pi_tot" | var == "dxy"){
+    ms_out$value <- ms_out$value * sitemean
+  }
   return(ms_out)
 }
 
@@ -232,19 +236,23 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
     '#00A550' #green
   ))
 
+all_data[all_data$var == "sites" ,]
+all_data[all_data$pop == "Rhastatulus" ,]
 
-ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot"),
-                ms_stat(chrom="A",var="pi_tot"),
-               all_data_pi[all_data_pi$pop == "Rhastatulus",-c(2,3)]
+sitemean <- 2508.81/1000
+
+ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
+                ms_stat(chrom="A",var="pi_tot",sitemean=2.50881),
+               cbind(all_data_pi[all_data_pi$pop == "Rhastatulus",-c(2,3)],state="obs")
 )
 
-ggplot(ms_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
+ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
-  scale_x_discrete(limits=c("A","A_sim","H","X","X_sim","Y")) 
+  scale_x_discrete(limits=c("A","H","X","Y")) 
 
 ####TajD####
 
@@ -268,7 +276,7 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) +
   ))
 
 
-all_data[all_data$var == "sites" && all_data$pop == "Rhastatulus",]
+
 
 ####FST####
 
