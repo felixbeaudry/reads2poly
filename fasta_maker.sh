@@ -15,11 +15,14 @@ echo "Making $ind_list $loc_list fastas"
 mkdir ${outDir}
 awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outDir}/${loc_list}
 echo "Removing Previous Fasta Files"
+while read outgr
+do
 while read loc
 do
 rm ${outDir}/${loc}.fasta
 rm ${outDir}/${outgr}/${loc}.fasta
 done < ${outDir}/${loc_list}
+done < ${outgroup}
 
 while read ind 
 do
