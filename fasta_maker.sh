@@ -31,8 +31,8 @@ perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.bea
 while read loc
 do
 #echo -e "${ind}\t${loc}"
-#python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${outDir}/${ind}/${loc}.fasta -c 60 2>${outDir}/errors.txt | cat >> ${outDir}/${loc}.fasta
-cat ${outDir}/${ind}/${loc}.fasta >> ${outDir}/${loc}.fasta
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${outDir}/${ind}/${loc}.fasta -c 60 2>${outDir}/errors.txt | cat >> ${outDir}/${loc}.fasta
+#cat ${outDir}/${ind}/${loc}.fasta >> ${outDir}/${loc}.fasta
 done < ${outDir}/${loc_list}
 done < ${ind_list}
 
