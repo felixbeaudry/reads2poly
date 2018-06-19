@@ -24,6 +24,7 @@ rm ${outDir}/${outgr}/${loc}.fasta
 done < ${outDir}/${loc_list}
 done < ${outgroup}
 
+export PYTHONPATH=/usr/lib64/python2.7/site-packages/
 while read ind 
 do
 echo "Adding ${ind} sequences"

@@ -158,11 +158,22 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
   }
   filename_wIn <- paste(set,"_",outgroup,"_summarystats_pop_",chrom,"chrom.txt",sep="")
   filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
+  
+  in_read <- fread(filename_wIn)
+  in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
+  seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 50]
+  in_read_cov <- in_read[in_read$locus %in% coverage_list ]
+  in_bet <- fread(filename_btw)
+  in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
+  
+  
   stats_wIn <- summaryVar(in_mat=fread(filename_wIn),pops=pops,chrom=chrom)
   stats_btw <- summaryVarInter(inter=fread(filename_btw),pops=pops,chrom=chrom)
   stats_bind <- cbind(rbind(stats_wIn,stats_btw),outgroup=outgroup,stringsAsFactors=FALSE)
   return(stats_bind)
 }
+
 ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
   filename <- paste('ms_',chrom,'_stat.txt',sep="")
   ms <- fread(filename)
@@ -198,6 +209,7 @@ stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
 
+
 all_data_var<- data.frame(rbind(
   stats_var(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
   ,stats_var(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop)
@@ -208,11 +220,6 @@ all_data_var<- data.frame(rbind(
   ,stats_var(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
 
-maleX <- data.frame(stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop))
-femaleX <- data.frame(stats_table(outgroup="rothschildianus",set="joshFem",chrom="X",pops=pop))
-
-maleX[maleX$var == "pi",]
-femaleX[maleX$var == "pi",]
 
 ####pi####
 
@@ -245,6 +252,8 @@ ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
                 ms_stat(chrom="A",var="pi_tot",sitemean=2.50881),
                cbind(all_data_pi[all_data_pi$pop == "Rhastatulus",-c(2,3)],state="obs")
 )
+
+ms_pi <- ms_pi[-c(5,8,9,10),]
 
 ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -397,9 +406,9 @@ ggplot(evo_rate, aes(x=outgroup, y=value, color=chrom
   theme_bw()  + theme_bw(base_size = 18) + labs(x="Species",y="Average Rate of Evolution") +
   scale_x_discrete(limits=c("hastatulus","rothschildianus","bucephalophorus"))
 
-####alpha####
+####mk####
 
-alpha <- all_data[all_data$var == "alpha" ,]
+mk <- all_data[all_data$var == "mk" ,]
 
 alpha$chrom_f = factor(alpha$chrom, levels=c('A','H','X','Y'))
 
@@ -418,3 +427,10 @@ ggplot(alpha, aes(x=pop, y=value, color=outgroup
   facet_grid(. ~ chrom_f, scales = "free") +
   theme(axis.text.x = element_text(angle = 40, hjust = 1))  +
   theme(strip.background =element_rect(fill="white"))
+
+####fmaleX!=maleX####
+maleX <- data.frame(stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop))
+femaleX <- data.frame(stats_table(outgroup="rothschildianus",set="joshFem",chrom="X",pops=pop))
+
+maleX[maleX$var == "pi",]
+femaleX[femaleX$var == "pi",]
