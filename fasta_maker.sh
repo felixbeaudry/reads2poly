@@ -15,14 +15,11 @@ echo "Making $ind_list $loc_list fastas"
 mkdir ${outDir}
 awk 'split($1,a,"."){print a[1]}' ${loc_list} >${outDir}/${loc_list}
 echo "Removing Previous Fasta Files"
-while read outgr
-do
+
 while read loc
 do
 rm ${outDir}/${loc}.fasta
-rm ${outDir}/${outgr}/${loc}.fasta
 done < ${outDir}/${loc_list}
-done < ${outgroup}
 
 export PYTHONPATH=/usr/lib64/python2.7/site-packages/
 while read ind 
@@ -37,6 +34,15 @@ python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${outDir}/${in
 done < ${outDir}/${loc_list}
 done < ${ind_list}
 
+echo "Removing Outgroup Fasta Files"
+while read outgr
+do
+while read loc
+do
+rm ${outDir}/${outgr}/${loc}.fasta
+done < ${outDir}/${loc_list}
+done < ${outgroup}
+
 while read outgr
 do
 mkdir ${outDir}/${outgr}
@@ -48,7 +54,5 @@ done < ${outgroup}
 
 ##take inds_list and print as one line with commas, and output into directory
 #sed -E -e ':a;N;$!ba;s/\n/,/g' $ind_list >${outDir}/pop
-##send in to polymorphurama
-#perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl fasta ${outDir} pop 
 
 
