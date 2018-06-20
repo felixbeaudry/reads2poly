@@ -21,15 +21,19 @@ do
 rm ${outDir}/${loc}.fasta
 done < ${outDir}/${loc_list}
 
-export PYTHONPATH=/usr/lib64/python2.7/site-packages/
 while read ind 
 do
 echo "Extracting ${ind} sequences from vcf"
-perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl  -v /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/${ind}.uni.vcf -o ${outDir}/${ind} -l ${outDir}/${ind}.logfile -a T -m 60 -d 10 -g 30 2>${outDir}/${ind}_vcferrors.txt
+perl /ohta/felix.beaudry/scripts/reads2poly/vcf2fasta_uni.pl -v /ohta/felix.beaudry/alignments/NCF1_nostop/RNA/${ind}.uni.vcf -o ${ind} -l ${outDir}/${ind}.logfile -a T -m 60 -d 10 -g 30 2>${outDir}/${ind}_vcferrors.txt
+done < ${ind_list}
+
+while read ind 
+do
 echo "Adding ${ind} sequences to fasta"
+export PYTHONPATH=/usr/lib64/python2.7/site-packages/
 while read loc
 do
-python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${outDir}/${ind}/${loc}.fasta -c 60 2>${outDir}/errors.txt | cat >> ${outDir}/${loc}.fasta
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i ${ind}/${loc}.fasta -c 60 2>${outDir}/errors.txt | cat >> ${outDir}/${loc}.fasta
 #cat ${outDir}/${ind}/${loc}.fasta >> ${outDir}/${loc}.fasta
 done < ${outDir}/${loc_list}
 done < ${ind_list}
