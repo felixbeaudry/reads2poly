@@ -17,33 +17,66 @@ library(FactoMineR)
 library(factoextra)
 library(ggridges)
 
+####Functions####
+
+FPKMer <- function(infile=NULL){ 
+  exp <- data.frame(infile,row.names = 1)
+  FPKM <-  (exp/(exp$Length/1000))/(colSums(exp, na.rm = FALSE, dims = 1)/1000000)
+  FPKMt <- t(FPKM[,-c(1)])
+  return(FPKMt)
+}
+
+PCAer <- function(FPKM=NULL,id=NULL){
+  expPCA <- PCA(FPKM,graph=FALSE)
+  print(get_eigenvalue(expPCA))
+  expPCAcoord <- data.frame(expPCA$ind$coord)
+  expPCAcoords <- setDT(expPCAcoord, keep.rownames = TRUE)[]
+  exp_id <- fread(id)
+  coords_id <- data.frame(sqldf('select exp_id.*, expPCAcoords.* 
+                                from expPCAcoords left join exp_id
+                                on exp_id.Individual = expPCAcoords.rn'))
+  coords_id <- coords_id[,-c(6)]
+  return(coords_id)
+}
+
+BIASer <- function(setOne=NULL,setTwo=NULL,locInfo=NULL,FPKM=NULL,type=NULL){
+  locInfo <- fread(locInfo)
+  FPKM_one <- FPKM[setOne,]
+  FPKM_two <- FPKM[setTwo,]
+  if (type==1) {
+    FPKM_ratio <- data.frame(log((colSums(FPKM_one, na.rm = FALSE, dims = 1)/length(setOne))/
+                                   (colSums(FPKM_two, na.rm = FALSE, dims = 1)/length(setTwo)),2))
+    FPKM_ratio <- rename(FPKM_ratio, c("log..colSums.FPKM_one..na.rm...FALSE..dims...1..length.setOne....colSums.FPKM_two.." = "M2F"))
+  }else{
+    FPKM_ratio <- data.frame( ((colSums(FPKM_one, na.rm = FALSE, dims = 1)/length(setOne)) - (colSums(FPKM_two, na.rm = FALSE, dims = 1)/length(setTwo))) /
+                                ((colSums(FPKM_one, na.rm = FALSE, dims = 1)/length(setOne)) + (colSums(FPKM_two, na.rm = FALSE, dims = 1)/length(setTwo)))
+    )
+    FPKM_ratio <- rename(FPKM_ratio, c("X..colSums.FPKM_one..na.rm...FALSE..dims...1..length.setOne....." = "M2F"))
+  }
+  
+  FPKM_dt <- setDT(FPKM_ratio, keep.rownames = TRUE)[]
+  FPKM_split <- separate(FPKM_dt, rn, c("1","locus","2"), sep = "_", remove = TRUE,
+                         convert = FALSE, extra = "merge", fill = "left")
+  
+  FPKM_combo <- data.frame(sqldf('select FPKM_split.M2F,  locInfo.*  
+                                 from locInfo left 
+                                 join FPKM_split on FPKM_split.locus = locInfo.hastatulus_transcript
+                                 '))
+  
+  FPKM_auto <- FPKM_combo[FPKM_combo$SingleAutosomal == 1,]
+  FPKM_fin <- FPKM_auto[is.finite(FPKM_auto$M2F), ]
+  return(FPKM_fin)
+}
+
 ####Input####
 
-exp_id <-fread('expression_id.csv')
-exp <- data.frame(fread('exp.tsv', header=TRUE,colClasses=list(integer=2:68)),row.names = 1)
-#exp <- exp_all[,-c(22:43,68)]
-FPKM <-  (exp/(exp$Length/1000))/(colSums(exp, na.rm = FALSE, dims = 1)/1000000)
-FPKMt <- t(FPKM[,-c(1)])
-expPCA <- PCA(FPKMt,graph=FALSE)
-expPCAcoord <- data.frame(expPCA$ind$coord)
-expPCAcoords <- setDT(expPCAcoord, keep.rownames = TRUE)[]
+allinput <- fread('exp.tsv', header=TRUE,colClasses=list(integer=2:68))
 
-coords_id <- data.frame(sqldf('select exp_id.*, expPCAcoords.* 
-                           from expPCAcoords left join exp_id
-                           on exp_id.Individual = expPCAcoords.rn'))
+####PCA Plots####
 
-coords_id <- coords_id[,-c(6)]
-
-locInfo <- fread('synteny_10322_hastatulus_transcripts.txt')
-
-####PCA####
-print(expPCA)
-eig.val <- get_eigenvalue(expPCA)
-eig.val
-
-fviz_eig(expPCA, addlabels = TRUE, ylim = c(0, 50))
-
-####Plots####
+#full set
+FPKM <- FPKMer(infile=allinput)
+coords_id <- PCAer(FPKM=FPKM,id='expression_id.csv')
 
 coords_id$Population[coords_id$Population == "XYY"] <- "N"
 coords_id$Population[coords_id$Population == "XY"] <- "T"
@@ -70,96 +103,34 @@ ggplot(coords_id,aes(x=Dim.2, y=Dim.3,color=Tissue,shape=Sex)) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
   scale_color_manual(values=c( "#ffd700", "#fa8775",   "#cd34b5"))
 
+#josh set
+jFPKM <- FPKMer(infile=allinput[,c(1:2,45:68)])
+coords_idj <- PCAer(FPKM=jFPKM,id='expression_id.csv')
 
-####Male2Female#### 
-jFPKM <- t(FPKM[,c(44:67)])
-jFPKM_fem <- jFPKM[c(1:6,13:18),]
-jFPKM_mal <- jFPKM[-c(1:6,13:18),]
-
-jFPKM_fem_xy <- jFPKM[c(1:6),]
-jFPKM_mal_xy <- jFPKM[c(7:12),]
-
-#study pca
-expPCAj <- PCA(jFPKM,graph=FALSE)
-expPCAcoordj <- data.frame(expPCAj$ind$coord)
-expPCAcoordsj <- setDT(expPCAcoordj, keep.rownames = TRUE)[]
-coords_idj <- data.frame(sqldf('select exp_id.*, expPCAcoordsj.* 
-                               from expPCAcoordsj left join exp_id
-                               on exp_id.Individual = expPCAcoordsj.rn'))
-
-coords_idj <- coords_idj[,-c(6)]
-
-#ggpairs(coords_idj[,c(3,6:10)], aes(colour = Sex, alpha = 0.4))
-
-#josh <- 
-  ggplot(coords_idj,aes(x=Dim.1, y=Dim.2,color=Population,shape=Sex,label=Individual)) +  
+ggplot(coords_idj,aes(x=Dim.1, y=Dim.2,color=Population,shape=Sex,label=Individual)) +  
   geom_text(size=5) + guides(shape=FALSE,color=FALSE) +
   geom_point(alpha=0.5,size=10) +
   theme_bw(base_size = 18) + 
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
   scale_color_manual(values=c( "#ffd700", "#fa8775",   "#cd34b5")) + labs(title="Josh")
 
+####BIAS ANALYSIS
+#male2female Texas
 
-#bias
-jFPKM_mf_xy <- data.frame(log((colSums(jFPKM_mal_xy, na.rm = FALSE, dims = 1)/12)/
-                             (colSums(jFPKM_fem_xy, na.rm = FALSE, dims = 1)/12),2))
-jFPKM_mf_xy <- rename(jFPKM_mf_xy, c("log..colSums.jFPKM_mal_xy..na.rm...FALSE..dims...1..12...colSums.jFPKM_fem_xy.." = "M2F"))
-jFPKM_mf_dt_xy <- setDT(jFPKM_mf_xy, keep.rownames = TRUE)[]
+jFPKM_tx <- FPKMer(infile=allinput[,c(1:2,45:56)])
 
-jFPKM_mf_split_xy <- separate(jFPKM_mf_dt_xy, rn, c("1","locus","2"), sep = "_", remove = TRUE,
-                              convert = FALSE, extra = "merge", fill = "left")
+jFPKM_bias <- BIASer(setOne=c(1:6),setTwo=c(7:12),locInfo='synteny_10322_hastatulus_transcripts.txt',FPKM=jFPKM_tx,type = 2)
 
-jFPKM_mf_dt_xy_combo <- data.frame(sqldf('select jFPKM_mf_split_xy.M2F,  locInfo.*  
-                                      from locInfo left 
-                                       join jFPKM_mf_split_xy on  jFPKM_mf_split_xy.locus = locInfo.hastatulus_transcript
-                                       '))
-
-jFPKM_mf_dt_xy_auto <- jFPKM_mf_dt_xy_combo[jFPKM_mf_dt_xy_combo$SingleAutosomal == 1,]
-jFPKM_mf_dt_xy_fin <- jFPKM_mf_dt_xy_auto[is.finite(jFPKM_mf_dt_xy_auto$M2F) , ]
-
-
-#m2f_plot <-
-ggplot(jFPKM_mf_dt_xy_fin,aes(x=M2F)) + 
+ggplot(jFPKM_bias,aes(x=M2F)) + 
   geom_histogram(aes(y=..density..),binwidth=0.10,alpha=0.5) +
   geom_density() +
-  geom_vline(xintercept = mean(jFPKM_mf_dt_xy_fin$M2F),colour="red", linetype = "longdash") +
+  geom_vline(xintercept = mean(mf$M2F),colour="red", linetype = "longdash") +
   scale_y_continuous(breaks=NULL) + theme_bw()  +
   theme( panel.grid.minor = element_blank()) + 
-   guides(alpha=FALSE,colour=FALSE,fill=FALSE) + labs(x="log Male to Female expression")
-
-#mclusters
-
-jFPKM_mf_clust_xy <- densityMclust(jFPKM_mf_dt_xy_fin$M2F,G=3)
-#jFPKM_mf_clust_xy_freeG <- densityMclust(jFPKM_mf_compl_xy$M2F)
-
-jFPKM_mf_class_xy <- Mclust(jFPKM_mf_dt_xy_fin$M2F,G=3)
-#jFPKM_mf_clust_m_xy_freeG <- Mclust(jFPKM_mf_compl_xy$M2F)
-
-#summary(jFPKM_mf_clust_xy, parameters = TRUE)
-
-#par(mfrow = c(2,1))
-plot(jFPKM_mf_clust_xy,what="density",data=jFPKM_mf_dt_xy_fin$M2F,breaks=50)
-#plot(jFPKM_mf_clust_m_xy_freeG,what="classification")
-par(mfrow = c(1,1))
-
-mclass1_xy <- gsub("1","Extreme",jFPKM_mf_clust_xy$classification)
-mclass2_xy <- gsub("2","None",mclass1_xy)
-V2_xy <- gsub("3","Intermediate",mclass2_xy)
+   guides(alpha=FALSE,colour=FALSE,fill=FALSE) + labs(x="Sex-biased expression")
 
 
-jFPKM_mf_bind_xy <- cbind(jFPKM_mf_dt_xy_fin,V2_xy)
-
-jFPKM_mf_bind_xy$sexSpec[ jFPKM_mf_bind_xy$M2F < mean(jFPKM_mf_bind_xy$M2F) & jFPKM_mf_bind_xy$V2 == "Extreme"] <- "extFem"
-jFPKM_mf_bind_xy$sexSpec[ jFPKM_mf_bind_xy$M2F < mean(jFPKM_mf_bind_xy$M2F) & jFPKM_mf_bind_xy$V2 == "Intermediate"] <- "intFem"
-jFPKM_mf_bind_xy$sexSpec[  jFPKM_mf_bind_xy$V2 == "None" ] <- "None"
-jFPKM_mf_bind_xy$sexSpec[ jFPKM_mf_bind_xy$M2F > mean(jFPKM_mf_bind_xy$M2F) & jFPKM_mf_bind_xy$V2 == "Intermediate" ] <- "intMale"
-jFPKM_mf_bind_xy$sexSpec[ jFPKM_mf_bind_xy$M2F > mean(jFPKM_mf_bind_xy$M2F) & jFPKM_mf_bind_xy$V2 == "Extreme" ] <- "extMale"
-
-length(jFPKM_mf_bind_xy$sexSpec[jFPKM_mf_bind_xy$sexSpec == "extMale"])
-
-ggplot(jFPKM_mf_bind_xy,aes(x=sexSpec,y=M2F)) + geom_boxplot() 
-
-##correlations
+####Correlations####
 
 ##FMFST
 fm <- fread('summarystats_FM_xy.xls')
