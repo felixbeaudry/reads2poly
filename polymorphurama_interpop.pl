@@ -1582,7 +1582,7 @@ foreach $file (@files){
 	#	else{++$pop;}
 	#}
 	#else{++$pop;}
-
+	++$pop;
 	} # loop for each pop
 
 	my $Fst_syn = 0;
