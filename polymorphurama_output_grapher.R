@@ -57,7 +57,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=NULL){ 
+stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=NULL,popStr='pop'){ 
   summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
                         conf.interval=.95, .drop=TRUE) {
     library(plyr)
@@ -80,10 +80,7 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
     datac$ci <- datac$se * ciMult
     return(datac)
   }
-  
 
-  
-  
   summaryStats <- function(in_mat=NULL,pops=NULL,chrom=NULL){
     pol_melt <- melt(in_mat,id.vars = "locus",verbose=FALSE)
     pol_sep <- separate(pol_melt, variable, c("pop","var","cod"), 
@@ -97,7 +94,6 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
     summary <- summarySE(pol_sep_comp, measurevar="value", groupvars=c("var","pop","cod"))
     cbind(summary, "chrom" = chrom)
   }
-  
   
   summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL){
     inter_melt <- melt(inter,id.vars = "locus",verbose=FALSE)
@@ -113,18 +109,17 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
     cbind(inter_summary, "chrom" = chrom)
   }
-  if(pops="pop"){
-    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",pop,"FLNC",chrom,"chrom.txt",sep="")
+  if(popStr=='pop'){
+   filename_wIn <- paste(set,"_",outgroup,"_summarystats_",chrom,"chrom.txt",sep="")
     filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
-  }
-  else{
-    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",chrom,"chrom.txt",sep="")
-    filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
+  }else{
+    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,"chrom.txt",sep="")
+    filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,"chrom.txt",sep="")
   }
   in_read <- fread(filename_wIn)
   in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 100]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= seqMax  & in_read$pop0_sites_syn >= 100]
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -208,6 +203,7 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
 
 #pop <- c("hastatulus","Y1","Y1Y2")
 pop <- c("Rhastatulus","XY","XYY")
+FLNC <- c("XYY","FL","NC")
 
 #DML <- fread('DemModelLoci.txt',header=FALSE)
 #DML <- DML$V1 
@@ -215,13 +211,12 @@ pop <- c("Rhastatulus","XY","XYY")
 all_data <- data.frame(rbind(
 stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop)
-
-,stats_table(outgroup="none",set="rna",chrom="A",pops=pop)
+,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
 
-
+FLNC_stats <- stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=FLNC,popStr="FLNC")
 
 all_data_var<- data.frame(rbind(
   stats_var(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
@@ -238,7 +233,7 @@ all_data_var<- data.frame(rbind(
 ####pi####
 
 all_data_pi <- all_data[all_data$var == "pi" & all_data$cod == "syn"  ,]
-all_data_pi <- all_data_pi[c(1:6,10:12),]
+all_data_pi <- all_data_pi[c(1:9),]
 
 title_pisyn <- expression(paste(pi, ""[syn]))
 
@@ -269,9 +264,9 @@ ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
 )
 
 #ms_pi <- ms_pi[-c(5,8,9,10),]
-ms_pi <- ms_pi[c(1,2,3,6),]
+ms_pi <- ms_pi[c(1,2,3,5),]
 
-pi_plot_oe <-
+#pi_plot_oe <-
 ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
@@ -280,7 +275,27 @@ ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   #scale_x_discrete(limits=c("A","H","X","Y")) 
   scale_x_discrete(limits=c("A","X")) 
-  
+
+FLNC_pi <- FLNC_stats[FLNC_stats$var == "pi" & FLNC_stats$cod == "syn"  ,]
+
+ggplot(FLNC_pi, aes(x=pop, y=value, fill=pop)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
+  #facet_grid(. ~ pop, scales = "free") +
+  scale_x_discrete(limits=c("NC","FL")) + ylim(0,0.008) +
+  scale_fill_manual(values=c( 
+    'red', #Blue
+    
+    #  '#1B75BB', #purple-y
+    'blue', #green
+    '#FFF100'  #yellow
+  ))
+
+
 ####TajD####
 
 all_data_tajD <- all_data[all_data$var == "tajD" & all_data$cod == "syn"  ,]
@@ -306,9 +321,9 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) +
 ####FST####
 
 all_data_fst <- all_data[all_data$var == "Fst" & all_data$cod == "syn"  ,]
-all_data_fst <- all_data_fst[c(1,2,4),]
+all_data_fst <- all_data_fst[c(1,2,3),]
 
-fst_plot <-
+#fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -327,10 +342,10 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
 
 ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
                 ms_stat(chrom="A",var="fst"),
-                cbind(all_data_fst[c(1,4),-c(2,3)],"state"="obs")
+                cbind(all_data_fst[c(1,2,3),-c(2,3)],"state"="obs")
 )
 
-fst_plot_oe <- 
+#fst_plot_oe <- 
   ggplot(ms_fst, aes(x=chrom, y=value, fill=state)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +

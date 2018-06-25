@@ -1444,7 +1444,7 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
-				if ($pop != 1 | $popOnek == 0 ){
+				#if ($pop != 1 | $popOnek == 0 ){
 
 
 					print "\npop: ",$pop,"\t";
@@ -1547,11 +1547,11 @@ foreach $file (@files){
 
 					$samplesize[$poly_set]=$numseqs;
 					$poly_set++;
-				}
+				#}
 				}
 
 		else {
-			if ($pop != 1 | $popOnek == 0  ){
+			#if ($pop != 1 | $popOnek == 0  ){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<6;++$z){
@@ -1559,7 +1559,7 @@ foreach $file (@files){
 					}
 				}
 				print OUT2 "NA\tNA\tNA\t";
-			}
+			#}
 			
 		} # if less than two seqs
 
@@ -1582,7 +1582,6 @@ foreach $file (@files){
 	#	else{++$pop;}
 	#}
 	#else{++$pop;}
-	++$pop;
 
 	} # loop for each pop
 
