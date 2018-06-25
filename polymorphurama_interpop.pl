@@ -34,8 +34,10 @@ die $usage unless ($opts{i});
 my $d2 = $opts{i};
 
 my $pop_file = $opts{i} . "pop";
+my $pop_file_name ;
 if ($opts{p}) {
 	$pop_file = $opts{i} . $opts{p};
+	$pop_file_name = $opts{p} . "_";
 }
 
 
@@ -90,12 +92,12 @@ print "\n";
 
 ####Output files###
 
-open (OUT, '>', ($d2 . $ext . $outgroup_string . '_frequencies_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ($d2 . $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
@@ -227,7 +229,7 @@ foreach $file (@files){
 	}	}	}	}
 
 	chomp $file;
-	print "\n", $file, "\tnumseqs: ", $numseqs, "\toutgroup: ", $sequence_names[$outgroup_position];
+	print "\n", $file, "\tnumseqs: ", $numseqs - 1, "\toutgroup: ", $sequence_names[$outgroup_position];
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
@@ -248,29 +250,30 @@ foreach $file (@files){
 		#insert outgroup sequence as subset position 0
 		#print $sequence_names[$outgroup_position],"\n";
 		#print $totdata[$outgroup_position], "\n";
-		$data[0]=$totdata[$outgroup_position];
+		#$data[0]=$totdata[$outgroup_position];
 
 
 		#input individuals from correct population into set
 		$number_of_individuals = @{ $position_array[$pop] };
 		for ($y=0; $y < $number_of_individuals; $y++){
 			$in_position = $position_array[$pop][$y];
-			$data[$y+1]=$totdata[$in_position];
+			#$data[$y+1]=$totdata[$in_position];
+			$data[$y]=$totdata[$in_position];
 			#print $sequence_names[$in_position],"\n";
 			#print $totdata[$in_position], "\n";
 		}
 	
 		#run dxy loop one time  
-		if ($pop == 1 ){
-			if ($popOnek == 0){             
-				$data[0]= $data[0]=$totdata[$outgroup_position];
-			}
-			else{
-				#change outgroup sequences to pop2 sequences
-				$out_position = $position_array[($pop+1)][$outpop];
-				$data[0]=$totdata[$out_position];
-			}
-		}	                                    
+		#if ($pop == 1 ){
+		#	if ($popOnek == 0){             
+		#		$data[0]= $data[0]=$totdata[$outgroup_position];
+		#	}
+		#	else{
+		#		#change outgroup sequences to pop2 sequences
+		#		$out_position = $position_array[($pop+1)][$outpop];
+		#		$data[0]=$totdata[$out_position];
+		#	}
+		#}	                                    
 
 		$numseqs=scalar(@data);
 		if ($numseqs>2){
@@ -1560,25 +1563,26 @@ foreach $file (@files){
 			
 		} # if less than two seqs
 
-	if ($pop == 1 ){
+	#if ($pop == 1 ){
 
-		if ($popOnek == 0){ 
-			$popOnek = 1;
-		}
-		elsif ($outpop < @{ $position_array[($pop + 1)] }){
+	#	if ($popOnek == 0){ 
+	#		$popOnek = 1;
+	#	}
+	#	elsif ($outpop < @{ $position_array[($pop + 1)] }){
 
 		#sum over dxy's and divide by the number of inds.
-			$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
-			$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
-			$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
-			if ($Dxy_syn != 0){
-				$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
-			}
-			++$outpop;
-		}
-		else{++$pop;}
-	}
-	else{++$pop;}
+	#		$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+	#		$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+	#		$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+	#		if ($Dxy_syn != 0){
+	#			$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+	#		}
+	#		++$outpop;
+	#	}
+	#	else{++$pop;}
+	#}
+	#else{++$pop;}
+	++$pop;
 
 	} # loop for each pop
 

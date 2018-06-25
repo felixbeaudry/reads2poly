@@ -7,6 +7,8 @@ library(stringr)
 library(tidyr)
 library(plyr)
 library(sqldf)
+library(rapport)
+
 options(max.print = 1000000)
 
 ####HomemadeFunctions####
@@ -55,7 +57,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
   return(datac)
 }
 
-stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){ 
+stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=NULL){ 
   summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE,
                         conf.interval=.95, .drop=TRUE) {
     library(plyr)
@@ -111,17 +113,25 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
     cbind(inter_summary, "chrom" = chrom)
   }
-  filename_wIn <- paste(set,"_",outgroup,"_summarystats_pop_",chrom,"chrom.txt",sep="")
-  filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
-
+  if(pops="pop"){
+    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",pop,"FLNC",chrom,"chrom.txt",sep="")
+    filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
+  }
+  else{
+    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",chrom,"chrom.txt",sep="")
+    filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
+  }
   in_read <- fread(filename_wIn)
   in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 50]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 100]
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
-  
+  if (length(subsetList) >0 ){
+    in_read_cov <- in_read[in_read$locus %in% subsetList ]
+    in_bet_cov <- in_bet_cov[in_bet_cov$locus %in% subsetList ]
+  }
   stats_wIn <- summaryStats(in_mat=in_read_cov ,pops=pops,chrom=chrom)
   stats_btw <- summaryStatsInter(inter=in_bet_cov,pops=pops,chrom=chrom)
   stats_bind <- cbind(rbind(stats_wIn,stats_btw),outgroup=outgroup,stringsAsFactors=FALSE)
@@ -156,13 +166,13 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL){
     
     cbind(inter_comp, "chrom" = chrom)
   }
-  filename_wIn <- paste(set,"_",outgroup,"_summarystats_pop_",chrom,"chrom.txt",sep="")
-  filename_btw <- paste(set,"_",outgroup,"_interpop_pop_",chrom,"chrom.txt",sep="")
+  filename_wIn <- paste(set,"_",outgroup,"_summarystats_",chrom,"chrom.txt",sep="")
+  filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
   
   in_read <- fread(filename_wIn)
   in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 50]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA == seqMax & in_read$pop0_sites_syn >= 100]
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -199,31 +209,36 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
 #pop <- c("hastatulus","Y1","Y1Y2")
 pop <- c("Rhastatulus","XY","XYY")
 
+#DML <- fread('DemModelLoci.txt',header=FALSE)
+#DML <- DML$V1 
+
 all_data <- data.frame(rbind(
 stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop)
-,stats_table(outgroup="rothschildianus",set="RNA",chrom="H",pops=pop)
-,stats_table(outgroup="bucephalophorus",set="RNA",chrom="H",pops=pop)
-,stats_table(outgroup="bucephalophorus",set="RNA",chrom="A",pops=pop)
+
+,stats_table(outgroup="none",set="rna",chrom="A",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
 
 
+
 all_data_var<- data.frame(rbind(
   stats_var(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
   ,stats_var(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop)
-  ,stats_var(outgroup="rothschildianus",set="RNA",chrom="H",pops=pop)
-  ,stats_var(outgroup="bucephalophorus",set="RNA",chrom="H",pops=pop)
-  ,stats_var(outgroup="bucephalophorus",set="RNA",chrom="A",pops=pop)
+  ,stats_var(outgroup="rothschildianus",set="rna",chrom="H",pops=pop)
+  ,stats_var(outgroup="rothschildianus",set="rna",chrom="A",pops=pop)
+  ,stats_var(outgroup="bucephalophorus",set="rna",chrom="H",pops=pop)
   ,stats_var(outgroup="bucephalophorus",set="XYphased",chrom="X",pops=pop)
   ,stats_var(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
 
 
+
 ####pi####
 
 all_data_pi <- all_data[all_data$var == "pi" & all_data$cod == "syn"  ,]
+all_data_pi <- all_data_pi[c(1:6,10:12),]
 
 title_pisyn <- expression(paste(pi, ""[syn]))
 
@@ -235,11 +250,11 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
   facet_grid(. ~ pop, scales = "free") +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  scale_x_discrete(limits=c("A","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
-    '#1B75BB', #purple-y
+  #  '#1B75BB', #purple-y
     '#00A550' #green
   ))
 
@@ -253,16 +268,19 @@ ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
                cbind(all_data_pi[all_data_pi$pop == "Rhastatulus",-c(2,3)],state="obs")
 )
 
-ms_pi <- ms_pi[-c(5,8,9,10),]
+#ms_pi <- ms_pi[-c(5,8,9,10),]
+ms_pi <- ms_pi[c(1,2,3,6),]
 
-ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
+pi_plot_oe <-
+ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
-  scale_x_discrete(limits=c("A","H","X","Y")) 
-
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+  
 ####TajD####
 
 all_data_tajD <- all_data[all_data$var == "tajD" & all_data$cod == "syn"  ,]
@@ -288,7 +306,9 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) +
 ####FST####
 
 all_data_fst <- all_data[all_data$var == "Fst" & all_data$cod == "syn"  ,]
+all_data_fst <- all_data_fst[c(1,2,4),]
 
+fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -297,20 +317,20 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  scale_x_discrete(limits=c("A","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
-    '#1B75BB', #purple-y
+  #  '#1B75BB' #purple-y
     '#00A550' #green
   ))
 
 ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
                 ms_stat(chrom="A",var="fst"),
-                cbind(all_data_fst[,-c(2,3)],"state"="empirical")
+                cbind(all_data_fst[c(1,4),-c(2,3)],"state"="obs")
 )
 
-#fst_plot <- 
+fst_plot_oe <- 
   ggplot(ms_fst, aes(x=chrom, y=value, fill=state)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -318,13 +338,17 @@ ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
-  theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","H","X","Y")) 
-
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+    
+    
 ####dxy####
 
 dxy <- all_data[all_data$var == "dxy" ,]
+dxy <- dxy[c(1,2,4),]
 
+dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
@@ -332,32 +356,34 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  scale_x_discrete(limits=c("A","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
-    '#1B75BB', #purple-y
+ #   '#1B75BB', #purple-y
     '#00A550' #green
     ))
 
+multiplot(fst_plot,dxy_plot,cols=2)
 
 ms_dxy <- rbind(
   ms_stat(chrom="X",var="dxy",sitemean=2.50881),
   ms_stat(chrom="A",var="dxy",sitemean=2.50881),
-  cbind(dxy[,-c(2,3)],"state"="empirical")
+  cbind(dxy[c(1,4),-c(2,3)],"state"="obs")
 )
 
-#dxy_plot <- 
-  ggplot(ms_dxy, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
+dxy_plot_oe <- 
+  ggplot(ms_dxy, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
-  theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","H","X","Y")) 
-
-#multiplot(fst_plot,dxy_plot,cols=2)
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+    
+multiplot(pi_plot_oe,fst_plot_oe,dxy_plot_oe,cols=3)
 
 t.test(
   all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
