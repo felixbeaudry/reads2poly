@@ -246,7 +246,7 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] } -1) {
+		elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] } ) {
 			#change outgroup sequences to pop1 sequences
 			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
@@ -1545,7 +1545,7 @@ foreach $file (@files){
 
 
 
-				elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] }  ){
+				elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] }  -1){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1554,7 +1554,15 @@ foreach $file (@files){
 					}
 					$outpop++;
 				}
-
+				elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] }  ){
+					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+					if ($Dxy_syn != 0){
+						$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+					}
+					$pop++;
+				}
 
 				else{$pop++;}
 		}
