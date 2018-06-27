@@ -139,7 +139,6 @@ print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop
 #####Start Calculating Statistics####
 
 @file=&read_dir($d2,$pattern);
-$poly_set=0;
 
 # array of arrays from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
 
@@ -154,49 +153,6 @@ foreach $file (@files){
 	my @file_data=();
 	my @data = ();
 	my @sequence_names = ();
-
-	#empty within stats
-	my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
-							  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
-	my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
-
-	my @freq_P_U = ();	# preferred to unpreferred
-	my @freq_U_P = ();	# unpreferred to preferred
-	my @freq_P_P = ();	# preferred to preferred
-	my @freq_U_U = ();	# unpreferred to unpreferred
-	my @freqS_AT_GC = (); # changes AT to GC
-	my @freqS_GC_AT = (); # changes GC to AT
-	my @freqS_AT_AT = (); # changes AT to AT
-	my @freqS_GC_GC = (); # changes GC to GC
-	my @freqR_AT_GC = (); # changes AT to GC
-	my @freqR_GC_AT = (); # changes GC to AT
-	my @freqR_AT_AT = (); # changes AT to AT
-	my @freqR_GC_GC = (); # changes GC to GC
-
-	my @pi_syn = (); 
-	my @pi_rep = (); 
-	my @poly_freq_Syn = ();
-	my @poly_freq_Rep = ();
-	my @poly_freq_Syn_temp = ();
-	my @poly_freq_Syn_temp = ();
-
-	my @pi_syn_within = ();
-	my @pi_rep_within = ();
-
-	#empty interpop stats
-	my $dxy_syn_final = 0;
-	my $dxy_rep_final = 0;
-	my $dxy_syn_tot = 0;
-	my $dxy_rep_tot = 0;
-	my $dxy_tot = 0;
-	my $dxy_tot_final = 0;
-	my $dnds_tot_final = 0;
-	my $dnds_tot = 0;
-
-	my $alpha = 0;
-	my $kxy = 0;
-	my $knks = 0;
-
 
 
 	#fill locus memory
@@ -238,6 +194,14 @@ foreach $file (@files){
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
+	my $dxy_syn_tot ;
+	my $dxy_rep_tot ;
+	my $dxy_tot ;
+	my $dnds_tot ;
+
+	my @pi_rep_within ;
+	my @pi_syn_within ;
+
 	#start pop subloops
 	my $pop = 0;
 	#count for different loops within pops
@@ -245,15 +209,24 @@ foreach $file (@files){
 	#count for number of inds in the other population
 	my $outpop = 0;
 	while ($pop<$number_of_pops){
+		#empty within stats
+		my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
+								  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
+		my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 
-		#empty within stats with each pop loop
-		@pi_syn = (); 
-		@pi_rep = (); 
-		@poly_freq_Syn = ();
-		@poly_freq_Rep = ();
-		@poly_freq_Syn_temp = ();
-		@poly_freq_Syn_temp = ();
-		
+		my @freq_P_U = ();	# preferred to unpreferred
+		my @freq_U_P = ();	# unpreferred to preferred
+		my @freq_P_P = ();	# preferred to preferred
+		my @freq_U_U = ();	# unpreferred to unpreferred
+		my @freqS_AT_GC = (); # changes AT to GC
+		my @freqS_GC_AT = (); # changes GC to AT
+		my @freqS_AT_AT = (); # changes AT to AT
+		my @freqS_GC_GC = (); # changes GC to GC
+		my @freqR_AT_GC = (); # changes AT to GC
+		my @freqR_GC_AT = (); # changes GC to AT
+		my @freqR_AT_AT = (); # changes AT to AT
+		my @freqR_GC_GC = (); # changes GC to GC
+
 		@data=();
 		
 		#input individuals from correct population into set
@@ -273,7 +246,7 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] } ) {
+		elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] } -1) {
 			#change outgroup sequences to pop1 sequences
 			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
@@ -1521,8 +1494,6 @@ foreach $file (@files){
 					push @poly_freq_Syn_ALL; @poly_freq_Syn;
 					push @poly_freq_Rep_ALL; @poly_freq_Rep;
 
-					$samplesize[$poly_set]=$numseqs;
-					$poly_set++;
 					$popLoop++;
 				}
 
@@ -1570,6 +1541,10 @@ foreach $file (@files){
 					}
 					else{$popLoop++;}
 				}
+
+
+
+
 				elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] }  ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
@@ -1579,9 +1554,15 @@ foreach $file (@files){
 					}
 					$outpop++;
 				}
+
+
 				else{$pop++;}
 		}
+
+
+
 		# if less than two seqs
+
 		elsif($popLoop == 0 ){
 			print "\npop: ",$pop,"\tempty"; 
 			print OUT2 "NA\t";
@@ -1606,12 +1587,16 @@ foreach $file (@files){
 			$outpop++;
 		}
 		else{$pop++;}
+
+
+
 	} # loop for each pop
 
-	my $Fst_syn = 0;
-	my $Fst_rep = 0;
+	#Interpopulation statistics
 
-	
+	my $Fst_syn ;
+	my $Fst_rep ;
+
 	if ($pi_syn_within[0] != 0 ){
 		
 		$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
@@ -1619,7 +1604,6 @@ foreach $file (@files){
 	}
 	else{$Fst_syn = "NA";}
 
-	
 	if ($pi_rep_within[0] != 0 ){
 		
 		$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
@@ -1627,12 +1611,16 @@ foreach $file (@files){
 	}
 	else{$Fst_rep = "NA";}
 
+	my $dxy_syn_final;
+	my $dxy_rep_final;
+	my $dxy_tot_final;
+	my $dnds_tot_final;
 
-	if (scalar(@{ $position_array[2] }) != 0){
-		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[2] });
-		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[2] });
-		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[2] });
-		$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[2] });
+	if (scalar(@{ $position_array[1] }) != 0){
+		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
+		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
+		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
+		$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
 
 	}
 	else{
@@ -1642,15 +1630,10 @@ foreach $file (@files){
 		$dnds_tot_final = "NA";
 	}
 
-
-
-	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final;
-
+	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final,"\n";
+	print OUT2 "\n";
 	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\n" ;
 
-
-	print "\n";
-	print OUT2 "\n";
 
 } # loop foreach file
 
