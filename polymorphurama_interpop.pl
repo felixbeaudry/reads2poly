@@ -98,12 +98,12 @@ print "\n";
 
 ####Output files###
 
-open (OUT, '>', ( $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ( $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ( $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ( $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ( $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ( $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
