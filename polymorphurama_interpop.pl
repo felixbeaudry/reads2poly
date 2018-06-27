@@ -1565,7 +1565,7 @@ foreach $file (@files){
 						$popLoop = 0;
 						$pop++;
 					}
-					else($popLoop++;)
+					else{$popLoop++;}
 				}
 				elsif ( $popLoop < @{ $position_array[$pop+1] } ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
