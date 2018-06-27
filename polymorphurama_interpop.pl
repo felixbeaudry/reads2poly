@@ -1578,27 +1578,22 @@ foreach $file (@files){
 					$popLoop++;
 				}
 				else{$pop++;}
-
-
-		else{
-			if ($popLoop == 0 ){
-				print OUT2 "NA\t";
-				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<5;++$z){
-						print OUT2 "NA\t";		
-					}
+		elsif($popLoop == 0 ){
+			print OUT2 "NA\t";
+			for ($y=0; $y<2; ++$y){
+				for($z=0;$z<5;++$z){
+					print OUT2 "NA\t";		
 				}
-			$popLoop++;
 			}
-			elsif ($popLoop == 1 ){
-				print OUT2 "NA\tNA\tNA\tNA\tNA\t";
-				if ($pop != 1){
-						$popLoop = 0;
-						$pop++;
-					}
-				else{$popLoop++;}
-			}
-
+		$popLoop++;
+		}
+		elsif ($popLoop == 1 ){
+			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+			if ($pop != 1){
+					$popLoop = 0;
+					$pop++;
+				}
+			else{$popLoop++;}
 		} # if less than two seqs
 
 	
