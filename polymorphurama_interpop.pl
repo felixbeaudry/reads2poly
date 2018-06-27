@@ -115,7 +115,14 @@ print OUT2 "locus\t";
 for ($x=0; $x<$number_of_pops; ++$x){ 
 	print OUT2 "pop",$x,"_seqs_NA\t";
 	for ($y=0; $y<2; ++$y){
-		for($z=0;$z<6;++$z){
+		for($z=0;$z<5;++$z){
+			print OUT2 "pop",$x;
+			print OUT2 "_$vars[$z]";
+			print OUT2 "_$synrep[$y]\t";
+		}
+	}
+	for ($y=0; $y<2; ++$y){
+		for($z=5;$z<6;++$z){
 			print OUT2 "pop",$x;
 			print OUT2 "_$vars[$z]";
 			print OUT2 "_$synrep[$y]\t";
@@ -191,8 +198,7 @@ foreach $file (@files){
 	my $kxy = 0;
 	my $knks = 0;
 
-	#count for counting k before d on pop==1
-	my $popOnek = 0;
+
 
 	#fill locus memory
 	@file_data = get_file_data ($dirfile);
@@ -235,6 +241,8 @@ foreach $file (@files){
 
 	#start pop subloops
 	my $pop = 0;
+	#count for counting k before d on pop==1
+	my $popLoop = 0;
 	while ($pop<$number_of_pops){
 
 		#empty within stats with each pop loop
@@ -246,34 +254,34 @@ foreach $file (@files){
 		@poly_freq_Syn_temp = ();
 		
 		@data=();
-
-		#insert outgroup sequence as subset position 0
-		#print $sequence_names[$outgroup_position],"\n";
-		#print $totdata[$outgroup_position], "\n";
-		#$data[0]=$totdata[$outgroup_position];
-
-
+		
 		#input individuals from correct population into set
 		$number_of_individuals = @{ $position_array[$pop] };
-		for ($y=0; $y < $number_of_individuals; $y++){
-			$in_position = $position_array[$pop][$y];
-			#$data[$y+1]=$totdata[$in_position];
-			$data[$y]=$totdata[$in_position];
-			#print $sequence_names[$in_position],"\n";
-			#print $totdata[$in_position], "\n";
+
+		if ($popLoop == 0){             
+			for ($y=0; $y < $number_of_individuals; $y++){
+				$in_position = $position_array[$pop][$y];
+				$data[$y]=$totdata[$in_position];
+
+			}
 		}
-	
-		#run dxy loop one time  
-		#if ($pop == 1 ){
-		#	if ($popOnek == 0){             
-		#		$data[0]= $data[0]=$totdata[$outgroup_position];
-		#	}
-		#	else{
-		#		#change outgroup sequences to pop2 sequences
-		#		$out_position = $position_array[($pop+1)][$outpop];
-		#		$data[0]=$totdata[$out_position];
-		#	}
-		#}	                                    
+		elsif ($popLoop == 1){  
+			for ($y=0; $y < $number_of_individuals + 1; $y++){
+				$in_position = $position_array[$pop][$y];
+				#insert outgroup sequence as subset position 0
+				$data[0]=$totdata[$outgroup_position];
+				$data[$y+1]=$totdata[$in_position];
+			}
+		}
+		elsif ($pop == 1 & $popLoop < @{ $position_array[$pop+1] } ) {
+			#change outgroup sequences to pop2 sequences
+			$out_position = $position_array[($pop+1)][$outpop];
+			$data[0]=$totdata[$out_position];
+			
+		}	 
+		else{
+			print "Error in popLoops";
+		}                                   
 
 		$numseqs=scalar(@data);
 		if ($numseqs>2){
@@ -1444,8 +1452,7 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
-				#if ($pop != 1 | $popOnek == 0 ){
-
+				if ( $popLoop == 0 ){
 
 					print "\npop: ",$pop,"\t";
 					print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
@@ -1456,59 +1463,25 @@ foreach $file (@files){
 					if (defined $TajD_rep){}
 					else {$TajD_rep = "NA";}
 
-					if ($Dxy_syn != 0){
-						$knks = $Dxy_rep / $Dxy_syn;
-						$kxy = $Dxy_rep + $Dxy_syn;
-					}
-					else{
-						$knks= "NA";
-						$kxy = "NA";
-					}
-
-
-					if( $Dxy_syn != 0 & $pi_syn_site != 0 ){
-						if (  ($pi_rep_site / $pi_syn_site) != 0 ) {
-							$alpha =  ( ( $Dxy_rep / $Dxy_syn  ) / (  $pi_rep_site / $pi_syn_site ) );
-						}
-						else {$alpha = "NA";}
-					}
-					else {$alpha = "NA";}
-
-					if ( $sequence_names[$outgroup_position] !~ $outgroup_string ){
-				 		$Dxy_syn = "NA";
-						$Dxy_rep = "NA";
-						$knks = "NA";
-						$kxy = "NA";
-						$alpha = "NA";
-					}	
-
-		
-
 					print OUT2  
 						$numseqs, "\t", 
+
 						$no_syn_codons,"\t", 
 						$thetaS, "\t", 
 						$no_polyS, "\t", 
 						$pi_syn_site, "\t", 
 						$TajD_syn, "\t",
-						$Dxy_syn, "\t", 
 
 						$no_rep_codons,"\t",
 						$thetaR, "\t", 
 						$no_polyR, "\t",  
 						$pi_rep_site, "\t", 
-						$TajD_rep, "\t",
-						$Dxy_rep, "\t",																	   
-						
-						$knks, "\t",
-						$kxy, "\t",
-						$alpha, "\t"
+						$TajD_rep, "\t"
+
 						;
 
 					$pi_syn_within[$pop] = $pi_syn_site;
 					$pi_rep_within[$pop] = $pi_rep_site;
-
-					##consider removing dxy within each loop
 
 					if ($third_pos_count>0){
 						$GC_three=$GC_three/$third_pos_count;
@@ -1547,42 +1520,89 @@ foreach $file (@files){
 
 					$samplesize[$poly_set]=$numseqs;
 					$poly_set++;
-				#}
+					$popLoop++;
 				}
 
+				elsif ( $popLoop == 1 ){
+					if ($Dxy_syn != 0){
+						$knks = $Dxy_rep / $Dxy_syn;
+						$kxy = $Dxy_rep + $Dxy_syn;
+					}
+					else{
+						$knks= "NA";
+						$kxy = "NA";
+					}
+
+
+					if( $Dxy_syn != 0 & $pi_syn_site != 0 ){
+						if (  ($pi_rep_site / $pi_syn_site) != 0 ) {
+							$alpha =  ( ( $Dxy_rep / $Dxy_syn  ) / (  $pi_rep_site / $pi_syn_site ) );
+						}
+						else {$alpha = "NA";}
+					}
+					else {$alpha = "NA";}
+
+					if ( $sequence_names[$outgroup_position] !~ $outgroup_string ){
+				 		$Dxy_syn = "NA";
+						$Dxy_rep = "NA";
+						$knks = "NA";
+						$kxy = "NA";
+						$alpha = "NA";
+					}	
+
+					print "\tDivergence: $kxy";
+
+					print OUT2  
+						$Dxy_syn, "\t", 
+						$Dxy_rep, "\t",																	   
+						
+						$knks, "\t",
+						$kxy, "\t",
+						$alpha, "\t"
+					;
+					
+					if ($pop != 1){
+						$popLoop = 0;
+						$pop++;
+					}
+					else($popLoop++;)
+				}
+				elsif ( $popLoop < @{ $position_array[$pop+1] } ){
+					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+					if ($Dxy_syn != 0){
+						$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+					}
+					$outpop++;
+					$popLoop++;
+				}
+				else{$pop++;}
+
+
 		else {
-			#if ($pop != 1 | $popOnek == 0  ){
+			if ($popLoop == 0 ){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<6;++$z){
+					for($z=0;$z<5;++$z){
 						print OUT2 "NA\t";		
 					}
 				}
-				print OUT2 "NA\tNA\tNA\t";
-			#}
-			
+			$popLoop++;
+			}
+			elsif ($popLoop == 1 ){
+				print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+				if ($pop != 1){
+						$popLoop = 0;
+						$pop++;
+					}
+				else($popLoop++;)
+			}
+
 		} # if less than two seqs
 
-	#if ($pop == 1 ){
-
-	#	if ($popOnek == 0){ 
-	#		$popOnek = 1;
-	#	}
-	#	elsif ($outpop < @{ $position_array[($pop + 1)] }){
-
-		#sum over dxy's and divide by the number of inds.
-	#		$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
-	#		$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
-	#		$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
-	#		if ($Dxy_syn != 0){
-	#			$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
-	#		}
-	#		++$outpop;
-	#	}
-	#	else{++$pop;}
-	#}
-	#else{++$pop;}
-	++$pop;
+	
+	
 	} # loop for each pop
 
 	my $Fst_syn = 0;

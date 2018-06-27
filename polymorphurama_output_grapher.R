@@ -211,7 +211,7 @@ FLNC <- c("XYY","FL","NC")
 all_data <- data.frame(rbind(
 stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop)
-,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop)
+,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="X",pops=pop)
 ,stats_table(outgroup="bucephalophorus",set="XYphased",chrom="Y",pops=pop)
 ), stringsAsFactors = FALSE)
