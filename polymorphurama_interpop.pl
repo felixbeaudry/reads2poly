@@ -1616,7 +1616,7 @@ foreach $file (@files){
 	my $dxy_tot_final;
 	my $dnds_tot_final;
 
-	if (scalar(@{ $position_array[1] }) != 0){
+	if (scalar(@{ $position_array[$pop-1] }) != 0){
 		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
 		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
 		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
