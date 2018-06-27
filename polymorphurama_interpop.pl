@@ -1617,8 +1617,8 @@ foreach $file (@files){
 	} # loop for each pop
 
 	#Interpopulation statistics
-	#print "\nnumseqs1: ",@{ $position_array[1] },"\tnumseqs2: ",@{ $position_array[2] },"\n";
-	if( scalar(@{ $position_array[1] }) > 0 && scalar(@{ $position_array[2] }) > 0){
+	print "\nnumseqs1: ",scalar(@{$position_array[1]}),"\tnumseqs2: ",scalar(@{$position_array[2]}),"\n";
+	if( scalar(@{$position_array[1]}) > 0 && scalar(@{$position_array[2]}) > 0){
 
 		my $Fst_syn ;
 		my $Fst_rep ;
