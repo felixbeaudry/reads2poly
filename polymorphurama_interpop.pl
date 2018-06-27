@@ -273,9 +273,9 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == 1 && $outpop < @{ $position_array[$pop+1] } ) {
+		elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] } ) {
 			#change outgroup sequences to pop1 sequences
-			$out_position = $position_array[($pop+1)][$outpop];
+			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
 			for ($y=0; $y < $number_of_individuals + 1; $y++){
 				$in_position = $position_array[$pop][$y];
@@ -1570,7 +1570,7 @@ foreach $file (@files){
 					}
 					else{$popLoop++;}
 				}
-				elsif ($pop == 1 && $outpop < @{ $position_array[$pop+1] }  ){
+				elsif ($pop == $number_of_pops -1 && $outpop < @{ $position_array[$pop-1] }  ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1590,17 +1590,19 @@ foreach $file (@files){
 					print OUT2 "NA\t";		
 				}
 			}
-		$popLoop++;
+		print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+		$popLoop = 0;
+		$pop++;
 		}
 		elsif ($popLoop == 1 ){
 			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
-			if ($pop != 1){
+			if ($pop != 2){
 					$popLoop = 0;
 					$pop++;
 				}
 			else{$popLoop++;}
 		}
-		elsif($pop == 1 && $outpop < @{ $position_array[$pop+1] } ){
+		elsif($pop == 2 && $outpop < @{ $position_array[$pop-1] } ){
 			$outpop++;
 		}
 		else{$pop++;}
