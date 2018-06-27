@@ -1578,6 +1578,7 @@ foreach $file (@files){
 					$popLoop++;
 				}
 				else{$pop++;}
+		}
 		elsif($popLoop == 0 ){
 			print OUT2 "NA\t";
 			for ($y=0; $y<2; ++$y){
