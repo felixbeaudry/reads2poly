@@ -95,8 +95,6 @@ for ($x=0;$x<$number_of_pops;$x++){
 }
 print "\n";
 
-my $word = $d2;
-$word =~ tr|_||;
 
 ####Output files###
 
@@ -218,15 +216,17 @@ foreach $file (@files){
 	my $outpop = 0;
 
 	if ($numseqs<4){
-		$pop=$number_of_pops;
-		print "\npop: ",$pop,"\tempty"; 
-			print OUT2 "NA\t";
-			for ($y=0; $y<2; ++$y){
-				for($z=0;$z<5;++$z){
-					print OUT2 "NA\t";		
+		for ($x=0;$x < $number_of_pops;++$x){
+			print "\npop: ",$pop,"\tempty"; 
+				print OUT2 "NA\t";
+				for ($y=0; $y<2; ++$y){
+					for($z=0;$z<5;++$z){
+						print OUT2 "NA\t";		
+					}
 				}
-			}
-		print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+		}
+		$pop=$number_of_pops;
 	}
 
 
