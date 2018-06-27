@@ -1578,6 +1578,7 @@ foreach $file (@files){
 				}
 				else{$pop++;}
 		}
+		# if less than two seqs
 		elsif($popLoop == 0 ){
 			print OUT2 "NA\t";
 			for ($y=0; $y<2; ++$y){
@@ -1594,7 +1595,8 @@ foreach $file (@files){
 					$pop++;
 				}
 			else{$popLoop++;}
-		} # if less than two seqs
+		} 
+		else{$pop++;}
 	} # loop for each pop
 
 	my $Fst_syn = 0;
