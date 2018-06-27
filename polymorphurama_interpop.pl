@@ -236,9 +236,6 @@ foreach $file (@files){
 
 		@data=();
 		
-		print "\nscalar: ",scalar(@{ $position_array[$pop] });
-		print "\nno scalar",@{ $position_array[$pop] };
-
 		#input individuals from correct population into set
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
 
@@ -1556,7 +1553,7 @@ foreach $file (@files){
 
 
 
-				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{ $position_array[$pop-1] })  -1){
+				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{ $position_array[$pop-1] })  ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1565,15 +1562,7 @@ foreach $file (@files){
 					}
 					$outpop++;
 				}
-				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{ $position_array[$pop-1] }  )){
-					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
-					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
-					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
-					if ($Dxy_syn != 0){
-						$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
-					}
-					$pop++;
-				}
+
 
 				else{$pop++;}
 		}
