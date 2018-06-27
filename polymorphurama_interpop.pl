@@ -211,6 +211,14 @@ foreach $file (@files){
 
 	if ($numseqs<4){
 		$pop=$number_of_pops;
+		print "\npop: ",$pop,"\tempty"; 
+			print OUT2 "NA\t";
+			for ($y=0; $y<2; ++$y){
+				for($z=0;$z<5;++$z){
+					print OUT2 "NA\t";		
+				}
+			}
+		print OUT2 "NA\tNA\tNA\tNA\tNA\t";
 	}
 
 
@@ -254,7 +262,7 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{ $position_array[$pop-1] } )) {
+		elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1] }) ){
 			#change outgroup sequences to pop1 sequences
 			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
@@ -1553,7 +1561,7 @@ foreach $file (@files){
 
 
 
-				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{ $position_array[$pop-1] })  ){
+				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1]}) -1){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1562,7 +1570,15 @@ foreach $file (@files){
 					}
 					$outpop++;
 				}
-
+				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1]}) ){
+					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+					if ($Dxy_syn != 0){
+						$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+					}
+					$pop++;
+				}
 
 				else{$pop++;}
 		}
@@ -1591,7 +1607,7 @@ foreach $file (@files){
 				}
 			else{$popLoop++;}
 		}
-		elsif($pop == 2 && $outpop < scalar(@{ $position_array[$pop-1] } )){
+		elsif($pop == 2 && $outpop < scalar(@{$position_array[$pop-1]}) ){
 			$outpop++;
 		}
 		else{$pop++;}
@@ -1602,7 +1618,7 @@ foreach $file (@files){
 
 	#Interpopulation statistics
 	#print "\nnumseqs1: ",@{ $position_array[1] },"\tnumseqs2: ",@{ $position_array[2] },"\n";
-	if( scalar(@{ $position_array[1] }) > 0 && scalar(@{ $position_array[2] } > 0)){
+	if( scalar(@{ $position_array[1] }) > 0 && scalar(@{ $position_array[2] }) > 0){
 
 		my $Fst_syn ;
 		my $Fst_rep ;
