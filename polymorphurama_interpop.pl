@@ -7,14 +7,14 @@ use Text::CSV;
 use Getopt::Long qw(:config no_ignore_case);
 
 my %opts;
-GetOptions(\%opts, "f:s", "i:s", "p:s", "S:s", "o:s", "c:s");
+GetOptions(\%opts, "f:s", "i:s", "p:s", "S:s", "o:s", "c:s","C:s");
 my $usage = <<USAGE;
 
     Program: $0
     Version: 2.0
     Contact: Felix Beaudry(felix.beaudry\@utoronto.ca)
 
-    Usage:	$0 -i intake_directory [-p pop -f file_pattern -S [subset] -o [outgroup_string] -c [chrom]]
+    Usage:	$0 -i intake_directory [-p pop -f file_pattern -S [subset] -o [outgroup_string] -c [chrom] -C [chromName]]
 
     			-i directory containing alignment files
     			-p file of strings identifying individuals in each population
@@ -22,6 +22,7 @@ my $usage = <<USAGE;
     			-S name of the subset to add to file output name [empty]
     			-o string identifying outgroup [first line in file]
     			-c type of chromosome [A]
+    			-C name of type of chromosome [A]
 
  	Example $0 -f fasta -i test_files/ -p pop -S hemizygous -o rothschildianus 
 
@@ -56,14 +57,18 @@ if ($opts{S}){
 	$ext = $opts{S}.'_';
 }
 
-my $chrom_file = "Achrom";
+my $chromName = "Achrom";
 my $chrom;
 if ($opts{c}){
-    $chrom_file = ($opts{c});
     $chrom = ($opts{c});
+    $chromName = $chrom;
 }
 
-print "\n\n***Polymorphurama ",$ext,$chrom_file,"***\n\n";
+if ($opts{C}){
+	$chromName = ($opts{C});
+}
+
+print "\n\n***Polymorphurama ",$ext,$chromName,"***\n\n";
 
 ####Start Population Array Input####
 
@@ -90,14 +95,17 @@ for ($x=0;$x<$number_of_pops;$x++){
 }
 print "\n";
 
+my $word = $d2;
+$word =~ tr|_||;
+
 ####Output files###
 
-open (OUT, '>', ($d2 . $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chrom_file . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ($word . $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ($word . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($word . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ($word . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ($word. $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ($word . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
