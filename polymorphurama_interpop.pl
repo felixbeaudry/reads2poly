@@ -273,9 +273,9 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == 1 && $popLoop < @{ $position_array[$pop+1] } ) {
+		elsif ($pop == 2 && $popLoop < @{ $position_array[$pop+1] } ) {
 			#change outgroup sequences to pop2 sequences
-			$out_position = $position_array[($pop+1)][$outpop];
+			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
 		}	 
 		else{
@@ -1642,7 +1642,7 @@ foreach $file (@files){
 
 	print "\n";
 	print OUT2 "\n";
-
+	$pop++;
 } # loop foreach file
 
 
