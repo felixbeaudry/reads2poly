@@ -1570,7 +1570,7 @@ foreach $file (@files){
 					}
 					else{$popLoop++;}
 				}
-				elsif ( $outpop < @{ $position_array[$pop-1] }  ){
+				elsif ($pop == 2 && $outpop < @{ $position_array[$pop-1] }  ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1599,7 +1599,7 @@ foreach $file (@files){
 				}
 			else{$popLoop++;}
 		}
-		elsif($popLoop == 2 ){
+		elsif($pop == 2 && $outpop < @{ $position_array[$pop-1] } ){
 			$outpop++;
 		}
 		else{$pop++;}
