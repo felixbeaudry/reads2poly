@@ -194,7 +194,6 @@ foreach $file (@files){
 	my $dnds_tot = 0;
 
 	my $alpha = 0;
-	my $outpop = 0;
 	my $kxy = 0;
 	my $knks = 0;
 
@@ -241,8 +240,10 @@ foreach $file (@files){
 
 	#start pop subloops
 	my $pop = 0;
-	#count for counting k before d on pop==1
+	#count for different loops within pops
 	my $popLoop = 0;
+	#count for number of inds in the other population
+	my $outpop = 0;
 	while ($pop<$number_of_pops){
 
 		#empty within stats with each pop loop
@@ -262,21 +263,24 @@ foreach $file (@files){
 			for ($y=0; $y < $number_of_individuals; $y++){
 				$in_position = $position_array[$pop][$y];
 				$data[$y]=$totdata[$in_position];
-
 			}
 		}
-		elsif ($popLoop == 1){  
+		elsif ($popLoop == 1){ 
+			#insert outgroup sequence as subset position 0
+			$data[0]=$totdata[$outgroup_position]; 
 			for ($y=0; $y < $number_of_individuals + 1; $y++){
 				$in_position = $position_array[$pop][$y];
-				#insert outgroup sequence as subset position 0
-				$data[0]=$totdata[$outgroup_position];
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == 2 && $popLoop < @{ $position_array[$pop+1] } ) {
-			#change outgroup sequences to pop2 sequences
+		elsif ($pop == 2 && $outpop < @{ $position_array[$pop-1] } ) {
+			#change outgroup sequences to pop1 sequences
 			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
+			for ($y=0; $y < $number_of_individuals + 1; $y++){
+				$in_position = $position_array[$pop][$y];
+				$data[$y+1]=$totdata[$in_position];
+			}
 		}	 
 		else{
 			print "Error in popLoops";
@@ -1451,7 +1455,7 @@ foreach $file (@files){
 
 				my $no_tot_codons = $no_syn_codons + $no_rep_codons;
 
-				if ( $popLoop == 0 ){
+				if ($popLoop == 0){
 
 					print "\npop: ",$pop,"\t";
 					print "Sample Size: $numseqs\tTotal Codons: $no_tot_codons\tTotal SNPs: $totsnps\ttheta: $thettot\tpi: $totpi\ttajima's D: $TajD_tot";
@@ -1560,13 +1564,13 @@ foreach $file (@files){
 						$alpha, "\t"
 					;
 					
-					if ($pop != 1){
+					if ($pop != 2){
 						$popLoop = 0;
 						$pop++;
 					}
 					else{$popLoop++;}
 				}
-				elsif ( $popLoop < @{ $position_array[$pop+1] } ){
+				elsif ( $outpop < @{ $position_array[$pop-1] }  ){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 					$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -1574,7 +1578,6 @@ foreach $file (@files){
 						$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
 					}
 					$outpop++;
-					$popLoop++;
 				}
 				else{$pop++;}
 		}
@@ -1590,12 +1593,15 @@ foreach $file (@files){
 		}
 		elsif ($popLoop == 1 ){
 			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
-			if ($pop != 1){
+			if ($pop != 2){
 					$popLoop = 0;
 					$pop++;
 				}
 			else{$popLoop++;}
-		} 
+		}
+		elsif($popLoop == 2 ){
+			$outpop++;
+		}
 		else{$pop++;}
 	} # loop for each pop
 
@@ -1642,7 +1648,7 @@ foreach $file (@files){
 
 	print "\n";
 	print OUT2 "\n";
-	$pop++;
+
 } # loop foreach file
 
 
