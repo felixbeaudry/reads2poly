@@ -98,12 +98,12 @@ print "\n";
 
 ####Output files###
 
-open (OUT, '>', ($word . $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT2, '>', ($word . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($word . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($word . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT5, '>', ($word. $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($word . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT, '>', ( $ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT2, '>', ( $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ( $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT4, '>', ( $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT5, '>', ( $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT_DIFF, '>', ( $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
@@ -217,7 +217,7 @@ foreach $file (@files){
 
 	if ($numseqs<4){
 		for ($x=0;$x < $number_of_pops;++$x){
-			print "\npop: ",$pop,"\tempty"; 
+			print "\npop: ",$x,"\tempty"; 
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<5;++$z){
