@@ -235,7 +235,7 @@ foreach $file (@files){
 	}	}	}	}
 
 	chomp $file;
-	print "\n", $file, "\tnumseqs: ", $numseqs - 1, "\toutgroup: ", $sequence_names[$outgroup_position];
+	print "\n", $file, "\tnumseqs: ", $numseqs , "\toutgroup: ", $sequence_names[$outgroup_position];
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
@@ -273,11 +273,10 @@ foreach $file (@files){
 				$data[$y+1]=$totdata[$in_position];
 			}
 		}
-		elsif ($pop == 1 & $popLoop < @{ $position_array[$pop+1] } ) {
+		elsif ($pop == 1 && $popLoop < @{ $position_array[$pop+1] } ) {
 			#change outgroup sequences to pop2 sequences
 			$out_position = $position_array[($pop+1)][$outpop];
 			$data[0]=$totdata[$out_position];
-			
 		}	 
 		else{
 			print "Error in popLoops";
@@ -1596,9 +1595,6 @@ foreach $file (@files){
 				}
 			else{$popLoop++;}
 		} # if less than two seqs
-
-	
-	
 	} # loop for each pop
 
 	my $Fst_syn = 0;
