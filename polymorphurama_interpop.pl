@@ -1610,7 +1610,7 @@ foreach $file (@files){
 	} # loop for each pop
 
 	#Interpopulation statistics
-
+	print "\nnumseqs1: ",@{ $position_array[1] },"\tnumseqs2: ",@{ $position_array[2] },"\n";
 	if( @{ $position_array[1] } > 0 && @{ $position_array[2] } > 0){
 
 		my $Fst_syn ;
