@@ -208,6 +208,13 @@ foreach $file (@files){
 	my $popLoop = 0;
 	#count for number of inds in the other population
 	my $outpop = 0;
+
+	if ($numseqs<4){
+		$pop=$number_of_pops;
+	}
+
+
+
 	while ($pop<$number_of_pops){
 		#empty within stats
 		my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
@@ -231,6 +238,8 @@ foreach $file (@files){
 		
 		#input individuals from correct population into set
 		$number_of_individuals = @{ $position_array[$pop] };
+
+
 
 		if ($popLoop == 0){             
 			for ($y=0; $y < $number_of_individuals; $y++){
@@ -1602,40 +1611,51 @@ foreach $file (@files){
 
 	#Interpopulation statistics
 
-	my $Fst_syn ;
-	my $Fst_rep ;
+	if( @{ $position_array[1] } > 0 && @{ $position_array[2] } > 0){
 
-	if ($pi_syn_within[0] != 0 ){
-		
-		$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
-		if($Fst_syn < 0){$Fst_syn = 0;}
-	}
-	else{$Fst_syn = "NA";}
+		my $Fst_syn ;
+		my $Fst_rep ;
 
-	if ($pi_rep_within[0] != 0 ){
-		
-		$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
-		if($Fst_rep < 0){$Fst_rep = 0;}
-	}
-	else{$Fst_rep = "NA";}
+		if ($pi_syn_within[0] != 0 ){
+			
+			$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
+			if($Fst_syn < 0){$Fst_syn = 0;}
+		}
+		else{$Fst_syn = "NA";}
 
-	my $dxy_syn_final;
-	my $dxy_rep_final;
-	my $dxy_tot_final;
-	my $dnds_tot_final;
+		if ($pi_rep_within[0] != 0 ){
+			
+			$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
+			if($Fst_rep < 0){$Fst_rep = 0;}
+		}
+		else{$Fst_rep = "NA";}
 
-	if (scalar(@{ $position_array[$pop-1] }) != 0){
-		$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
-		$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
-		$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
-		$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
+		my $dxy_syn_final;
+		my $dxy_rep_final;
+		my $dxy_tot_final;
+		my $dnds_tot_final;
 
+		if (scalar(@{ $position_array[$pop-1] }) != 0){
+			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
+			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
+			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
+			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
+
+		}
+		else{
+			$dxy_rep_final = "NA";
+			$dxy_syn_final = "NA";
+			$dxy_tot_final = "NA";
+			$dnds_tot_final = "NA";
+		}
 	}
 	else{
 		$dxy_rep_final = "NA";
 		$dxy_syn_final = "NA";
 		$dxy_tot_final = "NA";
 		$dnds_tot_final = "NA";
+		$Fst_syn = "NA";
+		$Fst_rep = "NA";
 	}
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final,"\n";
