@@ -1617,11 +1617,16 @@ foreach $file (@files){
 	} # loop for each pop
 
 	#Interpopulation statistics
-	print "\nnumseqs1: ",scalar(@{$position_array[1]}),"\tnumseqs2: ",scalar(@{$position_array[2]}),"\n";
+	my $Fst_syn ;
+	my $Fst_rep ;
+	my $dxy_syn_final;
+	my $dxy_rep_final;
+	my $dxy_tot_final;
+	my $dnds_tot_final;
+
 	if( scalar(@{$position_array[1]}) > 0 && scalar(@{$position_array[2]}) > 0){
 
-		my $Fst_syn ;
-		my $Fst_rep ;
+
 
 		if ($pi_syn_within[0] != 0 ){
 			
@@ -1637,10 +1642,7 @@ foreach $file (@files){
 		}
 		else{$Fst_rep = "NA";}
 
-		my $dxy_syn_final;
-		my $dxy_rep_final;
-		my $dxy_tot_final;
-		my $dnds_tot_final;
+
 
 		if (scalar(@{ $position_array[$pop-1] }) != 0){
 			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
