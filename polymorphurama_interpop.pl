@@ -1,6 +1,6 @@
 ##!perl 
 ##edited by Felix Beaudry, May 9 2018
-## run with: perl polymorphurama_interpop.pl file_extension directory TX_NC outgroup _Xchrom
+## run with: perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i directory/ -p pop_file -S set -o outgroup -c chrom
 
 use BeginPerlBioinfoB_1;
 use Text::CSV;
@@ -146,11 +146,6 @@ print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop
 
 @file=&read_dir($d2,$pattern);
 
-# array of arrays from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
-
-my @poly_freq_Syn_ALL = ();	  
-my @poly_freq_Rep_ALL = ();         
-
 foreach $file (@files){
 
 	#reset file 
@@ -159,7 +154,6 @@ foreach $file (@files){
 	my @file_data=();
 	my @data = ();
 	my @sequence_names = ();
-
 
 	#fill locus memory
 	@file_data = get_file_data ($dirfile);
@@ -229,10 +223,13 @@ foreach $file (@files){
 		$pop=$number_of_pops;
 	}
 
-
-
 	while ($pop<$number_of_pops){
 		#empty within stats
+
+		# array of arrays from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
+		my @poly_freq_Syn_ALL = ();	  
+		my @poly_freq_Rep_ALL = ();         
+
 		my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 								  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
 		my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
@@ -1296,7 +1293,6 @@ foreach $file (@files){
 
 				$pi_syn_total=$pi_rep_total=0;
 
-
 				for ($ind=1; $ind<$numseqs-1; $ind++){
 					$pi_syn[$ind]=(2*($ind/($numseqs-1))*(1-($ind/($numseqs-1))))*$poly_freq_Syn[$ind];
 					$pi_rep[$ind]=(2*($ind/($numseqs-1))*(1-($ind/($numseqs-1))))*$poly_freq_Rep[$ind];
@@ -1310,7 +1306,6 @@ foreach $file (@files){
 				if ($no_syn_codons>0){
 					$pi_syn_site=$pi_syn_total/$no_syn_codons;
 					$pi_rep_site=$pi_rep_total/$no_rep_codons;	
-
 
 					#$pi_JC_syn= -0.75*log(1-(4/3)*$pi_syn_site);
 					#$pi_JC_rep= -0.75*log(1-(4/3)*$pi_rep_site);
@@ -1590,8 +1585,6 @@ foreach $file (@files){
 
 				else{$pop++;}
 		}
-
-
 
 		# if less than two seqs
 
