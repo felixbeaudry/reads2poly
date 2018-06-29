@@ -140,7 +140,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop0_dxy_NA\n";
+print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop0_dxy_NA\tpop0_da_NA\n";
 
 #####Start Calculating Statistics####
 
@@ -1560,10 +1560,6 @@ foreach $file (@files){
 					}
 					else{$popLoop++;}
 				}
-
-
-
-
 				elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1]}) -1){
 					$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 					$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
@@ -1624,13 +1620,11 @@ foreach $file (@files){
 	my $dxy_rep_final;
 	my $dxy_tot_final;
 	my $dnds_tot_final;
+	my $da;
 
 	if( scalar(@{$position_array[1]}) > 0 && scalar(@{$position_array[2]}) > 0){
 
-
-
 		if ($pi_syn_within[0] != 0 ){
-			
 			$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
 			if($Fst_syn < 0){$Fst_syn = 0;}
 		}
@@ -1643,13 +1637,12 @@ foreach $file (@files){
 		}
 		else{$Fst_rep = "NA";}
 
-
-
 		if (scalar(@{ $position_array[$pop-1] }) != 0){
 			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
 			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
+			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2));
 
 		}
 		else{
@@ -1657,7 +1650,11 @@ foreach $file (@files){
 			$dxy_syn_final = "NA";
 			$dxy_tot_final = "NA";
 			$dnds_tot_final = "NA";
+			$da = "NA";
 		}
+
+
+
 	}
 	else{
 		$dxy_rep_final = "NA";
@@ -1666,11 +1663,12 @@ foreach $file (@files){
 		$dnds_tot_final = "NA";
 		$Fst_syn = "NA";
 		$Fst_rep = "NA";
+		$da = "NA";
 	}
 
 	print "\nBetween populations 1 & 2\tFst: ",$Fst_syn,"\tDxy: ",$dxy_tot_final,"\n";
 	print OUT2 "\n";
-	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\n" ;
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\t", $da, "\n" ;
 
 
 } # loop foreach file
