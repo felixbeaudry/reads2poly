@@ -1642,7 +1642,7 @@ foreach $file (@files){
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
 			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
-			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2));
+			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2);
 
 		}
 		else{

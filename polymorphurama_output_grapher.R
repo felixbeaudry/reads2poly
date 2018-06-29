@@ -249,7 +249,6 @@ all_data_var<- data.frame(rbind(
   ,stats_var(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
 ), stringsAsFactors = FALSE)
 
-
 ####pi####
 
 all_data_pi <- all_data[all_data$var == "pi" & all_data$cod == "syn"  ,]
@@ -383,7 +382,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
 
 all_data_neo_fst <- all_data_neo[all_data_neo$var == "Fst" & all_data_neo$cod == "syn"  ,]
 
-fst_neo_plot <-
+#fst_neo_plot <-
 ggplot(all_data_neo_fst, aes(x=chrom, y=value, fill=chrom)) +
   guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
