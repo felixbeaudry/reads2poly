@@ -720,9 +720,12 @@ mk$outgroup[mk$outgroup == "rothschildianus"] <- "R.rothschildianus"
 #  theme(strip.background =element_rect(fill="white")) + coord_trans(y = "log2") +
 #  geom_abline(intercept = 1,slope=0)
 
+mk$Chromosome = factor(mk$chrom, levels=c('A','X','NeoX','Hemi','Y'))
+
+
 #adapt_plot <-
 
-ggplot(mk, aes(x=outgroup, y=value, color=chrom
+ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
                      # , group=1
 )) + #guides(fill = FALSE) +
   geom_point(position=position_dodge(.9)) +
@@ -732,8 +735,8 @@ ggplot(mk, aes(x=outgroup, y=value, color=chrom
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 18) + labs(x="Outgroup",y="Rate of Adaptation") +
-  scale_x_discrete(limits=c("R.hastatulus","R.rothschildianus","R.bucephalophorus")) +
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Adaptation") +
+  scale_x_discrete(limits=c("R.rothschildianus","R.bucephalophorus")) +
   theme(axis.text.x = element_text(face = "italic")) + coord_trans(y = "log2")
 
 

@@ -209,7 +209,7 @@ foreach $file (@files){
 	#count for number of inds in the other population
 	my $outpop = 0;
 
-	if ($numseqs<4){
+	if ($numseqs<2){
 		for ($x=0;$x < $number_of_pops;++$x){
 			print "\npop: ",$x,"\tempty"; 
 				print OUT2 "NA\t";
