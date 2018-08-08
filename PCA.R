@@ -46,7 +46,7 @@ GBSpca <- PCA(GBSs[,-(1:4)], graph = FALSE)
  
  GBSeig <- GBSpca$eig
  
-XYXYYPCAplot <- 
+#XYXYYPCAplot <- 
    ggplot(GBScoordsN,aes(x=-(Dim.1), y=Dim.2, label=state,color=state)) + geom_text(size=10) + 
    theme_bw(base_size = 18) + guides(color = FALSE) +
    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
@@ -79,7 +79,7 @@ ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(siz
  
  GBSXYYeig <- GBSXYYpca$eig
  
- XYYPCAplot <- 
+ #XYYPCAplot <- 
    ggplot(GBSXYYcoordsN,aes(x=Dim.2, y=Dim.1, label=state,color=state)) + geom_text(size=10) + 
  theme_bw(base_size = 18) + guides(color = FALSE) +
    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
@@ -100,6 +100,13 @@ ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(siz
    ggplot(locDimXYY,aes(x=Longitude,y=Dim.2)) + geom_point() + geom_smooth(method="lm",se = TRUE,size=1)
    XYY_long_2_model <- lm(Longitude ~ Dim.2 , data=locDimXYY)
    summary(XYY_long_2_model)
+   
+   
+  noAL <- locDimXYY[locDimXYY$state != "AL",]
+  ggplot(noAL,aes(x=Latitude,y=Dim.1)) + geom_point() + geom_smooth(method="lm",se = TRUE,size=1)
+  XYY_lat_1_model_noAL <- lm(Latitude ~ Dim.1 , data=noAL)
+  summary(XYY_lat_1_model_noAL)
+  
    
 ####XY####
  GBSXY <- data.frame(c(GBSIDXYY[c(30:32,46:52,54:57,76:92)],GBS[c(30:32,46:52,54:57,76:92),-1]), row.names=1) #XY removed
