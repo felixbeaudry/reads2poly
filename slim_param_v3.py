@@ -14,7 +14,7 @@ def arguments():
         return(args)
 
 args = arguments()
-se = float(args.sel) / 1000 
+se = float(args.sel) / 100 
 pr = args.pro
 
 print('initialize()')
