@@ -10,12 +10,20 @@ def arguments():
         parser  = argparse.ArgumentParser(description="script for script slim scripts")
         parser.add_argument("-s","--sel",help="selection coefficient",required=True)
         parser.add_argument("-p","--pro",help="proportion of sites under selection",required=True)
+        parser.add_argument("-t","--typ",help="direction of selection",required=True)
         args = parser.parse_args()
         return(args)
 
 args = arguments()
-se = str(float(args.sel) / 100 )
+selec = args.sel
 pr = args.pro
+di = args.typ
+
+
+if di == "n":
+	se = str(-1 * float(args.sel) / 100 )
+else :
+	se = str(float(args.sel) / 100 )
 
 print('initialize()')
 print('{')
