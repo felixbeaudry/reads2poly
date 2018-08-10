@@ -1,27 +1,33 @@
 
 
-use strict;
 
-my $count = 0;
-my $sum = 0;
+my $count;
+my $sum;
 my $first;
 my $last;
 
 open(BLOC, "$ARGV[0]") or die $!;
 while(<BLOC>) {
 	        my $line = <BLOC>;
+	        $line = sprintf("%.3f", $line);
 	        $sum = $sum + $line;
+	        print $line,"\n";
+	        print $sum,"\n";
 	        $count = $count + 1;
 	    }
 close(BLOC);
+print $sum,"\n";
+print $count,"\n";
+
 my $mean = $sum / $count;
 my $lastCount = $count;
-my $total_dev = 0;
-my $count = 0;
+my $total_dev;
+my $count;
 
 open(BLOC, "$ARGV[0]") or die $!;
 while(<BLOC>) {
 	        my $line = <BLOC>;
+	        $line = sprintf("%.3f", $line);
 	       	if ($count == 0){
 	        	$first = $line;
 	        }
