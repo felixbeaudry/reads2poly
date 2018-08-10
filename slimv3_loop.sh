@@ -10,7 +10,7 @@ do
 			do
 			echo "${typ} ${sel} ${pro} ${sim}"
 			/ohta/apps/SLiM/bin/slim ${typ}_${sel}_${pro}.slim | awk '$1 ~ "ratio"{print $2}' >${typ}_${sel}_${pro}_${sim}.txt 
-			python /ohta/felix.beaudry/scripts/reads2poly/slim_stat.py ${typ}_${sel}_${pro}_${sim}.txt >>${typ}_${sel}_${pro}.txt
+			python /ohta/felix.beaudry/scripts/reads2poly/slim_stat.py -i ${typ}_${sel}_${pro}_${sim}.txt >>${typ}_${sel}_${pro}.txt
 			#rm ${typ}_${sel}_${pro}_${sim}.txt
 			done
 		done
