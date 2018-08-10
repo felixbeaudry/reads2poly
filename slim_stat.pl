@@ -1,7 +1,4 @@
-# -*- coding: utf-8 -*-
-#python
-##script for script slim scripts
-#Felix Beaudry June 22 2018
+
 
 use strict;
 
