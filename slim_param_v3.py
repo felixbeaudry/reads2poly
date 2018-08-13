@@ -15,15 +15,16 @@ def arguments():
         return(args)
 
 args = arguments()
-selec = args.sel
-pr = args.pro
+
 di = args.typ
 
 
 if di == "n":
-	se = str(-1 * float(args.sel) / 100 )
+	se = str(-1 * ( 10  ** (float(args.sel) / 100) ) )
 else :
-	se = str(float(args.sel) / 100 )
+	se = str(1 * ( 10  ** (float(args.sel) / 100) ) )
+
+pr = str( (10  ** (float(args.pro) / 10) ) /10 )
 
 print('initialize()')
 print('{')
