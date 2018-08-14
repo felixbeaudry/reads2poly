@@ -109,13 +109,9 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
     cbind(inter_summary, "chrom" = chrom)
   }
- # if(popStr=='pop'){
- #  filename_wIn <- paste(set,"_",outgroup,"_summarystats_",chrom,"chrom.txt",sep="")
- #   filename_btw <- paste(set,"_",outgroup,"_interpop_",chrom,"chrom.txt",sep="")
- # }else{
-    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,"chrom.txt",sep="")
-    filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,"chrom.txt",sep="")
-  #}
+
+    filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+    filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,".txt",sep="")
   in_read <- fread(filename_wIn)
   #in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
@@ -161,8 +157,8 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,popStr='pop'){
     
     cbind(inter_comp, "chrom" = chrom)
   }
-  filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,"chrom.txt",sep="")
-  filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,"chrom.txt",sep="")
+  filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+  filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,".txt",sep="")
   
   in_read <- fread(filename_wIn)
   #in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
@@ -197,11 +193,7 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
 
 ####import####
 
-#outgroup <- c("rothschildianus","bucephalophorus")
-#set <- c("rna","rna_felix","rna_josh","rna_josh_males","rna_josh_fem")
-#chrom <- c("auto","hemi","X","Y")
 
-#pop <- c("hastatulus","Y1","Y1Y2")
 pop <- c("R.hastatulus","XY","XYY")
 FLNC <- c("XYY","FL","NC")
 
@@ -209,48 +201,19 @@ FLNC <- c("XYY","FL","NC")
 #DML <- DML$V1 
 
 all_data <- data.frame(rbind(
-stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop,popStr="pop")
-,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop,popStr="pop")
-,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
-#,stats_table(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
-#,stats_table(outgroup="rothschildianus",set="rna",chrom="H",pops=pop,popStr="pop")
+
+stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
+,stats_table(outgroup="rothschildianus",set="rna",chrom="H",pops=pop,popStr="pop")
+
 ), stringsAsFactors = FALSE)
 
-levels(all_data$chrom) = c("X","Y","A")
-
-all_data_neo <- data.frame(rbind(
-  stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="rna",chrom="H",pops=pop,popStr="pop")
-), stringsAsFactors = FALSE)
-
-#levels(all_data_neo$chrom) = c("X","Y","A", "NeoX")
-levels(all_data_neo$chrom) = c("X","Y","A", "NeoX","Hemi")
-
-all_data_flnc <- data.frame(rbind(
-  stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
-  ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=FLNC,popStr="FLNC")
-  ,stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=FLNC,popStr="FLNC")
-  ,stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=FLNC,popStr="FLNC")
-), stringsAsFactors = FALSE)
-
-
-#FLNC_stats <- stats_table(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=FLNC,popStr="FLNC")
+#levels(all_data$chrom) = c("X","Y","A")
 
 all_data_var<- data.frame(rbind(
   stats_var(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop,popStr="pop")
   ,stats_var(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop,popStr="pop")
   ,stats_var(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
   ,stats_var(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
-), stringsAsFactors = FALSE)
-
-FLNC_data_var<- data.frame(rbind(
-  stats_var(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=FLNC,popStr="FLNC")
 ), stringsAsFactors = FALSE)
 
 
@@ -261,7 +224,7 @@ all_data_neo[all_data_neo$var == "sites" & all_data_neo$cod == "syn"
 
 ####pi####
 
-all_data_pi <- all_data_neo[all_data_neo$var == "pi" & all_data_neo$cod == "syn"  ,]
+all_data_pi <- all_data[all_data$var == "pi" & all_data$cod == "syn"  ,]
 #all_data_pi <- all_data_pi[c(1:9),]
 
 title_pisyn <- expression(paste(pi, ""[syn]))

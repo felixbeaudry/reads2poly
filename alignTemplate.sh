@@ -10,7 +10,7 @@ do
 
 
 # this is the best practices recommendation for genomic alignment. Each of the two specialized in a different way to align sequences (one is fast, the second is accurate), running them in sequence saves time but also allows for accuracy
-/ohta/apps/bwa-0.7.15/bwa mem -t 10 -M assembly.fasta _R1.fastq _R2.fastq | samtools view -Sb -o _bwa.bam  ##-M Mark shorter split hits as secondary
+/ohta/apps/bwa-0.7.15/bwa mem -t 10 -M assembly.fasta ${ind}_R1.fastq ${ind}_R2.fastq | samtools view -S -b -o ${ind}_bwa.bam - ##-M Mark shorter split hits as secondary
 #useful for divergent reads 
 python /ohta/apps/stampy-1.0.30/stampy.py -g -h -M _bwa.bam -o _stampy.sam --bamkeepgoodreads --bwamark -t 10
 
@@ -20,7 +20,7 @@ python /ohta/apps/stampy-1.0.30/stampy.py -g -h -M _bwa.bam -o _stampy.sam --bam
 #add information about the read group (eg what, where, when, by whom)
 java -jar /ohta/apps/picard/build/libs/picard.jar AddOrReplaceReadGroups I=.sam O=.bam  RGLB=  RGPU= RGSM= RGPL=Illumina SO=coordinate # TMP_DIR= # LB library (eg project name) PU platform (eg sequencing location) SM sample (eg individual)
 #mark reads that look suspiciously similar
-java -jar /ohta/apps/picard/build/libs/picard.jar MarkDuplicates I=.bam I=.bam O=.bam M=.metrics CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT  VALIDATION_STRINGENCY=SILENT TMP_DIR=/ohta/felix.beaudry/tmp/ MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
+java -jar /ohta/apps/picard/build/libs/picard.jar MarkDuplicates I=.bam I=.bam O=.bam M=.metrics CREATE_INDEX=true VALIDATION_STRINGENCY=SILENT TMP_DIR=/ohta/felix.beaudry/tmp/ MAX_FILE_HANDLES_FOR_READ_ENDS_MAP=1000
 
 # these steps give you the number of reads aligned for each locus; the first makes an index of file, the second summarizes it in a txt file
 samtools index .bam 
@@ -31,7 +31,7 @@ java -jar /ohta/apps/GenomeAnalysisTK.jar -T SplitNCigarReads -R .fasta -I .bam 
 
 
 # for individuals, use this. this makes a file calling all the SNPs relative to the reference 
-java -Djava.io.tmpdir=tmp -jar /ohta/apps/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa  -I ${ind}_bwa_add.bam -o ${ind}.uni.vcf  --output_mode EMIT_ALL_SITES
+java -Djava.io.tmpdir=tmp -jar /ohta/apps/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa  -I ${ind}_bwa_add.bam -o ${ind}.uni.vcf  --output_mode EMIT_ALL_SITES -rf BadCigar -nt 16 -glm BOTH
 
 done
 
