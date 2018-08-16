@@ -1478,7 +1478,7 @@ foreach $file (@files){
 					$pi_syn_within[$pop] = $pi_syn_site;
 					$pi_rep_within[$pop] = $pi_rep_site;
 
-					if ($third_pos_count>0){
+					if ($third_pos_count>0 & ($FOP+$FNOP)>0){
 						$GC_three=$GC_three/$third_pos_count;
 						$FOP = $FOP/($FOP+$FNOP);
 					}
