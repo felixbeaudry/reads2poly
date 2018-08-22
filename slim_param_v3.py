@@ -7,38 +7,45 @@ import fileinput, argparse
 import sys
 
 def arguments():
-        parser  = argparse.ArgumentParser(description="script for script slim scripts")
+        parser  = argparse.ArgumentParser(description="script for writting loops of slim scripts")
         parser.add_argument("-s","--sel",help="selection coefficient",required=True)
         parser.add_argument("-p","--pro",help="proportion of sites under selection",required=True)
-        parser.add_argument("-t","--typ",help="direction of selection",required=True)
+        parser.add_argument("-t","--typ",help="is selection positive, y/n",required=True)
+        parser.add_argument("-l","--log",help="is the log of the selection coefficient positive, y/n")
         args = parser.parse_args()
         return(args)
 
 args = arguments()
 
 di = args.typ
+lo = args.log
 
-
-if di == "n":
-	se = str(-1 * ( 10  ** (float(args.sel) / 100) ) )
-else :
-	se = str(1 * ( 10  ** (float(args.sel) / 100) ) )
+if lo == "n":
+	if di == "n":
+		se = str(-1 * ( 10  ** (-1 * (float(args.sel) / 100) ) ) )
+	else :
+		se = str(1 * ( 10  ** (-1 * (float(args.sel) / 100) ) ) )
+else : 
+	if di == "n":
+		se = str(-1 * ( 10  ** (float(args.sel) / 100) ) )
+	else :
+		se = str(1 * ( 10  ** (float(args.sel) / 100) ) )
 
 pr = str( (10  ** (float(args.pro) / 10) ) /10 )
 
 print('initialize()')
 print('{')
-print('initializeMutationRate(1.5e-8);')
+print('initializeMutationRate(1e-5);')
 print('initializeMutationType("m1", 0.5, "f", 0.0);     // PAR')
 print('initializeMutationType("m2", 0.5, "f", 0.0);     // non-PAR')
 print('initializeMutationType("m3", 1.0, "f", 0.0);     // Y marker')
 print('initializeMutationType("m4", 0.5, "f", '+se+');     // selection')
 print('initializeGenomicElementType("g1", m1, 1.0);     // PAR: m1 only')
 print('initializeGenomicElementType("g2", c(m2,m4), c('+pr+','+str((float(1)-float(pr)))+'));     // non-PAR: m2 only')
-print('initializeGenomicElement(g1, 0, 2699999);        // PAR')
-print('initializeGenomicElement(g2, 2700000, 5999999);  // non-PAR')
+print('initializeGenomicElement(g1, 0, 9);        // PAR')
+print('initializeGenomicElement(g2, 10, 5999999);  // non-PAR')
 print('initializeSex("A");')
-print('initializeRecombinationRate(c(1e-8, 0), c(2699999, 5999999), sex="M");')
+print('initializeRecombinationRate(c(1e-8, 0), c(10, 5999999), sex="M");')
 print('initializeRecombinationRate(1e-8, sex="F");')
 print('}')
 print('1 late() {')
