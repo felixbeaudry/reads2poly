@@ -115,7 +115,7 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
   in_read <- fread(filename_wIn)
   #in_read$pop0_pi_syn_w <- in_read$pop0_pi_syn * in_read$pop0_sites_syn
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= seqMax  & in_read$pop0_sites_syn >= 100]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= seqMax  & in_read$pop0_sites_syn >= 50]
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -192,7 +192,7 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
 
 
 ####import####
-
+TM_none_summarystats_pop_A
 
 pop <- c("R.hastatulus","XY","XYY")
 FLNC <- c("XYY","FL","NC")
@@ -200,12 +200,12 @@ FLNC <- c("XYY","FL","NC")
 #DML <- fread('DemModelLoci.txt',header=FALSE)
 #DML <- DML$V1 
 
-all_data <- data.frame(rbind(
+all_data <- data.frame(
+#rbind(
 
-stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
-,stats_table(outgroup="rothschildianus",set="rna",chrom="H",pops=pop,popStr="pop")
-
-), stringsAsFactors = FALSE)
+stats_table(outgroup="rothschildianus",set="TM",chrom="A",pops=pop,popStr="pop")
+#))
+, stringsAsFactors = FALSE)
 
 #levels(all_data$chrom) = c("X","Y","A")
 
