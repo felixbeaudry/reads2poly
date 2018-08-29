@@ -7,8 +7,8 @@
 ind_list=$1
 loc_list=$2
 outDir=$3
-outgroup=$4
-cutoff=$5
+#outgroup=$4
+cutoff=$4
 
 echo "Making $ind_list $loc_list fastas"
 
