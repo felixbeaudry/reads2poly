@@ -3,7 +3,7 @@
 #Felix Beaudry 8 May 2018
 
 import fileinput, argparse
-from numpy import array, zeros
+import sys
 
 def arguments():
         parser  = argparse.ArgumentParser(description="script to output only useful fasta sequences")
@@ -14,44 +14,51 @@ def arguments():
 
 args = arguments()
 inpath = args.input
-perc = (1- ( float(args.cutoff) / 100))
+minC = args.cutoff
+perc = (1- ( float(minC) / 100))
 
-infile = open(inpath,'r')
+names = [None] * 2
+alignment = [None] * 2
+Ns = [None] * 2
+length = [None] * 2
 
-
-sequence = array(
-	[
-	zeros(5),
-	zeros(5)
-	])
-alignment = ['','']
 x=-1
-for line in infile:
-	if ">" in line :
-		x += 1
 
-		values = line.split('_')
-		ind = str(values[0])
-		for w in range(1,len(values)-1):	
-			ind = ind + "_" + str(values[w])
-		sequence[x][0] = values[(len(values)-1)]
-	else:
-	 	sequence[x][1] = line.count('N') + sequence[x][1] 
-	 	sequence[x][2] = line.count('-') + sequence[x][2] 
-	 	sequence[x][3] = len(line) + sequence[x][3] 
-	 	alignment[x] = alignment[x] + line
+def nonblank_lines(f):
+    for l in f:
+        line = l.rstrip()
+        if line:
+            yield line
 
-x=int(0)
+with open(inpath) as infile:
+	for line in nonblank_lines(infile):
+		if ">" in line :
+			x += 1
+			names[x] = str(line)
+		else:
+		 	if alignment[x] == None:
+		 		alignment[x] =  str(line) 
+		 		Ns[x] = float(line.count('N'))
+		 		length[x] = float(len(line)) 
+		 	else:
+		 		alignment[x] =  str(alignment[x]) + str(line) 
+		 		Ns[x] = float(line.count('N')) + float(Ns[x])
+		 		length[x] = float(len(line)) + float(length[x])
 
 
-for x in range(0, 2):
-	#print perc
-	#print ((sequence[x][1] + sequence[x][2]) /sequence[x][3])
-	if ((sequence[x][3] >0) & (( (sequence[x][1] + sequence[x][2]) /sequence[x][3]) < perc)) :
-		print str(ind)+"_"+str(int(sequence[x][0]))
-		print alignment[x]
-		x += 1
-	else:
-	 	x += 1
+for z in 0,1:
+	if (length[z] > 0) :
+		if( (Ns[z] / length[z]) < perc):
+			print names[z]
+			#sys.stdout.write('\n')
+			curr = alignment[z]
+			for i in range(0, len(curr), 1):
+				sys.stdout.write(curr[i])
+				if ((i+1)%60 == 0 and i != 0):
+					sys.stdout.write('\n')
+	sys.stdout.write('\n')
+				
+			
+
 
 
