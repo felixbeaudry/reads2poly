@@ -192,40 +192,31 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
 
 
 ####import####
-TM_none_summarystats_pop_A
 
 pop <- c("R.hastatulus","XY","XYY")
 FLNC <- c("XYY","FL","NC")
 
-#DML <- fread('DemModelLoci.txt',header=FALSE)
-#DML <- DML$V1 
-
 all_data <- data.frame(
-#rbind(
-
-stats_table(outgroup="rothschildianus",set="TM",chrom="A",pops=pop,popStr="pop")
-#))
+  rbind(
+    stats_table(outgroup="rothschildianus",set="fem",chrom="A",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="fem",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="fem",chrom="N",pops=pop,popStr="pop")
+  )
 , stringsAsFactors = FALSE)
 
-#levels(all_data$chrom) = c("X","Y","A")
-
-all_data_var<- data.frame(rbind(
-  stats_var(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop,popStr="pop")
-  ,stats_var(outgroup="rothschildianus",set="XYphased",chrom="Y",pops=pop,popStr="pop")
-  ,stats_var(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
-  ,stats_var(outgroup="rothschildianus",set="rnajoshfem",chrom="N",pops=pop,popStr="pop")
-), stringsAsFactors = FALSE)
-
-
-####synsite#####
-all_data_neo[all_data_neo$var == "sites" & all_data_neo$cod == "syn" 
-             & all_data_neo$pop == "R.hastatulus" & all_data_neo$chrom == "A", ]
+all_data_var <- data.frame(
+  rbind(
+    stats_var(outgroup="rothschildianus",set="josh",chrom="A",pops=pop,popStr="pop"),
+    stats_var(outgroup="rothschildianus",set="josh",chrom="XY",pops=pop,popStr="pop"),
+    stats_var(outgroup="rothschildianus",set="josh",chrom="N",pops=pop,popStr="pop"),
+    stats_var(outgroup="rothschildianus",set="josh",chrom="H",pops=pop,popStr="pop")
+  )
+, stringsAsFactors = FALSE)
 
 
 ####pi####
 
 all_data_pi <- all_data[all_data$var == "pi" & all_data$cod == "syn"  ,]
-#all_data_pi <- all_data_pi[c(1:9),]
 
 title_pisyn <- expression(paste(pi, ""[syn]))
 
@@ -237,7 +228,7 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(axis.text.x = element_text(angle = 40, hjust = 1)) +
   facet_grid(. ~ pop, scales = "free") +
-  scale_x_discrete(limits=c("A","X","Hemi","NeoX","Y")) +
+  scale_x_discrete(limits=c("A","XY","H","N")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
@@ -246,61 +237,10 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
     '#8B4BD8'
   ))
 
-ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
-                ms_stat(chrom="A",var="pi_tot",sitemean=2.50881),
-               cbind(all_data_pi[all_data_pi$pop == "R.hastatulus",-c(2,3)],state="obs")
-)
-
-#ms_pi <- ms_pi[-c(5,8,9,10),]
-#ms_pi <- ms_pi[c(1,2,3,5),]
-
-#pi_plot_oe <-
-ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
-  #scale_x_discrete(limits=c("A","H","X","Y")) 
-  scale_x_discrete(limits=c("A","X")) 
-
-all_data_flnc_pi <- all_data_flnc[all_data_flnc$var == "pi" & all_data_flnc$cod == "syn" & all_data_flnc$pop != "R.hastatulus" ,]
-
-all_data_flnc_pi$pop_f = factor(all_data_flnc_pi$pop, levels=c('R.hastatulus','XY','XYY','FL','NC'))
-
-ggplot(all_data_flnc_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
-  facet_grid(. ~ pop_f, scales = "free") +
-  scale_x_discrete(limits=c("A","X","N","Y")) +
-  scale_fill_manual(values=c( 
-    '#00ADEF', #Blue
-    '#FFF100',  #yellow
-    '#00A550', #green
-    '#1B75BB' #purple-y
-  ))
-
-flnc_pi_y <- all_data_flnc_pi[all_data_flnc_pi$chrom == "Y" & all_data_flnc_pi$pop != "XYY",]
-
-ggplot(flnc_pi_y,aes(x=pop,y=value,fill=pop)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn)
-
-t.test(
-  FLNC_data_var$value[FLNC_data_var$chrom == "Y" & FLNC_data_var$var == "pi" & FLNC_data_var$cod == "syn" & FLNC_data_var$pop == "FL"  ] ,  
-  FLNC_data_var$value[FLNC_data_var$chrom == "Y" & FLNC_data_var$var == "pi" & FLNC_data_var$cod == "syn" & FLNC_data_var$pop == "NC"  ])
-
 
 ####TajD####
 
-all_data_tajD <- all_data_neo[all_data_neo$var == "tajD" & all_data_neo$cod == "syn"  ,]
+all_data_tajD <- all_data[all_data$var == "tajD" & all_data$cod == "syn"  ,]
 
 ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) + 
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -311,9 +251,9 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) 
   #theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
   facet_grid(. ~ pop, scales = "free") +
   theme(axis.text.x = element_text(angle = 40, hjust = 1)) +
-  scale_x_discrete(limits=c("A","Hemi","NeoX","X","Y")) +
+  scale_x_discrete(limits=c("A","H","N","XY")) +
   theme(strip.background =element_rect(fill="white")) +
-  theme(strip.text = element_text(face = "italic")) +
+  theme(strip.text = element_text(face = "italic")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
@@ -326,9 +266,8 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) 
 ####FST####
 
 all_data_fst <- all_data[all_data$var == "Fst" & all_data$cod == "syn"  ,]
-#all_data_fst <- all_data_fst[c(1,2,3),]
 
-fst_plot <-
+#fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -337,7 +276,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","Y")) +
+  scale_x_discrete(limits=c("A","XY","N")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
@@ -350,91 +289,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   annotate(geom="text", x = "X", y = 0.155, label = "b", parse = TRUE, size=10) +
   annotate(geom="text", x = "Y", y = 0.51, label = "c", parse = TRUE, size=10) 
 
-all_data_neo_fst <- all_data_neo[all_data_neo$var == "Fst" & all_data_neo$cod == "syn"  ,]
 
-#fst_neo_plot <-
-ggplot(all_data_neo_fst, aes(x=chrom, y=value, fill=chrom)) +
-  guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","NeoX","Y")) +
-  scale_fill_manual(values=c( 
-    '#00ADEF', #Blue
-    '#FFF100',  #yellow
-    '#00A550', #green
-    '#1B75BB' #purple-y
-   # '#8B4BD8'
-  )) +
-
-  annotate(geom="text", x = "A", y = 0.12, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "X", y = 0.155, label = "b", parse = TRUE, size=10) +
-  annotate(geom="text", x = "NeoX", y = 0.615, label = "c", parse = TRUE, size=10) +
-annotate(geom="text", x = "Y", y = 0.52, label = "c", parse = TRUE, size=10) 
-
-
-ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
-                ms_stat(chrom="A",var="fst"),
-                cbind(all_data_fst[c(1,2,3),-c(2,3)],"state"="obs")
-)
-
-fst_plot_oe <- 
-  ggplot(ms_fst, aes(x=chrom, y=value, fill=state)) +
- guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  #scale_x_discrete(limits=c("A","H","X","Y")) 
-  scale_x_discrete(limits=c("A","X")) 
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ])
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "N" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
- 
-   #Nem = ¼(fst - 1)  
-   (1/0.1165208 - 1)/4
-  
-  fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
-  fst_anova <- aov(value ~ chrom, data=fst_data_var)
-  summary(fst_anova) 
-  
-  
-  all_data_flnc_fst <- all_data_flnc[all_data_flnc$var == "Fst" & all_data_flnc$chrom != "N" ,]
-
-fst_xyysub_plot <-
-  ggplot(all_data_flnc_fst, aes(x=chrom, y=value, fill=chrom)) +
-    guides(fill = FALSE) +
-    geom_bar(position=position_dodge(), stat="identity" ) +
-    geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                  width=.2,                    # Width of the error bars
-                  position=position_dodge(.9)) + 
-    theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
-    #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-    scale_x_discrete(limits=c("A","X","Y")) +
-    scale_fill_manual(values=c( 
-      '#00ADEF', #Blue
-      '#FFF100',  #yellow
-      '#00A550' #green
-     # '#1B75BB' #purple-y
-    )) +
-    facet_grid(. ~ pop, scales = "free") +
-    theme(strip.text = element_text(face = "italic"))
-
-    
 ####dxy####
 
 dxy <- all_data[all_data$var == "dxy" ,]
@@ -448,7 +303,7 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","Y")) +
+  scale_x_discrete(limits=c("A","XY","N","H")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
@@ -461,125 +316,11 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   
 multiplot(fst_plot,dxy_plot,cols=2)
 
-dxy_neo <- all_data_neo[all_data_neo$var == "dxy" ,]
-
-dxy_neo_plot <- 
-  ggplot(dxy_neo, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","NeoX","Y")) +
-  scale_fill_manual(values=c( 
-    '#00ADEF', #Blue
-    '#FFF100',  #yellow
-    '#00A550', #green
-    '#1B75BB' #purple-y
-    
-    
-  )) +
-  annotate(geom="text", x = "A", y = 0.015, label = "a", parse = TRUE, size=10) +
-    annotate(geom="text", x = "X", y = 0.0075, label = "b", parse = TRUE, size=10) +
-    annotate(geom="text", x = "NeoX", y = 0.039, label = "c", parse = TRUE, size=10) +
-    annotate(geom="text", x = "Y", y = 0.008, label = "b", parse = TRUE, size=10) 
-
-  multiplot(fst_neo_plot,dxy_neo_plot,cols=2)
-  
-
-ms_dxy <- rbind(
-  ms_stat(chrom="X",var="dxy",sitemean=2.50881),
-  ms_stat(chrom="A",var="dxy",sitemean=2.50881),
-  cbind(dxy[,-c(2,3)],"state"="obs")
-)
-
-dxy_plot_oe <- 
-  ggplot(ms_dxy, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  #scale_x_discrete(limits=c("A","H","X","Y")) 
-  scale_x_discrete(limits=c("A","X")) 
-    
-multiplot(pi_plot_oe,fst_plot_oe,dxy_plot_oe,cols=3)
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ] ,  
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
-
-
-dxy_data_var <- all_data_var[ all_data_var$var == "dxy", ]  
-dxy_anova <- aov(value ~ chrom, data=dxy_data_var)
-summary(dxy_anova) 
-
-#Dxy = 2μt
-0.014862532/(2*7.5e-9)
-(115000+35000)-0.014862532/(2*7.5e-9)
-
-all_data_flnc_dxy <- all_data_flnc[all_data_flnc$var == "dxy"   & all_data_flnc$chrom != "N" ,]
-
-dxy_xyysub_plot <-
-ggplot(all_data_flnc_dxy, aes(x=chrom, y=value, fill=chrom)) +
-  guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","Y")) +
-  scale_fill_manual(values=c( 
-    '#00ADEF', #Blue
-    '#FFF100',  #yellow
-    '#00A550' #green
-
-  )) +
-  facet_grid(. ~ pop, scales = "free") +
-  theme(strip.text = element_text(face = "italic"))
-
-multiplot(fst_xyysub_plot,dxy_xyysub_plot)
-
-####da####
-
-dxy_prime <- all_data[all_data$var == "dxy" ,]
-pi_prime <- all_data[ all_data$var == "pi" &  all_data$cod == "syn" & all_data$pop != "Rhastatulus",]
-
-da_tab <- NULL
-for(chromo in c('X','Y','N','A')){
- pi_mean <- ( pi_prime$value[pi_prime$chrom == chromo & pi_prime$pop == 'XY'] 
-              +  pi_prime$value[pi_prime$chrom == chromo & pi_prime$pop == 'XYY']) / 2
- da <- (dxy_prime$value[dxy_prime$chrom == chromo] - pi_mean)
- da_tab <- rbind(da_tab,cbind(chromo,da))
-}
-da_df <- as.data.frame(da_tab)
-da_df$da <- as.numeric(paste(da_df$da))
-
-ggplot(da_df, aes(x=chromo, y=as.numeric(da), fill=chromo)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Da") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","X","N","Y")) +
-  scale_fill_manual(values=c( 
-    '#00A550', #green
-    '#1B75BB', #purple-y
-    '#00ADEF', #Blue
-    
-    '#FFF100'  #yellow
-  )) 
-
 
 ####kxy####
 kxydxy <- rbind(
-all_data_neo[all_data_neo$var == "kxy" & all_data_neo$pop == "R.hastatulus",],
-all_data_neo[ all_data_neo$var == "dxy",]
+all_data[all_data$var == "kxy" & all_data$pop == "R.hastatulus",],
+all_data[ all_data$var == "dxy",]
 )
 kxydxy$outgroup[kxydxy$var == "dxy"] <- "R.hastatulus"
 kxydxy$outgroup[kxydxy$outgroup == "rothschildianus"] <- "R.rothschildianus"
@@ -588,7 +329,7 @@ kxydxy$outgroup[kxydxy$outgroup == "rothschildianus"] <- "R.rothschildianus"
 #levels(kxydxy$outgroup) = c("R.rothschildianus", "R.hastatulus")
 
 
-div_plot <- 
+#div_plot <- 
 ggplot(kxydxy, aes(x=outgroup, y=value, color=chrom
                       # , group=1
                        )) + #guides(fill = FALSE) +
@@ -602,16 +343,12 @@ ggplot(kxydxy, aes(x=outgroup, y=value, color=chrom
   scale_x_discrete(limits=c("R.hastatulus","R.rothschildianus","R.bucephalophorus")) +
    theme(axis.text.x = element_text(face = "italic"))
 
-#Dxy = 2μt
-0.269506300/(2*7.5e-9)
-
-
 
 ####dnds####
 evo_rate <- rbind(
   #all_data_neo[all_data_neo$var == "kaks" & all_data_neo$pop == "R.hastatulus",],
-  all_data_neo[all_data_neo$var == "kaks" ,],
-  all_data_neo[ all_data_neo$var == "dnds",]
+  all_data[all_data$var == "kaks" ,],
+  all_data[ all_data$var == "dnds",]
 )
 
 #levels(all_data_dxy$outgroup) = c("rothschildianus", "hastatulus","bucephalophorus")
@@ -633,66 +370,19 @@ ggplot(evo_rate, aes(x=outgroup, y=value, color=chrom
   theme(axis.text.x = element_text(face = "italic"))
 
 
-multiplot(div_plot,rate_plot)
-
-evo_rate_flnc <- rbind(
-  all_data_flnc[all_data_flnc$var == "kaks" ,],
-  all_data_flnc[ all_data_flnc$var == "dnds",]
-)
-
-evo_rate$outgroup[evo_rate$var == "dnds"] <- "R.hastatulus"
-evo_rate$outgroup[evo_rate$outgroup == "rothschildianus"] <- "R.rothschildianus"
-
-
-
-flnc_pi_y <- all_data_flnc_pi[all_data_flnc_pi$chrom == "Y" & all_data_flnc_pi$pop != "XYY",]
-
-ggplot(flnc_pi_y,aes(x=pop,y=value,fill=pop)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn)
-
-t.test(
-  FLNC_data_var$value[FLNC_data_var$chrom == "Y" & FLNC_data_var$var == "kaks" & FLNC_data_var$pop == "FL"  ] ,  
-  FLNC_data_var$value[FLNC_data_var$chrom == "Y" & FLNC_data_var$var == "kaks" & FLNC_data_var$pop == "NC"  ])
-
-
 ####mk####
 
-mk <- all_data_neo[all_data_neo$var == "mk" & all_data_neo$pop == "R.hastatulus",]
+mk <- all_data[all_data$var == "mk" & all_data$pop == "R.hastatulus",]
 mk$outgroup[mk$outgroup == "rothschildianus"] <- "R.rothschildianus"
 
-#mk$chrom_f = factor(mk$chrom, levels=c('A','NeoX','Hemi','X','Y'))
-
-#title_alpha <- expression(paste(alpha))
-
-#ggplot(mk, aes(x=pop, y=value, color=outgroup
-                     # , group=1
-#)) + guides(fill = FALSE,color=FALSE) +
-#  geom_point(position=position_dodge(.9)) +
-  
-  #stat_summary(fun.y=sum, geom="line") +
-#  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-#                width=.4,                    # Width of the error bars
-#                position=position_dodge(.9)) + 
-#  theme_bw()  + theme_bw(base_size = 18) + labs(x="Population",y="dnds/pnps") +
-#  facet_grid(. ~ chrom_f, scales = "free") +
-#  theme(axis.text.x = element_text(angle = 40, hjust = 1))  +
-#  theme(strip.background =element_rect(fill="white")) + coord_trans(y = "log2") +
-#  geom_abline(intercept = 1,slope=0)
-
-mk$Chromosome = factor(mk$chrom, levels=c('A','X','NeoX','Hemi','Y'))
-
+mk$Chromosome = factor(mk$chrom, levels=c('A','XY','N','H'))
 
 #adapt_plot <-
-
 ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
                      # , group=1
 )) + #guides(fill = FALSE) +
   geom_point(position=position_dodge(.9)) +
-  
+
   geom_abline(intercept = 1,slope=0,alpha=0.5) +
   #stat_summary(fun.y=sum, geom="line") +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
@@ -702,13 +392,110 @@ ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
   scale_x_discrete(limits=c("R.rothschildianus","R.bucephalophorus")) +
   theme(axis.text.x = element_text(face = "italic")) + coord_trans(y = "log2")
 
+####MS####
+##pi##
+ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
+               ms_stat(chrom="A",var="pi_tot",sitemean=2.50881),
+               cbind(all_data_pi[all_data_pi$pop == "R.hastatulus",-c(2,3)],state="obs")
+)
+
+#pi_plot_oe <-
+ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+
+##fst##
+ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
+                ms_stat(chrom="A",var="fst"),
+                cbind(all_data_fst[c(1,2,3),-c(2,3)],"state"="obs")
+)
+
+fst_plot_oe <- 
+  ggplot(ms_fst, aes(x=chrom, y=value, fill=state)) +
+  guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ])
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "N" & all_data_var$var == "Fst" ] ,  
+  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
+  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
+
+#Nem = ¼(fst - 1)  
+(1/0.1165208 - 1)/4
+
+fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
+fst_anova <- aov(value ~ chrom, data=fst_data_var)
+summary(fst_anova) 
+
+##dxy##
 
 
-multiplot(div_plot,rate_plot,adapt_plot)
+ms_dxy <- rbind(
+  ms_stat(chrom="X",var="dxy",sitemean=2.50881),
+  ms_stat(chrom="A",var="dxy",sitemean=2.50881),
+  cbind(dxy[,-c(2,3)],"state"="obs")
+)
 
-####fmaleX!=maleX####
+dxy_plot_oe <- 
+  ggplot(ms_dxy, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Dxy") +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  scale_x_discrete(limits=c("A","X")) 
+
+multiplot(pi_plot_oe,fst_plot_oe,dxy_plot_oe,cols=3)
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ] ,  
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
+
+
+dxy_data_var <- all_data_var[ all_data_var$var == "dxy", ]  
+dxy_anova <- aov(value ~ chrom, data=dxy_data_var)
+summary(dxy_anova) 
+
+#Dxy = 2μt
+0.014862532/(2*7.5e-9)
+(115000+35000)-0.014862532/(2*7.5e-9)
+
+####Extra Calculations####
+##fmaleX!=maleX##
 maleX <- data.frame(stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop))
 femaleX <- data.frame(stats_table(outgroup="rothschildianus",set="joshFem",chrom="X",pops=pop))
 
 maleX[maleX$var == "pi",]
 femaleX[femaleX$var == "pi",]
+
+##synsite##
+all_data[all_data$var == "sites" & all_data$cod == "syn" 
+         & all_data$pop == "R.hastatulus" & all_data$chrom == "A", ]
+
+#Dxy = 2μt
+0.269506300/(2*7.5e-9)
