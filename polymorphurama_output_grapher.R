@@ -200,9 +200,20 @@ all_data <- data.frame(
   rbind(
     stats_table(outgroup="rothschildianus",set="fem",chrom="A",pops=pop,popStr="pop"),
     stats_table(outgroup="rothschildianus",set="fem",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="fem",chrom="X",pops=pop,popStr="pop"),
     stats_table(outgroup="rothschildianus",set="fem",chrom="N",pops=pop,popStr="pop")
   )
 , stringsAsFactors = FALSE)
+
+all_data <- data.frame(
+  rbind(
+    stats_table(outgroup="rothschildianus",set="josh",chrom="A",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="josh",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="josh",chrom="XY",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="josh",chrom="N",pops=pop,popStr="pop")
+  )
+  , stringsAsFactors = FALSE)
+
 
 all_data_var <- data.frame(
   rbind(
@@ -213,6 +224,27 @@ all_data_var <- data.frame(
   )
 , stringsAsFactors = FALSE)
 
+####theata####
+all_data_theta <- all_data[all_data$var == "theta" & all_data$cod == "syn"  ,]
+
+title_thetasyn <- expression(paste(theta, ""[syn]))
+
+ggplot(all_data_theta, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_thetasyn) +
+  theme(axis.text.x = element_text(angle = 40, hjust = 1)) +
+  facet_grid(. ~ pop, scales = "free") +
+  scale_x_discrete(limits=c("A","XY","H","N")) #+
+scale_fill_manual(values=c( 
+  '#00ADEF', #Blue
+  '#FFF100',  #yellow
+  '#00A550', #green
+  '#1B75BB', #purple-y
+  '#8B4BD8'
+))
 
 ####pi####
 
@@ -276,7 +308,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  scale_x_discrete(limits=c("A","XY","N")) #+
+  scale_x_discrete(limits=c("A","XY","H","N")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     '#FFF100',  #yellow
@@ -346,9 +378,9 @@ ggplot(kxydxy, aes(x=outgroup, y=value, color=chrom
 
 ####dnds####
 evo_rate <- rbind(
-  #all_data_neo[all_data_neo$var == "kaks" & all_data_neo$pop == "R.hastatulus",],
-  all_data[all_data$var == "kaks" ,],
-  all_data[ all_data$var == "dnds",]
+  all_data[all_data$var == "kaks" & all_data$pop == "R.hastatulus",],
+  all_data[all_data$var == "dnds" ,]
+  
 )
 
 #levels(all_data_dxy$outgroup) = c("rothschildianus", "hastatulus","bucephalophorus")
