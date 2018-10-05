@@ -1,0 +1,16 @@
+mkdir rna
+cp /ohta/felix.beaudry/fastas/rna.inds rna.inds 
+for loc in A XY H N
+do
+#cp /ohta/felix.beaudry/fastas/${loc}.list ${loc}.list
+#mkdir subsets/rna/${loc}
+cp /ohta/felix.beaudry/fastas/pop subsets/rna/${loc}/pop 
+bash /ohta/felix.beaudry/scripts/reads2poly/fasta_maker_v2.sh rna.inds ${loc}.list subsets/rna/${loc} /ohta/felix.beaudry/fastas/outgroup
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/${loc}/ -p pop -S rna -o rothschildianus -C ${loc}
+done
+
+while read ind
+do
+samtools index ${ind}_ddpl.bam 
+samtools idxstats ${ind}_ddpl.bam >${ind}.reads.txt
+done < rna.inds
