@@ -22,7 +22,7 @@ for line in infile:
 
         output = \
         """
-        INSERT INTO %s VALUES ('%s', '%s');
+        INSERT INTO %s VALUES ('%s');
         """ %(col,
                 Loci
                 )
