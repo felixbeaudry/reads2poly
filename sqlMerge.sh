@@ -8,7 +8,7 @@ $3 = out
 
 #cat A.list H.list N.list X.list >allLoci.list
 echo "create table ${base} (Loci VARCHAR(150));" | mysql -u felix.beaudry -D felix_rhastatulus
-python /ohta/felix.beaudry/scripts/reads2poly/intosql_base.py -i allLoci.list -c Loci | mysql -u felix.beaudry -D ${out}
+python /ohta/felix.beaudry/scripts/reads2poly/intosql_base.py -i allLoci.list -c RhastatulusBase | mysql -u felix.beaudry -D felix_rhastatulus
 
 
 awk 'split($1,a,"."){print a[1] "" a[2]}' ${inds} >rna.sql.list
