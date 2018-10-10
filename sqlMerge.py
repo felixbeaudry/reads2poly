@@ -32,7 +32,7 @@ for line in infile:
         line = re.sub('\.', '', line)
         sys.stdout.write(' LEFT JOIN '+line+' ON '+loc+'.Loci = '+line+'.Locus') 
 
-sys.stdout.write(');" | mysql -u felix.beaudry -D felix_exp')
+sys.stdout.write(');" | mysql -u felix.beaudry -D felix_rha')
 
 
 
