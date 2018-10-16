@@ -1490,7 +1490,7 @@ foreach $file (@files){
 					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
 					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
 
-
+					print OUT "pop", $pop, "\t";
 					print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
 					print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 
