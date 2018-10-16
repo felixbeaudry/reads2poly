@@ -32,6 +32,7 @@ done < rna.sql.list
 
 ##use list of names to make a SQL merge command
 python /ohta/felix.beaudry/scripts/reads2poly/sqlMerge.py -i rna.sql.list -l ${base} -t ${out}
+##echo "DROP TABLE ${ind};" | mysql -u felix.beaudry -D felix_rha
 bash -i sqlMerging.sh
 
 ##export merged database
