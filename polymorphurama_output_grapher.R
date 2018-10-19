@@ -198,10 +198,10 @@ FLNC <- c("XYY","FL","NC")
 
 all_data <- data.frame(
   rbind(
-    stats_table(outgroup="rothschildianus",set="fem",chrom="A",pops=pop,popStr="pop"),
+    stats_table(outgroup="bucephalophorus",set="fem",chrom="H",pops=pop,popStr="pop"),
     stats_table(outgroup="rothschildianus",set="fem",chrom="H",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="fem",chrom="X",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="fem",chrom="N",pops=pop,popStr="pop")
+    stats_table(outgroup="bucephalophorus",set="fem",chrom="XY",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="fem",chrom="XY",pops=pop,popStr="pop")
   )
 , stringsAsFactors = FALSE)
 
