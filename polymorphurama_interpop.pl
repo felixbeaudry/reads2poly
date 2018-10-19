@@ -98,7 +98,10 @@ print "\n";
 
 ####Output files###
 
-open (OUT, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop0, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '0' .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '1' . $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '2' . $chromName . '.txt')) or die "Could not open outfile\n";
+
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
@@ -1490,9 +1493,19 @@ foreach $file (@files){
 					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
 					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
 
-					print OUT "pop", $pop, "\t";
-					print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-					print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					if ($pop == 0){	
+						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
+					elsif ($pop == 1){	
+						print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
+					elsif ($pop == 2){	
+						print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
+					
 
 					print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
 					print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
