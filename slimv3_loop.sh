@@ -2,7 +2,7 @@ for log in n p
 do
         for typ in n p
         do
-                for sel in {0..300..10}
+                for sel in {300..0..10}
                 do
                         for pro in {0..10}
                         do
