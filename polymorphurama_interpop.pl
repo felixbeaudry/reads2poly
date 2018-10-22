@@ -104,9 +104,9 @@ print "\n";
 
 ####Write Output files###
 
-open (OUTpop0, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '0' .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '1' . $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '2' . $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop0, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '0_' .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '1_' . $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '2_' . $chromName . '.txt')) or die "Could not open outfile\n";
 
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";

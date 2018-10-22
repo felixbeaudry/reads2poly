@@ -1,51 +1,78 @@
 
-setwd('~/Google Drive/Research/Data/')
+#library(ggplot2)
 library(data.table)
-library(ggplot2)
-#import .frequency
+args = commandArgs(trailingOnly=TRUE)
+#setwd('~/Google Drive/Research/Data/')
 
-within_stat <- fread('fem_bucephalophorus_summarystats_pop_H.txt' )
+set= args[1]
+outgroup=args[2]
+popStr=args[3]
+popNum=args[4]
+chrom=args[5]
 
+filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+within_stat <- fread(filename_wIn)
 invar_syn <- sum(within_stat$pop1_sites_syn  - within_stat$pop1_S_syn )
 invar_rep <- sum( within_stat$pop1_sites_rep - within_stat$pop1_S_rep)
 
-
-data <- fread('fem_bucephalophorus_frequencies_pop_H.txt',header = FALSE )
-length <- ncol(data) / 2
+filename_frq <- paste(set,"_",outgroup,"_frequencies_",popStr,"1_",chrom,".txt",sep="")
+data <- fread(filename_frq,header = FALSE )
+length <- (ncol(data) / 2)-1
+cat("1")
 cat(length)
 
-data_syn <- data[,2:length]
-data_rep <- data[,(length+2):(length*2)]
+data_syn <- data[,2:(length+1)]
+data_rep <- data[,(length+3):(length*2+2)]
 
 data_syn_tot <- colSums (data_syn, na.rm = FALSE, dims = 1)
-cat(data_syn_tot)
-
 data_rep_tot <- colSums (data_rep, na.rm = FALSE, dims = 1)
-cat(invar_rep,data_rep_tot)
 
-
-data_syn_rel<-data.frame((data_syn_tot/sum(data_syn_tot)))
-
-ggplot(data_syn_rel) + geom_histogram(aes(x=X.data_syn_tot.sum.data_syn_tot..)) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "Count", y="No. alleles") +
-  theme(axis.text.x = element_text(angle = 40, hjust = 1)) 
+data_rep_fold <- vector("list", (length+1))
+data_rep_fold[1] <- round(invar_rep)
+data_rep_fold[2] <- data_rep_tot[2]
   
-data_rep_rel<-data.frame((data_rep_tot/sum(data_rep_tot)))
+for (site in c(seq(1,(length/2),by=1))){
+  data_rep_fold[site+2] <-  data_rep_tot[site+2] + data_rep_tot[(length+1)-site]
+  data_rep_fold[length+2-site] <- 0
+}
 
-ggplot(data_rep_rel) + geom_histogram(aes(x=X.data_rep_tot.sum.data_rep_tot..)) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "Count", y="No. alleles") +
-  theme(axis.text.x = element_text(angle = 40, hjust = 1)) 
+do.call(cat,data_rep_fold)
 
-ggplot() + 
-  geom_histogram(aes(x=data_syn_rel$X.data_syn_tot.sum.data_syn_tot..,alpha=0.1,fill="syn")) +
-  geom_histogram(aes(x=data_rep_rel$X.data_rep_tot.sum.data_rep_tot..,alpha=0.1,fill="rep")) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(y = "Count", x="No. alleles") +
-  theme(axis.text.x = element_text(angle = 40, hjust = 1)) + 
-  guides(alpha=FALSE,fill=guide_legend(title="Sites")) +
-  scale_fill_manual(values=c( 
-    '#00ADEF', #Blue
-    '#FFF100'
-  ))
+data_syn_fold <- vector("list", (length+1))
+data_syn_fold[1] <- round(invar_syn)
+data_syn_fold[2] <- data_syn_tot[2]
+
+for (site in c(seq(1,((length)/2),by=1))){
+  data_syn_fold[site+2] <-  data_syn_tot[site+2] + data_syn_tot[(length+1)-site]
+  data_syn_fold[length+2-site] <- 0
+}
+
+
+
+do.call(cat,data_syn_fold)
+  
+#data_syn_rel<-data.frame((data_syn_tot/sum(data_syn_tot)))
+
+#ggplot(data_syn_rel) + geom_histogram(aes(x=X.data_syn_tot.sum.data_syn_tot..)) +
+#  theme_bw()  + theme_bw(base_size = 30) + labs(x = "Count", y="No. alleles") +
+#  theme(axis.text.x = element_text(angle = 40, hjust = 1)) 
+  
+#data_rep_rel<-data.frame((data_rep_tot/sum(data_rep_tot)))
+
+#ggplot(data_rep_rel) + geom_histogram(aes(x=X.data_rep_tot.sum.data_rep_tot..)) +
+#  theme_bw()  + theme_bw(base_size = 30) + labs(x = "Count", y="No. alleles") +
+#  theme(axis.text.x = element_text(angle = 40, hjust = 1)) 
+
+#ggplot() + 
+#  geom_histogram(aes(x=data_syn_rel$X.data_syn_tot.sum.data_syn_tot..,alpha=0.1,fill="syn")) +
+#  geom_histogram(aes(x=data_rep_rel$X.data_rep_tot.sum.data_rep_tot..,alpha=0.1,fill="rep")) +
+#  theme_bw()  + theme_bw(base_size = 30) + labs(y = "Count", x="No. alleles") +
+#  theme(axis.text.x = element_text(angle = 40, hjust = 1)) + 
+#  guides(alpha=FALSE,fill=guide_legend(title="Sites")) +
+#  scale_fill_manual(values=c( 
+#    '#00ADEF', #Blue
+ #   '#FFF100'
+#  ))
 
 
 
