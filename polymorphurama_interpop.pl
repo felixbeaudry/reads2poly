@@ -10,11 +10,11 @@ my %opts;
 GetOptions(\%opts, "f:s", "i:s", "p:s", "S:s", "o:s", "c:s","C:s");
 my $usage = <<USAGE;
 
-    Program: $0
+    Program: Polymorphurama Interpop
     Version: 2.0
     Contact: Felix Beaudry(felix.beaudry\@utoronto.ca)
 
-    Usage:	$0 -i intake_directory [-p pop -f file_pattern -S [subset] -o [outgroup_string] -c [chrom] -C [chromName]]
+    Usage:	$0 -i intake_directory [-p [pop] -f [file_pattern] -S [subset] -o [outgroup_string] -c [chrom] -C [chromName]]
 
     			-i directory containing alignment files
     			-p file of strings identifying individuals in each population
@@ -28,12 +28,14 @@ my $usage = <<USAGE;
 
 
 USAGE
-# add parameters for the low quality cutoff.
+
 
 die $usage unless ($opts{i});
 
+#Input directory
 my $d2 = $opts{i};
 
+#Population file
 my $pop_file = $opts{i} . "pop";
 my $pop_file_name ;
 if ($opts{p}) {
@@ -41,22 +43,25 @@ if ($opts{p}) {
 	$pop_file_name = $opts{p} . "_";
 }
 
-
+#File extension name
 my $pattern="fasta";
 if ($opts{f}){
 	$pattern=$opts{f};
 }
 
+#Name of outgroup
 my $outgroup_string;
 if ($opts{o}){
 	$outgroup_string = $opts{o};
 }
 
+#Name of subset of data
 my $ext;
 if ($opts{S}){
 	$ext = $opts{S}.'_';
 }
 
+#Extension identifying location of loci
 my $chromName = "Achrom";
 my $chrom;
 if ($opts{c}){
@@ -70,7 +75,7 @@ if ($opts{C}){
 
 print "\n\n***Polymorphurama ",$ext,$chromName,"***\n\n";
 
-####Start Population Array Input####
+####Start Population Array Input, from pop file####
 
 my @pop_array;   # 2D array for CSV data
 #[row][col]
@@ -84,6 +89,7 @@ while( my $row = $csv->getline( $fh ) ) {
 
 my $number_of_pops = @pop_array;
 
+#print population info
 print "Populations :\n";
 for ($x=0;$x<$number_of_pops;$x++){
 	my $number_of_columns = @{ $pop_array[$x] };
@@ -96,7 +102,7 @@ for ($x=0;$x<$number_of_pops;$x++){
 print "\n";
 
 
-####Output files###
+####Write Output files###
 
 open (OUTpop0, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '0' .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $pop_file_name . '1' . $chromName . '.txt')) or die "Could not open outfile\n";
@@ -107,6 +113,8 @@ open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name
 open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+
+open(out_fa,'>', ($d2 . "ingroup" . '.fa')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
@@ -192,6 +200,7 @@ foreach $file (@files){
 					
 	}	}	}	}
 
+	#print starting info
 	chomp $file;
 	print "\n", $file, "\tnumseqs: ", $numseqs , "\toutgroup: ", $sequence_names[$outgroup_position];
 	print OUT2 $file, "\t";
@@ -207,11 +216,17 @@ foreach $file (@files){
 
 	#start pop subloops
 	my $pop = 0;
+
 	#count for different loops within pops
-	my $popLoop = 0;
+	my $popLoop = 0; #0:exclude outgroup, 1:include outgroup, 2:outgroup is other population
+
 	#count for number of inds in the other population
 	my $outpop = 0;
 
+
+	
+
+	#Skip loops if dataset too small
 	if ($numseqs<2){
 		for ($x=0;$x < $number_of_pops;++$x){
 			print "\npop: ",$x,"\tempty"; 
@@ -227,7 +242,7 @@ foreach $file (@files){
 	}
 
 	while ($pop<$number_of_pops){
-		#empty within stats
+		#empty within population stats
 
 		# array of arrays from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
 		my @poly_freq_Syn_ALL = ();	  
@@ -252,14 +267,18 @@ foreach $file (@files){
 
 		@data=();
 		
-		#input individuals from correct population into set
+		#Number of populations in ingroup
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
 
 
-		if ($popLoop == 0){             
+		if ($popLoop == 0){
+			$in_position = $position_array[$pop][0];
+			$data[0]=$totdata[$in_position];             
 			for ($y=0; $y < $number_of_individuals; $y++){
 				$in_position = $position_array[$pop][$y];
-				$data[$y]=$totdata[$in_position];
+				$data[$y+1]=$totdata[$in_position];
+				#$data[$y]=$totdata[$in_position];
+
 			}
 		}
 		elsif ($popLoop == 1){ 
@@ -268,6 +287,9 @@ foreach $file (@files){
 			for ($y=0; $y < $number_of_individuals + 1; $y++){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
+				if ($pop == 1){
+					print out_fa ">$y\n" , $data[$y], "\n";
+				}
 			}
 		}
 		elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1] }) ){
@@ -1492,7 +1514,6 @@ foreach $file (@files){
 
 					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
 					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
-
 					if ($pop == 0){	
 						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
 						print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
@@ -1505,7 +1526,8 @@ foreach $file (@files){
 						print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
 						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 					}
-					
+
+
 
 					print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
 					print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
@@ -1530,6 +1552,9 @@ foreach $file (@files){
 				}
 
 				elsif ( $popLoop == 1 ){
+
+
+
 					if ($Dxy_syn != 0){
 						$knks = $Dxy_rep / $Dxy_syn;
 						$kxy = $Dxy_rep + $Dxy_syn;
