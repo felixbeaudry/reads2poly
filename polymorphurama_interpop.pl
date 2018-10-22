@@ -114,7 +114,7 @@ open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_n
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
-open(out_fa,'>', ($d2 . "ingroup" . '.fa')) or die "Could not open outfile\n";
+#open(out_fa,'>', ($d2 . "ingroup" . '.fa')) or die "Could not open outfile\n";
 
 my @vars= ();
 $vars[0] = "sites";
