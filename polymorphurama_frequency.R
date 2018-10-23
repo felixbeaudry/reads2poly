@@ -18,8 +18,8 @@ invar_rep <- sum( within_stat$pop1_sites_rep - within_stat$pop1_S_rep)
 filename_frq <- paste(set,"_",outgroup,"_frequencies_",popStr,"1_",chrom,".txt",sep="")
 data <- fread(filename_frq,header = FALSE )
 length <- (ncol(data) / 2)-1
-cat("1")
-cat(length)
+cat("1\n")
+cat(length,"\n")
 
 data_syn <- data[,2:(length+1)]
 data_rep <- data[,(length+3):(length*2+2)]
@@ -37,6 +37,7 @@ for (site in c(seq(1,(length/2),by=1))){
 }
 
 do.call(cat,data_rep_fold)
+cat("\n")
 
 data_syn_fold <- vector("list", (length+1))
 data_syn_fold[1] <- round(invar_syn)
@@ -50,6 +51,7 @@ for (site in c(seq(1,((length)/2),by=1))){
 
 
 do.call(cat,data_syn_fold)
+cat("\n")
   
 #data_syn_rel<-data.frame((data_syn_tot/sum(data_syn_tot)))
 
