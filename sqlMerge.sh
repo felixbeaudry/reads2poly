@@ -6,7 +6,7 @@ $2 = base
 $3 = out
 
 ##Make a table with all the loci onto which to left join
-#cat A.list H.list N.list X.list >allLoci.list
+#cat A.list H.list N.list X.list | sort | uniq >allLoci.list
 echo "create table ${base} (Loci VARCHAR(150));" | mysql -u felix.beaudry -D felix_rhastatulus
 python /ohta/felix.beaudry/scripts/reads2poly/intosql_base.py -i allLoci.list -c RhastatulusBase | mysql -u felix.beaudry -D felix_rhastatulus
 

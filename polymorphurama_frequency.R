@@ -77,4 +77,13 @@ cat("\n")
 #  ))
 
 
+XXSFS <- fread('XX_SFS_OE.txt')
+
+XXSFS_melt <- melt(XXSFS,id.vars = "Alleles",verbose=FALSE)
+
+
+ggplot(XXSFS_melt,aes(x=Alleles, y=value,fill=variable)) +
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme_minimal()
+
 
