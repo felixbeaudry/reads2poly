@@ -161,6 +161,11 @@ interExpA$sexBias[interExpA$log2FoldChange > 0] <- "Leaf"
 interExpA$sexBias[interExpA$log2FoldChange < 0] <- "Pollen"
 interExpA$sexBias[interExpA$pvalue >  0.05] <- "Unbiased"
 
+pollenList <- interExpA$loci[interExpA$sexBias == "Pollen"]
+
+write(pollenList, file = "pollen.list",
+      append = FALSE, sep = "\n")
+
 ggplot(interExpA, aes(x = log2FoldChange, y = pop0_tajD_syn, color=pvalue)) + 
   geom_point() + 
   stat_smooth(method = "loess") +
@@ -182,3 +187,7 @@ ggplot(interExpA, aes(y=pop0_tajD_syn, x=sexBias)) +
   theme_bw()  + theme_bw(base_size = 30)
 
 t.test(interExpA$pop0_tajD_syn[interExpA$sexBias == "Leaf"],interExpA$pop0_tajD_syn[interExpA$sexBias == "Pollen"])
+
+TajD_LP_anova <- aov(pop0_tajD_syn ~ sexBias, data=interExpA)
+summary(TajD_LP_anova) 
+
