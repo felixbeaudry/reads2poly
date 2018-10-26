@@ -9,23 +9,24 @@ library(plyr)
 library(sqldf)
 library(rapport)
 library(ggridges)
-
 #source("https://bioconductor.org/biocLite.R")
 #biocLite(c("DESeq2"))
 #biocLite(c("apeglm"))
 library(DESeq2)
 library(apeglm)
-
 options(max.print = 1000000)
+
+####import####
 
 base <- fread('allLoci.list',header = FALSE)
 inds <- fread('rna.sql.list',header = FALSE)
 inds <- inds$V1
 inds <- c(inds,"SC1pollen","SC2pollen","TX1Bpollen","TX2Bpollen")
 
-####MERGE####
+#MERGE#
 loops <- 1
 reads <- base
+
 for (ind in inds){
   cat(ind,"\n")
   ind <- toString(ind)
@@ -41,22 +42,13 @@ for (ind in inds){
   reads <- reads[,columns]
 }
 
-readsCounts <- reads[,-c(1)]
-FPKM <-  data.frame(
-                    t(
-                      t(readsCounts/
-                          (readsCounts$length/1000)
-                        )/(colSums(readsCounts, na.rm = FALSE, dims = 1)/1000000)
-                      )
-                    )
-
+#readsCounts <- reads[,-c(1)]
+#FPKM <-  data.frame(t( t(readsCounts/  (readsCounts$length/1000)  )/(colSums(readsCounts, na.rm = FALSE, dims = 1)/1000000) ) )
 
 ####DESEQ####
 #http://bioconductor.org/packages/devel/bioc/vignettes/DESeq2/inst/doc/DESeq2.html
 
-treads <- reads[,-c(1:2)]
-rownames(treads) <- reads$V1
-
+#Sample Info#
 pop <- c("T","T","T","T","T","T","T","T","T","T","T","T","N","N","N","N","N","N","N","N","N","N","N","N","N","N","N","N","N","N","N","T","N","N","N","N","N","T","T","N","N","N","T","T","T","T","T","N","N","T","T")
 sex <- c("M","M","M","F","F","F","F","F","F","M","M","M","F","F","F","F","F","F","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M","M")
 origin <- c("J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","J","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","F","G","G","G","G")
@@ -64,35 +56,28 @@ tissue <- c("L","L","L","L","L","L","L","L","L","L","L","L","L","L","L","L","L",
 colData <- cbind(sex,pop,origin,tissue)
 rownames(colData) <- colnames(reads[-c(1,2)])
 
+#Read Intake#
+treads <- reads[,-c(1:2)]
+rownames(treads) <- reads$V1
 countdata <- data.matrix(treads,rownames.force=TRUE) 
 
-dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  tissue )
+##Define bias analysis##
+dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  sex + tissue)
 dds <- dds[ rowSums(counts(dds)) > 1, ] #filter for rows with info
-
 dss <- DESeq(dds)
-#res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
-#resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
-res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
-resLFC <- lfcShrink(dss, coef="tissue_L_vs_P", type="apeglm")
 
 
-head(res)
-summary(res)
+res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
+resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
+
+#res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
+#resLFC <- lfcShrink(dss, coef="tissue_L_vs_P", type="apeglm")
+
 plotMA(res, ylim=c(-2,2))
 plotMA(resLFC, ylim=c(-2,2))
 
-
-####Orthologs####
-
-roth <- fread('rothschildianus.orthologs',header=FALSE)
-buc <- fread('bucephalophorus.orthologs',header=FALSE)
-
-species <- data.frame(sqldf('select base.*, roth.*, buc.* from base left join roth on base.V1 = roth.V1 left join buc on base.V1 = buc.V1'))
-species <- species[,c(1,3,5)]
-names(species) <- c("hast","roth","buc")
-
-
-var(between)/var(within) -> (tot - within) / tot
+resdf <- data.frame(res)
+resdf$loci <- row.names(resdf)
 
 ####regions####
 
@@ -108,23 +93,16 @@ regions <- data.frame(sqldf('select base.*, alist.*, xylist.*, hlist.* , nlist.*
                             left join hlist on base.V1 = hlist.V1 
                             left join nlist on base.V1 = nlist.V1
                             '))
-names(regions) <- c("C","A","XY","H","N")
-
-regions$A[ !is.na(regions$A) == TRUE ] <- "A"
-regions$XY[ !is.na(regions$XY) == TRUE ] <- "XY"
-regions$H[ !is.na(regions$H) == TRUE ] <- "H"
-regions$N[ !is.na(regions$N) == TRUE ] <- "N"
+names(regions) <- c("Loci","A","XY","H","N")
 
 regions$regions[ !is.na(regions$A) == TRUE ] <- "Autosomal"
 regions$regions[ !is.na(regions$XY) == TRUE ] <- "XY"
 regions$regions[ !is.na(regions$H) == TRUE ] <- "Hemizygous"
 regions$regions[ !is.na(regions$N) == TRUE ] <- "NeoXY"
+regions <- regions[,c(1,6)]
 
-
-resdf <- data.frame(res)
-resdf$loci <- row.names(resdf)
-
-regionsExp <- data.frame(sqldf('select resdf.*, regions.* from resdf left join regions on resdf.loci = regions.C'))
+regionsExp <- data.frame(sqldf('select resdf.*, regions.* from resdf left join regions on resdf.loci = regions.Loci'))
+regionsExp <- regionsExp[,-8]
 
 ggplot(regionsExp, aes(x = log2FoldChange, y = regions, fill=regions, alpha=0.5)) + 
   geom_density_ridges() + guides(alpha=FALSE,fill=FALSE) +
@@ -137,12 +115,11 @@ scale_fill_manual(values=c(
   '#8B4BD8'
 ))
 
-#relatedness between pollen samples
 
+####Stat Correlates####
 
 inter <- fread('rna_rothschildianus_interpop_pop_A.txt')
 within <- fread('rna_rothschildianus_summarystats_pop_A.txt')
-
 
 inter <- separate(inter, locus, c("locus","file"), 
                     sep = ".fasta", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
@@ -150,23 +127,26 @@ inter <- separate(inter, locus, c("locus","file"),
 within <- separate(within, locus, c("locus","file"), 
                   sep = ".fasta", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
 
+interExp <- data.frame(sqldf('select regionsExp.*, inter.*, within.* from regionsExp 
+                             left join inter on regionsExp.loci = inter.locus 
+                             left join within on regionsExp.loci = within.locus'))
 
-interExp <- data.frame(sqldf('select regionsExp.*, inter.*, within.* from regionsExp left join inter on regionsExp.loci = inter.locus left join within on regionsExp.loci = within.locus'))
+interExp <- interExp[interExp$regions == "Autosomal" ,]
 
-interExpA <- interExp[interExp$regions == "Autosomal" ,]
+interExp$sexBias[interExp$log2FoldChange > 0] <- "Male"
+interExp$sexBias[interExp$log2FoldChange < 0] <- "Female"
+#interExp$sexBias[interExp$log2FoldChange > 0] <- "Leaf"
+#interExp$sexBias[interExp$log2FoldChange < 0] <- "Pollen"
+interExp$sexBias[interExp$pvalue >  0.05] <- "Unbiased"
 
-#interExpA$sexBias[interExpA$log2FoldChange > 0] <- "Male"
-#interExpA$sexBias[interExpA$log2FoldChange < 0] <- "Female"
-interExpA$sexBias[interExpA$log2FoldChange > 0] <- "Leaf"
-interExpA$sexBias[interExpA$log2FoldChange < 0] <- "Pollen"
-interExpA$sexBias[interExpA$pvalue >  0.05] <- "Unbiased"
+##export lists of biased genes##
+#pollenList <- interExp$loci[interExpA$sexBias == "Pollen"]
+#write(pollenList, file = "pollen.list",
+#      append = FALSE, sep = "\n")
 
-pollenList <- interExpA$loci[interExpA$sexBias == "Pollen"]
+#Tajima's D#
 
-write(pollenList, file = "pollen.list",
-      append = FALSE, sep = "\n")
-
-ggplot(interExpA, aes(x = log2FoldChange, y = pop0_tajD_syn, color=pvalue)) + 
+ggplot(interExp, aes(x = log2FoldChange, y = pop0_tajD_syn, color=pvalue)) + 
   geom_point() + 
   stat_smooth(method = "loess") +
  # facet_grid(. ~ regions) +
@@ -180,14 +160,77 @@ ggplot(interExpA, aes(x = log2FoldChange, y = pop0_tajD_syn, color=pvalue)) +
     '#8B4BD8'
   ))
 
-ggplot(interExpA, aes(y=pop0_tajD_syn, x=sexBias)) + 
-  geom_violin() +
-  scale_x_discrete(limits=c("Leaf","Unbiased","Pollen")) +
-  labs(x = "Expression Bias", y="TajD_syn") +
-  theme_bw()  + theme_bw(base_size = 30)
+title_tds <- expression(paste(TajD, ""[syn]))
 
-t.test(interExpA$pop0_tajD_syn[interExpA$sexBias == "Leaf"],interExpA$pop0_tajD_syn[interExpA$sexBias == "Pollen"])
+ggplot(interExp, aes(y=pop0_tajD_syn, x=sexBias)) + 
+  geom_violin() + geom_boxplot(width=0.1) +
+  theme_bw()  + theme_bw(base_size = 30) +
+  #facet_grid(. ~ regions) +
+  labs(x = "Expression Bias", y=title_tds) +
+  scale_x_discrete(limits=c("Male","Unbiased","Female")) 
 
-TajD_LP_anova <- aov(pop0_tajD_syn ~ sexBias, data=interExpA)
+t.test(interExp$pop0_tajD_syn[interExp$sexBias == "Male"],interExp$pop0_tajD_syn[interExp$sexBias == "Female"])
+
+TajD_LP_anova <- aov(pop0_tajD_syn ~ sexBias, data=interExp)
 summary(TajD_LP_anova) 
 
+#pi#
+
+title_pisyn <- expression(paste(pi, ""[syn]))
+
+ggplot(interExp, aes(y=pop0_pi_syn, x=sexBias)) + 
+  geom_violin() + geom_boxplot(width=0.1) +
+  theme_bw()  + theme_bw(base_size = 30) +
+  #facet_grid(. ~ regions) +
+  labs(x = "Expression Bias", y=title_pisyn) +
+  scale_x_discrete(limits=c("Male","Unbiased","Female")) +
+  ylim(0,0.01)
+
+t.test(interExp$pop0_pi_syn[interExp$sexBias == "Male"],interExp$pop0_pi_syn[interExp$sexBias == "Female"])
+
+pi_MF_anova <- aov(pop0_pi_syn ~ sexBias, data=interExp)
+summary(pi_MF_anova) 
+
+interExpBiased <- interExp[interExp$pvalue < 0.05,]
+interExpBiased$log2FoldChangeAbs <- abs(interExpBiased$log2FoldChange)
+
+interExpBiased_comp <- interExpBiased[!is.na(interExpBiased$sexBias), ]
+
+ggplot(interExpBiased_comp, aes(y=pop0_pi_syn, x=log2FoldChangeAbs, color=sexBias)) + 
+  geom_point(alpha=0.1) + guides(alpha=FALSE) +
+  stat_smooth(method = "lm",se=FALSE,size=2) +
+  theme_bw()  + theme_bw(base_size = 30) +
+  labs(x = "Expression Bias", y=title_pisyn, color="Sex") +
+  ylim(0,0.01)
+
+pi_male_fit <- lm(pop0_pi_syn ~ log2FoldChangeAbs , data=interExpBiased_comp[interExpBiased_comp$sexBias == "Male",])
+summary(pi_male_fit) 
+
+pi_female_fit <- lm(pop0_pi_syn ~ log2FoldChangeAbs , data=interExpBiased_comp[interExpBiased_comp$sexBias == "Female",])
+summary(pi_female_fit) 
+
+
+
+##
+
+ggplot(interExpBiased_comp, aes(y=pop0_dnds_NA, x=log2FoldChangeAbs, color=sexBias)) + 
+  geom_point() + guides(alpha=FALSE) +
+  stat_smooth(method = "lm",se=FALSE,size=2) +
+  theme_bw()  + theme_bw(base_size = 30) +
+  labs(x = "Expression Bias", y="dnds", color="Sex") 
+
+
+
+####Orthologs####
+
+roth <- fread('rothschildianus.orthologs',header=FALSE)
+buc <- fread('bucephalophorus.orthologs',header=FALSE)
+
+species <- data.frame(sqldf('select base.*, roth.*, buc.* from base left join roth on base.V1 = roth.V1 left join buc on base.V1 = buc.V1'))
+species <- species[,c(1,3,5)]
+names(species) <- c("hast","roth","buc")
+
+
+var(between)/var(within) -> (tot - within) / tot
+
+####relatedness between pollen samples####

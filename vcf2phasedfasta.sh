@@ -12,3 +12,58 @@ echo "phasing ${ind}"
 /ohta/apps/hapcut/HAPCUT --fragments ${ind}.fragmatrix --VCF ${ind}.sex.vcf --output ${ind}.hapcut --maxmem 30000 > ${ind}.uni_hapcut.log
 perl /ohta/felix.beaudry/scripts/extract_seq_perfect_sites.pl find_perfect_list.vcf ${ind}.hapcut ${ind}.sex.vcf >${ind}.fasta
 done <rna.inds
+
+
+mkdir phase
+while read ind
+do
+mkdir phase/${ind}
+rm phase/${ind}/${ind}.fai.out
+rm phase/${ind}/*; 
+perl fasta_liner.pl -i ${ind}.fasta
+for chrom in X Y
+do
+while read loc 
+do
+samtools faidx ${ind}.fasta.sort ${loc}_${chrom} 2>>phase/${ind}/${ind}.fai.out | cat >phase/${ind}/${loc}_${chrom}.fasta
+cat phase/${ind}/${loc}_${chrom}.fasta | grep -v '^>' | grep '^.' | tr -d '[:blank:]' | tr n - | tr , - > phase/${ind}/${loc}_${chrom}.noname.fasta
+echo ">${ind}_${chrom}chrom" | cat - phase/${ind}/${loc}_${chrom}.noname.fasta > temp && mv temp phase/${ind}/${loc}_${chrom}.fasta
+rm phase/${ind}/${loc}_${chrom}.noname.fasta
+done < XY.list
+done
+done < rna.inds
+
+
+for chrom in X Y
+do
+while read loc
+do
+rm subsets/rna/${chrom}phase/${loc}.fasta
+cat /ohta/felix.beaudry/fastas/bucephalophorus/${loc}.fasta >> subsets/rna/${chrom}phase/${loc}.fasta
+cat /ohta/felix.beaudry/fastas/rothschildianus/${loc}.fasta >> subsets/rna/${chrom}phase/${loc}.fasta
+while read ind
+do
+python /ohta/felix.beaudry/scripts/reads2poly/fasta_cleaner.py -i phase/${ind}/${loc}_${chrom}.fasta -c 60 >> subsets/rna/${chrom}phase/${loc}.fasta
+done <male.inds
+done <XY.list
+done
+
+mkdir subsets/male
+
+for loc in X Y
+do
+for pop in pop
+do
+for subset in rna
+do
+mkdir subsets/${subset}/${loc}phase
+cp ${pop}.pop subsets/${subset}/${loc}phase/${pop}.pop
+for outgroup in rothschildianus bucephalophorus
+do
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/${subset}/${loc}phase/ -p ${pop}.pop -S ${subset} -o ${outgroup} -C ${loc} -c ${loc}
+done
+done
+done
+done
+
+
