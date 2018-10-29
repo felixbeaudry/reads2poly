@@ -74,7 +74,7 @@ pi_two = 0
 fst = 0
 rep = 0
 on = "F"
-print "rep\tpi_tot\tfst\tdxy\n"; 
+print "rep\tpi_tot\tfst\tdxy"; 
 
 for line in infile:
 	if not line.strip():
