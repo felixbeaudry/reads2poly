@@ -40,7 +40,7 @@ data_rep_fold[1] <- round(invar_rep)
 #}
 
 
-for (site in c(seq(1,(length/2),by=1))){
+for (site in c(seq(1,ceiling(length/2),by=1))){
   data_rep_fold[site+1] <-  data_rep_tot[site] + data_rep_tot[(length+1)-site]
   data_rep_fold[length+2-site] <- 0
 }
@@ -51,14 +51,17 @@ cat("\n")
 
 data_syn_fold <- vector("list", (length+1))
 data_syn_fold[1] <- round(invar_syn)
-data_syn_fold[2] <- data_syn_tot[2]
+#data_syn_fold[2] <- data_syn_tot[2]
 
-for (site in c(seq(1,((length)/2),by=1))){
-  data_syn_fold[site+2] <-  data_syn_tot[site+2] + data_syn_tot[(length+1)-site]
+#for (site in c(seq(1,((length)/2),by=1))){
+#  data_syn_fold[site+2] <-  data_syn_tot[site+2] + data_syn_tot[(length+1)-site]
+#  data_syn_fold[length+2-site] <- 0
+#}
+
+for (site in c(seq(1,ceiling(length/2),by=1))){
+  data_syn_fold[site+1] <-  data_syn_tot[site] + data_syn_tot[(length+1)-site]
   data_syn_fold[length+2-site] <- 0
 }
-
-
 
 do.call(cat,data_syn_fold)
 cat("\n")
@@ -87,13 +90,13 @@ cat("\n")
 #  ))
 
 
-#XXSFS <- fread('XX_SFS_OE.txt')
+SFS <- fread('pollen_SFS_OE.txt')
 
-#XXSFS_melt <- melt(XXSFS,id.vars = "Alleles",verbose=FALSE)
+SFS_melt <- melt(SFS,id.vars = "Alleles",verbose=FALSE)
 
 
-#ggplot(XXSFS_melt,aes(x=Alleles, y=value,fill=variable)) +
-#  geom_bar(stat="identity", color="black", position=position_dodge())+
-#  theme_minimal()
+ggplot(SFS_melt,aes(x=Alleles, y=value,fill=variable)) +
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+  theme_minimal() + labs(x = "Count", y="Frequency",fill="")
 
 
