@@ -314,7 +314,22 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   annotate(geom="text", x = "X", y = 0.155, label = "b", parse = TRUE, size=10) +
   annotate(geom="text", x = "Y", y = 0.51, label = "c", parse = TRUE, size=10) 
 
-
+  t.test(
+    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
+    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ])
+  
+  t.test(
+    all_data_var$value[all_data_var$chrom == "N" & all_data_var$var == "Fst" ] ,  
+    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
+  
+  t.test(
+    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
+    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
+  
+  fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
+  fst_anova <- aov(value ~ chrom, data=fst_data_var)
+  summary(fst_anova) 
+  
 ####dxy####
 
 dxy <- all_data[all_data$var == "dxy" ,]
@@ -368,6 +383,20 @@ ggplot(kxydxy, aes(x=outgroup, y=value, color=chrom
   scale_x_discrete(limits=c("R.hastatulus","R.rothschildianus","R.bucephalophorus")) +
    theme(axis.text.x = element_text(face = "italic"))
 
+t.test(
+  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
+
+t.test(
+  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ] ,  
+  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
+
+
+dxy_data_var <- all_data_var[ all_data_var$var == "dxy", ]  
+dxy_anova <- aov(value ~ chrom, data=dxy_data_var)
+summary(dxy_anova) 
+
+
 
 ####dnds####
 evo_rate <- rbind(
@@ -420,13 +449,9 @@ ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
 ####MS####
 
 
-
-#filename <- paste('ms_',chrom,'_stat.txt',sep="")
-
-
 ##pi##
 ms_pi <- rbind(
-               ms_stat(chrom="A",var="pi_tot",sitemean=265.798,filename = "secMig.parsed.ms"),
+               ms_stat(chrom="A",var="pi_tot",sitemean=265.798,filename = "ancMig.parsed.ms"),
                cbind(all_data_pi[all_data_pi$pop == "R.hastatulus",-c(2,3)],state="obs")
 )
 
@@ -442,7 +467,7 @@ ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
 
 ##fst##
 ms_fst <- rbind(#ms_stat(chrom="X",var="fst"),
-                ms_stat(chrom="A",var="fst",filename = "secMig.parsed.ms"),
+                ms_stat(chrom="A",var="fst",filename = "ancMig.parsed.ms"),
                 cbind(all_data_fst[all_data_fst$pop == "R.hastatulus",-c(2,3)],state="obs")
 )
 
@@ -458,35 +483,16 @@ ms_fst <- rbind(#ms_stat(chrom="X",var="fst"),
   #scale_x_discrete(limits=c("A","H","X","Y")) 
   scale_x_discrete(limits=c("A","X")) 
 
-t.test(
-  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ])
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "N" & all_data_var$var == "Fst" ] ,  
-  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
-  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
-
-#Nem = ¼(fst - 1)  
-(1/0.1165208 - 1)/4
-
-fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
-fst_anova <- aov(value ~ chrom, data=fst_data_var)
-summary(fst_anova) 
 
 ##dxy##
 
-
 ms_dxy <- rbind(
-  ms_stat(chrom="X",var="dxy",sitemean=2.50881),
-  ms_stat(chrom="A",var="dxy",sitemean=2.50881),
-  cbind(dxy[,-c(2,3)],"state"="obs")
+  #ms_stat(chrom="X",var="dxy",sitemean=2.50881),
+  ms_stat(chrom="A",var="dxy",sitemean=2.50881,filename = "ancMig.parsed.ms"),
+  cbind(kxydxy[kxydxy$pop == "R.hastatulus",-c(2,3)],"state"="obs")
 )
 
-dxy_plot_oe <- 
+#dxy_plot_oe <- 
   ggplot(ms_dxy, aes(x=chrom, y=value, fill=state)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
@@ -497,24 +503,6 @@ dxy_plot_oe <-
   #scale_x_discrete(limits=c("A","H","X","Y")) 
   scale_x_discrete(limits=c("A","X")) 
 
-multiplot(pi_plot_oe,fst_plot_oe,dxy_plot_oe,cols=3)
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
-
-t.test(
-  all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ] ,  
-  all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
-
-
-dxy_data_var <- all_data_var[ all_data_var$var == "dxy", ]  
-dxy_anova <- aov(value ~ chrom, data=dxy_data_var)
-summary(dxy_anova) 
-
-#Dxy = 2μt
-0.014862532/(2*7.5e-9)
-(115000+35000)-0.014862532/(2*7.5e-9)
 
 ####Extra Calculations####
 ##fmaleX!=maleX##
@@ -530,6 +518,9 @@ all_data[all_data$var == "sites" & all_data$cod == "syn"
 
 #Dxy = 2μt
 0.269506300/(2*7.5e-9)
+0.014862532/(2*7.5e-9)
+(115000+35000)-0.014862532/(2*7.5e-9)
 
-
+#Nem = ¼(fst - 1)  
+(1/0.1165208 - 1)/4
 
