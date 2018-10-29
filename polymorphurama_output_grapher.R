@@ -175,8 +175,8 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,popStr='pop'){
   return(stats_bind)
 }
 
-ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
-  filename <- paste('ms_',chrom,'_stat.txt',sep="")
+ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL,filename=filname){
+  #filename <- paste('ms_',chrom,'_stat.txt',sep="")
   ms <- fread(filename)
   ms_melt <- melt(ms,id.vars = "rep")
   ms_comp <- ms_melt[complete.cases(ms_melt), ]
@@ -185,7 +185,7 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL){
   ms_bind <- cbind(rename(ms_sum, c("variable" = "var")),"chrom"=chrom,"outgroup"="exp","state"="exp")
   ms_out <- ms_bind[ms_bind$var == var,]
   if (var == "pi_tot" | var == "dxy"){
-    ms_out$value <- ms_out$value * sitemean
+    ms_out$value <- ms_out$value / sitemean
   }
   return(ms_out)
 }
@@ -198,22 +198,15 @@ FLNC <- c("XYY","FL","NC")
 
 all_data <- data.frame(
   rbind(
-    stats_table(outgroup="bucephalophorus",set="fem",chrom="H",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="fem",chrom="H",pops=pop,popStr="pop"),
-    stats_table(outgroup="bucephalophorus",set="fem",chrom="XY",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="fem",chrom="XY",pops=pop,popStr="pop")
+    stats_table(outgroup="bucephalophorus",set="rna",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="rna",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="bucephalophorus",set="rna",chrom="XY",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="rna",chrom="XY",pops=pop,popStr="pop"),
+    stats_table(outgroup="bucephalophorus",set="rna",chrom="N",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="rna",chrom="N",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop")
   )
 , stringsAsFactors = FALSE)
-
-all_data <- data.frame(
-  rbind(
-    stats_table(outgroup="rothschildianus",set="josh",chrom="A",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="josh",chrom="H",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="josh",chrom="XY",pops=pop,popStr="pop"),
-    stats_table(outgroup="rothschildianus",set="josh",chrom="N",pops=pop,popStr="pop")
-  )
-  , stringsAsFactors = FALSE)
-
 
 all_data_var <- data.frame(
   rbind(
@@ -425,9 +418,15 @@ ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
   theme(axis.text.x = element_text(face = "italic")) + coord_trans(y = "log2")
 
 ####MS####
+
+
+
+#filename <- paste('ms_',chrom,'_stat.txt',sep="")
+
+
 ##pi##
-ms_pi <- rbind(ms_stat(chrom="X",var="pi_tot",sitemean=2.50881),
-               ms_stat(chrom="A",var="pi_tot",sitemean=2.50881),
+ms_pi <- rbind(
+               ms_stat(chrom="A",var="pi_tot",sitemean=265.798,filename = "secMig.parsed.ms"),
                cbind(all_data_pi[all_data_pi$pop == "R.hastatulus",-c(2,3)],state="obs")
 )
 
@@ -437,24 +436,24 @@ ggplot(ms_pi, aes(x=chrom, y=value, fill=state)) + #guides(fill = FALSE) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) #+
   #scale_x_discrete(limits=c("A","H","X","Y")) 
   scale_x_discrete(limits=c("A","X")) 
 
 ##fst##
-ms_fst <- rbind(ms_stat(chrom="X",var="fst"),
-                ms_stat(chrom="A",var="fst"),
-                cbind(all_data_fst[c(1,2,3),-c(2,3)],"state"="obs")
+ms_fst <- rbind(#ms_stat(chrom="X",var="fst"),
+                ms_stat(chrom="A",var="fst",filename = "secMig.parsed.ms"),
+                cbind(all_data_fst[all_data_fst$pop == "R.hastatulus",-c(2,3)],state="obs")
 )
 
-fst_plot_oe <- 
+#fst_plot_oe <- 
   ggplot(ms_fst, aes(x=chrom, y=value, fill=state)) +
-  guides(fill = FALSE) +
+  #guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Fst") #+
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
   #scale_x_discrete(limits=c("A","H","X","Y")) 
   scale_x_discrete(limits=c("A","X")) 
@@ -531,3 +530,6 @@ all_data[all_data$var == "sites" & all_data$cod == "syn"
 
 #Dxy = 2μt
 0.269506300/(2*7.5e-9)
+
+
+
