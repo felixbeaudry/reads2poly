@@ -36,10 +36,10 @@ die $usage unless ($opts{i});
 my $d2 = $opts{i};
 
 #Population file
-my $pop_file = $opts{i} . "pop";
+my $pop_file = $opts{i} . "pop.pop";
 my $pop_file_name ;
 if ($opts{p}) {
-	$pop_file = $opts{i} . $opts{p};
+	$pop_file = $opts{i} . $opts{p} . ".pop";
 	$pop_file_name = $opts{p} . "_";
 }
 
