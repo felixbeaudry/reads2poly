@@ -1512,23 +1512,6 @@ foreach $file (@files){
 						$FOP = 0;
 					}
 
-					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
-					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
-					if ($pop == 0){	
-						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-					elsif ($pop == 1){	
-						print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-					elsif ($pop == 2){	
-						print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-
-
-
 					print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
 					print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
 					print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
@@ -1553,7 +1536,20 @@ foreach $file (@files){
 
 				elsif ( $popLoop == 1 ){
 
-
+					# print  "Synonymous Poly above a frequency of $freq_cut_off: $no_polyS_freq  \n"; 
+					# print  "Replacement Polyabove a frequency of $freq_cut_off: $no_polyR_freq  \n"; 		
+					if ($pop == 0){	
+						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
+					elsif ($pop == 1){	
+						print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
+					elsif ($pop == 2){	
+						print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+					}
 
 					if ($Dxy_syn != 0){
 						$knks = $Dxy_rep / $Dxy_syn;
