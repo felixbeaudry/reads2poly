@@ -11,10 +11,12 @@ popNum=args[4]
 chrom=args[5]
 
 filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+#filename_wIn <- "rna_rothschildianus_summarystats_pop_pollen.txt"
 within_stat <- fread(filename_wIn)
 invar_syn <- sum(within_stat$pop1_sites_syn  - within_stat$pop1_S_syn )
 invar_rep <- sum( within_stat$pop1_sites_rep - within_stat$pop1_S_rep)
 
+#filename_frq <- "rna_rothschildianus_frequencies_pop1_pollen.txt"
 filename_frq <- paste(set,"_",outgroup,"_frequencies_",popStr,"1_",chrom,".txt",sep="")
 data <- fread(filename_frq,header = FALSE )
 length <- (ncol(data) / 2)-1
@@ -29,12 +31,20 @@ data_rep_tot <- colSums (data_rep, na.rm = FALSE, dims = 1)
 
 data_rep_fold <- vector("list", (length+1))
 data_rep_fold[1] <- round(invar_rep)
-data_rep_fold[2] <- data_rep_tot[2]
-  
+
+#if you want to exclude outgroup
+#data_rep_fold[2] <- data_rep_tot[2]
+#for (site in c(seq(1,(length/2),by=1))){
+  #data_rep_fold[site+2] <-  data_rep_tot[site+2] + data_rep_tot[(length+1)-site]
+  #data_rep_fold[length+2-site] <- 0
+#}
+
+
 for (site in c(seq(1,(length/2),by=1))){
-  data_rep_fold[site+2] <-  data_rep_tot[site+2] + data_rep_tot[(length+1)-site]
+  data_rep_fold[site+1] <-  data_rep_tot[site] + data_rep_tot[(length+1)-site]
   data_rep_fold[length+2-site] <- 0
 }
+
 
 do.call(cat,data_rep_fold)
 cat("\n")
@@ -77,13 +87,13 @@ cat("\n")
 #  ))
 
 
-XXSFS <- fread('XX_SFS_OE.txt')
+#XXSFS <- fread('XX_SFS_OE.txt')
 
-XXSFS_melt <- melt(XXSFS,id.vars = "Alleles",verbose=FALSE)
+#XXSFS_melt <- melt(XXSFS,id.vars = "Alleles",verbose=FALSE)
 
 
-ggplot(XXSFS_melt,aes(x=Alleles, y=value,fill=variable)) +
-  geom_bar(stat="identity", color="black", position=position_dodge())+
-  theme_minimal()
+#ggplot(XXSFS_melt,aes(x=Alleles, y=value,fill=variable)) +
+#  geom_bar(stat="identity", color="black", position=position_dodge())+
+#  theme_minimal()
 
 
