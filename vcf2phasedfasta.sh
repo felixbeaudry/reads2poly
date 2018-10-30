@@ -3,27 +3,30 @@
 perl /ohta/felix.beaudry/scripts/find_perfect.pl >find_perfect_list.vcf
 awk '{print $1}' find_perfect_list.vcf | sort | uniq >sex.list
 
+rm sex.fasta.err
 while read ind
 do
+echo "Variant calling for ${ind}"
+java -Djava.io.tmpdir=tmp -jar /ohta/apps/GenomeAnalysisTK.jar -T UnifiedGenotyper -R /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa -I ${ind}_ddpl.bam -o ${ind}.uni.vcf --output_mode EMIT_ALL_SITES -nct 10 --genotyping_mode DISCOVERY
 
 #samtools sort ${ind}_add.bam >${ind}_sort.bam
-echo "filtering ${ind}"
+
 java -jar /ohta/apps/GenomeAnalysisTK.jar -T SelectVariants -R /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa -V ${ind}.uni.vcf -o ${ind}.sex.vcf -L sex.list --selectTypeToExclude INDEL
 
-echo "phasing ${ind}"
+echo "Phasing ${ind}"
 /ohta/apps/hapcut/extractHAIRS --VCF ${ind}.sex.vcf --bam ${ind}_sort.bam --maxIS 400 --ref /ohta/felix.beaudry/assemblies/hastTranscriptome/NCF1_combined_ref_CDS_noStop.fa > ${ind}.fragmatrix
 /ohta/apps/hapcut/HAPCUT --fragments ${ind}.fragmatrix --VCF ${ind}.sex.vcf --output ${ind}.hapcut --maxmem 30000 > ${ind}.uni_hapcut.log
 
-perl /ohta/felix.beaudry/scripts/extract_seq_perfect_sites.pl find_perfect_list.vcf ${ind}.hapcut ${ind}.sex.vcf >${ind}.sex.fasta
+perl /ohta/felix.beaudry/scripts/extract_seq_perfect_sites.pl find_perfect_list.vcf ${ind}.hapcut ${ind}.sex.vcf >${ind}.sex.fasta 2>${ind}.sex.fasta.err
 
-perl /ohta/felix.beaudry/scripts/reads2poly/fastaLiner.pl -i ${ind}.sex.fasta
+perl /ohta/felix.beaudry/scripts/reads2poly/fasterLiner.pl -i ${ind}.sex.fasta
 
 #mkdir phase/${ind}
 rm phase/${ind}/*; 
 for chrom in X Y
 do
 
-echo "fasting ${ind} ${chrom}"	
+echo "Fasting ${ind} ${chrom}"	
 while read loc 
 do
 samtools faidx ${ind}.sex.fasta.sort ${loc}_${chrom} 2>>phase/${ind}/${ind}.fai.out | cat >phase/${ind}/${loc}_${chrom}.fasta
