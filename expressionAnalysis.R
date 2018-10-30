@@ -62,19 +62,20 @@ rownames(treads) <- reads$V1
 countdata <- data.matrix(treads,rownames.force=TRUE) 
 
 ##Define bias analysis##
+#dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ tissue)
 dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  sex + tissue)
+
 dds <- dds[ rowSums(counts(dds)) > 1, ] #filter for rows with info
 dss <- DESeq(dds)
 
+#res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
+#resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
 
-res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
-resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
-
-#res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
+res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
 #resLFC <- lfcShrink(dss, coef="tissue_L_vs_P", type="apeglm")
 
-plotMA(res, ylim=c(-2,2))
-plotMA(resLFC, ylim=c(-2,2))
+#plotMA(res, ylim=c(-2,2))
+#plotMA(resLFC, ylim=c(-2,2))
 
 resdf <- data.frame(res)
 resdf$loci <- row.names(resdf)
@@ -103,17 +104,25 @@ regions <- regions[,c(1,6)]
 
 regionsExp <- data.frame(sqldf('select resdf.*, regions.* from resdf left join regions on resdf.loci = regions.Loci'))
 regionsExp <- regionsExp[,-8]
+regionsExp <- regionsExp[regionsExp$pvalue <  0.05,]
+regionsExp <- regionsExp[!is.na(regionsExp$pvalue), ]
+
 
 ggplot(regionsExp, aes(x = log2FoldChange, y = regions, fill=regions, alpha=0.5)) + 
   geom_density_ridges() + guides(alpha=FALSE,fill=FALSE) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "log2 Leaf Expression Bias", y="") +
+  theme_bw()  + theme_bw(base_size = 30) + 
+  labs(x = "log2 Male Expression Bias", y="") +
+ # labs(x = "log2 Leaf Expression Bias", y="") +
 scale_fill_manual(values=c( 
   '#00ADEF', #Blue
   '#FFF100',  #yellow
   '#00A550', #green
  # '#1B75BB', #purple-y
   '#8B4BD8'
-))
+)) + 
+  xlim(-3,3)
+
+
 
 
 ####Stat Correlates####
@@ -131,7 +140,7 @@ interExp <- data.frame(sqldf('select regionsExp.*, inter.*, within.* from region
                              left join inter on regionsExp.loci = inter.locus 
                              left join within on regionsExp.loci = within.locus'))
 
-interExp <- interExp[interExp$regions == "Autosomal" ,]
+#interExp <- interExp[interExp$regions == "Autosomal" ,]
 
 interExp$sexBias[interExp$log2FoldChange > 0] <- "Male"
 interExp$sexBias[interExp$log2FoldChange < 0] <- "Female"
@@ -140,9 +149,60 @@ interExp$sexBias[interExp$log2FoldChange < 0] <- "Female"
 interExp$sexBias[interExp$pvalue >  0.05] <- "Unbiased"
 
 ##export lists of biased genes##
-#pollenList <- interExp$loci[interExpA$sexBias == "Pollen"]
+#pollenList <- interExp$loci[interExp$sexBias == "Pollen"]
 #write(pollenList, file = "pollen.list",
 #      append = FALSE, sep = "\n")
+
+#leafList <- interExp$loci[interExp$sexBias == "Leaf"]
+#write(leafList, file = "leaf.list",
+#      append = FALSE, sep = "\n")
+
+#LPUnbiasedList <- interExp$loci[interExp$sexBias == "LPUnbiased"]
+#write(LPUnbiasedList, file = "LPUnbiased.list",
+#      append = FALSE, sep = "\n")
+
+stacks <- data.frame(
+cbind(
+  rbind(
+    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ])),
+    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]))
+  ),
+  rbind(
+    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ])),
+    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]))
+  ),
+  rbind(
+    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ])),
+    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]))
+  ),
+  rbind(
+    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ])),
+    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]))
+  )
+)
+#,row.names = c("Female","Male"))
+,row.names = c("Pollen","Leaf"))
+
+
+names(stacks) <- c("XY","Autosomal","Hemizygous","NeoXY")
+tstacks <- data.frame(t(stacks))
+tstacks$region <- rownames(tstacks)
+stack_melt <- melt(tstacks,id.vars = "region")
+
+ggplot(stack_melt, aes(x = region, y = value,fill=variable)) + 
+  geom_bar(stat="identity") +
+  # facet_grid(. ~ regions) +
+  labs(x = "", y="Percent Expression Bias",fill="") +
+  theme_bw()  + theme_bw(base_size = 30) + 
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue
+    #'#FFF100',  #yellow
+    #'#00A550', #green
+    # '#1B75BB', #purple-y
+    '#8B4BD8'
+  )) 
+
+
 
 #Tajima's D#
 

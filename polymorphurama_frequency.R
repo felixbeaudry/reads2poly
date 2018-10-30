@@ -32,18 +32,17 @@ data_rep_tot <- colSums (data_rep, na.rm = FALSE, dims = 1)
 data_rep_fold <- vector("list", (length+1))
 data_rep_fold[1] <- round(invar_rep)
 
-#if you want to exclude outgroup
-#data_rep_fold[2] <- data_rep_tot[2]
-#for (site in c(seq(1,(length/2),by=1))){
-  #data_rep_fold[site+2] <-  data_rep_tot[site+2] + data_rep_tot[(length+1)-site]
-  #data_rep_fold[length+2-site] <- 0
-#}
-
-
-for (site in c(seq(1,ceiling(length/2),by=1))){
-  data_rep_fold[site+1] <-  data_rep_tot[site] + data_rep_tot[(length+1)-site]
+data_rep_fold[2] <- data_rep_tot[2]
+for (site in c(seq(1,(length/2),by=1))){
+  data_rep_fold[site+2] <-  data_rep_tot[site+2] + data_rep_tot[(length+1)-site]
   data_rep_fold[length+2-site] <- 0
 }
+
+
+#for (site in c(seq(1,ceiling(length/2),by=1))){
+#  data_rep_fold[site+1] <-  data_rep_tot[site] + data_rep_tot[(length+1)-site]
+#  data_rep_fold[length+2-site] <- 0
+#}
 
 
 do.call(cat,data_rep_fold)
@@ -51,17 +50,17 @@ cat("\n")
 
 data_syn_fold <- vector("list", (length+1))
 data_syn_fold[1] <- round(invar_syn)
-#data_syn_fold[2] <- data_syn_tot[2]
+data_syn_fold[2] <- data_syn_tot[2]
 
-#for (site in c(seq(1,((length)/2),by=1))){
-#  data_syn_fold[site+2] <-  data_syn_tot[site+2] + data_syn_tot[(length+1)-site]
-#  data_syn_fold[length+2-site] <- 0
-#}
-
-for (site in c(seq(1,ceiling(length/2),by=1))){
-  data_syn_fold[site+1] <-  data_syn_tot[site] + data_syn_tot[(length+1)-site]
+for (site in c(seq(1,((length)/2),by=1))){
+  data_syn_fold[site+2] <-  data_syn_tot[site+2] + data_syn_tot[(length+1)-site]
   data_syn_fold[length+2-site] <- 0
 }
+
+#for (site in c(seq(1,ceiling(length/2),by=1))){
+#  data_syn_fold[site+1] <-  data_syn_tot[site] + data_syn_tot[(length+1)-site]
+#  data_syn_fold[length+2-site] <- 0
+#}
 
 do.call(cat,data_syn_fold)
 cat("\n")
@@ -90,13 +89,23 @@ cat("\n")
 #  ))
 
 
-SFS <- fread('pollen_SFS_OE.txt')
+#SFS <- fread('pollen_SFS_OE.txt')
 
-SFS_melt <- melt(SFS,id.vars = "Alleles",verbose=FALSE)
+#SFS_melt <- melt(SFS,id.vars = "Alleles",verbose=FALSE)
+
+#ggplot(SFS_melt,aes(x=Alleles, y=value,fill=variable)) +
+#  geom_bar(stat="identity", color="black", position=position_dodge())+
+#  theme_minimal() + labs(x = "Count", y="Frequency",fill="")
+
+#dfe <- fread('dfe_pollen.txt')
+#dfe$cat[dfe$V1 == 0] <- "0<Nes<1"
+#dfe$cat[dfe$V1 == 1] <- "1<Nes<10"
+#dfe$cat[dfe$V1 == 10] <- "10<Nes<100"
+#dfe$cat[dfe$V1 == 100] <- "100<Nes"
 
 
-ggplot(SFS_melt,aes(x=Alleles, y=value,fill=variable)) +
-  geom_bar(stat="identity", color="black", position=position_dodge())+
-  theme_minimal() + labs(x = "Count", y="Frequency",fill="")
-
+#ggplot(dfe,aes(x=cat, y=V2)) +
+#  geom_bar(stat="identity", color="black", position=position_dodge())+
+#  theme_minimal() +  theme_bw(base_size = 30) +
+#  labs(x = "", y="Proportion",title="Texas Pollen-Bias") 
 
