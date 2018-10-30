@@ -97,15 +97,17 @@ cat("\n")
 #  geom_bar(stat="identity", color="black", position=position_dodge())+
 #  theme_minimal() + labs(x = "Count", y="Frequency",fill="")
 
-#dfe <- fread('dfe_pollen.txt')
-#dfe$cat[dfe$V1 == 0] <- "0<Nes<1"
-#dfe$cat[dfe$V1 == 1] <- "1<Nes<10"
-#dfe$cat[dfe$V1 == 10] <- "10<Nes<100"
-#dfe$cat[dfe$V1 == 100] <- "100<Nes"
+dfe <- fread('DFE_tissue_pop.txt')
+dfe$cat[dfe$Nes == 0] <- "0<Nes<1"
+dfe$cat[dfe$Nes == 1] <- "1<Nes<10"
+dfe$cat[dfe$Nes == 10] <- "10<Nes<100"
+dfe$cat[dfe$Nes == 100] <- "100<Nes"
 
 
-#ggplot(dfe,aes(x=cat, y=V2)) +
-#  geom_bar(stat="identity", color="black", position=position_dodge())+
-#  theme_minimal() +  theme_bw(base_size = 30) +
-#  labs(x = "", y="Proportion",title="Texas Pollen-Bias") 
+ggplot(dfe,aes(x=cat, y=proportion, fill=tissue)) +
+  geom_bar(stat="identity", color="black", position=position_dodge())+
+ theme_minimal() +  theme_bw(base_size = 30) +
+  facet_grid(. ~ pop, scales = "free") +
+  theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
+  labs(x = "", y="Proportion of sites",fill="Tissue") 
 
