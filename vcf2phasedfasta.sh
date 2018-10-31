@@ -41,7 +41,8 @@ done < male.inds
 for chrom in X Y
 do
 while read loc
-do
+do 
+for outgroup in bucephalophorus rothschildianus
 rm subsets/rna/${chrom}phase/${loc}.fasta
 cat /ohta/felix.beaudry/fastas/bucephalophorus/${loc}.fasta >> subsets/rna/${chrom}phase/${loc}.fasta
 cat /ohta/felix.beaudry/fastas/rothschildianus/${loc}.fasta >> subsets/rna/${chrom}phase/${loc}.fasta

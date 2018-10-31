@@ -109,5 +109,15 @@ ggplot(dfe,aes(x=cat, y=proportion, fill=tissue)) +
  theme_minimal() +  theme_bw(base_size = 30) +
   facet_grid(. ~ pop, scales = "free") +
   theme(axis.text.x = element_text(angle = 20, hjust = 1)) +
-  labs(x = "", y="Proportion of sites",fill="Tissue") 
+  labs(x = "Effective Strength of Selection", y="Proportion of Mutations",fill="Tissue") +
+  scale_fill_manual(values=c( 
+       'gray', #Blue
+      'white'
+     ))
+
+
+    
+
+dfe_anova <- aov(proportion ~  cat + tissue, data=dfe)
+summary(dfe_anova) 
 

@@ -151,7 +151,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tpop0_Fst_syn\tpop0_neid_syn\tpop0_neid_rep\tpop0_dnds_NA\tpop0_dxy_NA\tpop0_da_NA\n";
+print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_d_rep\tpop0_dnds_NA\tpop0_dxy_NA\tpop0_da_NA\n";
 
 #####Start Calculating Statistics####
 

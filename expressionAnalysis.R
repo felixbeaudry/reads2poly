@@ -68,10 +68,10 @@ dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ 
 dds <- dds[ rowSums(counts(dds)) > 1, ] #filter for rows with info
 dss <- DESeq(dds)
 
-#res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
+res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
 #resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
 
-res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
+#res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
 #resLFC <- lfcShrink(dss, coef="tissue_L_vs_P", type="apeglm")
 
 #plotMA(res, ylim=c(-2,2))
@@ -127,8 +127,8 @@ scale_fill_manual(values=c(
 
 ####Stat Correlates####
 
-inter <- fread('rna_rothschildianus_interpop_pop_A.txt')
-within <- fread('rna_rothschildianus_summarystats_pop_A.txt')
+inter <- fread('rna_rothschildianus_interpop_fm_A.txt')
+within <- fread('rna_rothschildianus_summarystats_fm_A.txt')
 
 inter <- separate(inter, locus, c("locus","file"), 
                     sep = ".fasta", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
@@ -180,8 +180,8 @@ cbind(
     length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] ) / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]))
   )
 )
-#,row.names = c("Female","Male"))
-,row.names = c("Pollen","Leaf"))
+,row.names = c("Female","Male"))
+#,row.names = c("Pollen","Leaf"))
 
 
 names(stacks) <- c("XY","Autosomal","Hemizygous","NeoXY")
@@ -193,7 +193,7 @@ ggplot(stack_melt, aes(x = region, y = value,fill=variable)) +
   geom_bar(stat="identity") +
   # facet_grid(. ~ regions) +
   labs(x = "", y="Percent Expression Bias",fill="") +
-  theme_bw()  + theme_bw(base_size = 30) + 
+  theme_bw()  + theme_bw(base_size = 30) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
     #'#FFF100',  #yellow
@@ -279,7 +279,21 @@ ggplot(interExpBiased_comp, aes(y=pop0_dnds_NA, x=log2FoldChangeAbs, color=sexBi
   theme_bw()  + theme_bw(base_size = 30) +
   labs(x = "Expression Bias", y="dnds", color="Sex") 
 
+#Fst
 
+ggplot(interExp, aes(x = log2FoldChange, y = pop0_Fst_syn, color=pvalue)) + 
+  geom_point() + 
+  stat_smooth(method = "loess") +
+  # facet_grid(. ~ regions) +
+  labs(x = "log2 Male Expression Bias", y="M-F Fst") +
+  theme_bw()  + theme_bw(base_size = 30) + 
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue
+    '#FFF100',  #yellow
+    '#00A550', #green
+    # '#1B75BB', #purple-y
+    '#8B4BD8'
+  ))
 
 ####Orthologs####
 
