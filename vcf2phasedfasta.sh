@@ -54,7 +54,6 @@ done <sex.list
 done
 
 
-
 for loc in X Y
 do
 for pop in pop

@@ -446,6 +446,71 @@ ggplot(mk, aes(x=outgroup, y=value, color=Chromosome
   scale_x_discrete(limits=c("R.rothschildianus","R.bucephalophorus")) +
   theme(axis.text.x = element_text(face = "italic")) + coord_trans(y = "log2")
 
+####ds####
+
+ksds <- rbind(
+  all_data[all_data$var == "k" & all_data$cod == "syn" & all_data$pop == "R.hastatulus",],
+  all_data[ all_data$var == "neid" & all_data$cod == "syn",]
+)
+ksds$outgroup[ksds$var == "dxy"] <- "R.hastatulus"
+ksds$outgroup[ksds$outgroup == "rothschildianus"] <- "R.rothschildianus"
+
+####Qpi####
+
+Q_data_pi <-
+  data.frame(
+  cbind(
+    c("XY","XYY"),
+    c(
+    all_data_pi$value[all_data_pi$chrom == "XY" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus"] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus"],
+    all_data_pi$value[all_data_pi$chrom == "XY" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus"] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus"]
+    )
+  )
+    )
+
+names(Q_data_pi) <- c("Pop","Qpi")
+
+options(digits = 4)
+
+
+Q_data_pi$Qpi<- type.convert(Q_data_pi$Qpi, na.strings = "NA", as.is = FALSE, dec = ".",
+             numerals =  "no.loss")
+
+
+title_qpi <- expression(paste("Q", ""[pi]))
+
+
+ggplot(Q_data_pi, aes(x=Pop, y=Qpi)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_qpi) 
+
+ ####Qfst####
+
+all_data_fst
+
+Q_data_fst <-
+  data.frame(
+    cbind(
+      "R.hastatulus",
+
+      all_data_fst$value[all_data_fst$chrom == "XY" & all_data_fst$outgroup == "rothschildianus"] / all_data_fst$value[all_data_fst$chrom == "A" & all_data_fst$outgroup == "rothschildianus"]
+      
+    )
+  )
+
+names(Q_data_fst) <- c("Pop","Qfst")
+
+Q_data_fst$Qfst<- type.convert(Q_data_fst$Qfst, na.strings = "NA", as.is = FALSE, dec = ".",
+                             numerals =  "no.loss")
+
+title_qfst <- expression(paste("Q", ""[Fst]))
+
+
+ggplot(Q_data_fst, aes(x=Pop, y=Qfst)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_qfst) 
+
+
 ####MS####
 
 
@@ -524,3 +589,28 @@ all_data[all_data$var == "sites" & all_data$cod == "syn"
 #Nem = ¼(fst - 1)  
 (1/0.1165208 - 1)/4
 
+#silene pollen expressed dnds
+s_pollen_dnds <- 
+data.frame(
+  rbind(
+c(0.192, 0.1689), 
+c(0.142 ,0.1436)
+), rownames = c("not pollen","pollen")
+)
+names(s_pollen_dnds) <- c("mean","se","tissue")
+
+ggplot(s_pollen_dnds, aes(x=tissue, y=mean, color=tissue)) +
+  guides(color = FALSE) +
+  geom_point( ) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="dnds") +
+#theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+#scale_x_discrete(limits=c("A","H","X","Y")) 
+
+  scale_color_manual(values=c( 
+    'red', 
+    'blue'
+    
+  ))
