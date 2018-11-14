@@ -62,17 +62,17 @@ rownames(treads) <- reads$V1
 countdata <- data.matrix(treads,rownames.force=TRUE) 
 
 ##Define bias analysis##
-dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ tissue)
-#dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  sex + tissue)
+#dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ tissue)
+dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  sex + tissue)
 #dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  pop)
 
 dds <- dds[ rowSums(counts(dds)) > 1, ] #filter for rows with info
 dss <- DESeq(dds)
 
-#res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
+res <- results(dss, contrast=c("sex","M","F"),  alpha = 0.05  )
 #resLFC <- lfcShrink(dss, coef="sex_M_vs_F", type="apeglm")
 
-res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
+#res <- results(dss, contrast=c("tissue","L","P"),  alpha = 0.05  )
 #resLFC <- lfcShrink(dss, coef="tissue_L_vs_P", type="apeglm")
 
 #res <- results(dss, contrast=c("pop","T","N"),  alpha = 0.05  )
@@ -132,25 +132,15 @@ scale_fill_manual(values=c(
 
 #inter <- fread('rna_rothschildianus_interpop_fm_A.txt')
 #within <- fread('rna_rothschildianus_summarystats_fm_A.txt')
-inter <- fread('rna_rothschildianus_interpop_pop_XY.txt')
-within <- fread('rna_rothschildianus_summarystats_pop_XY.txt')
-inter <- fread('rna_rothschildianus_interpop_pop_A.txt')
-within <- fread('rna_rothschildianus_summarystats_pop_A.txt')
+inter <- fread('N_rothschildianus_interpop_pop_N.txt')
+within <- fread('N_rothschildianus_summarystats_pop_N.txt')
+#inter <- fread('rna_rothschildianus_interpop_pop_A.txt')
+#within <- fread('rna_rothschildianus_summarystats_pop_A.txt')
 
-hast_S <- 
-  data.frame(
-  cbind(
-    within$locus,
-  within$pop0_sites_syn
-  ))
-
-hast_S <- hast_S[hast_S$X2 != 0,]
-
-write.csv(hast_S, file = "hast_synsites.txt" )
-
-write(hast_S, file = "hast_synsites.txt",
-     append = FALSE, sep = "\n")
-
+#hast_S <- data.frame( cbind( within$locus, within$pop0_sites_syn ))
+#hast_S <- hast_S[hast_S$X2 != 0,]
+#write.csv(hast_S, file = "hast_synsites.txt" )
+#write(hast_S, file = "hast_synsites.txt", append = FALSE, sep = "\n")
 
 inter <- separate(inter, locus, c("locus","file"), 
                     sep = ".fasta", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
@@ -164,10 +154,10 @@ interExp <- data.frame(sqldf('select regionsExp.*, inter.*, within.* from region
 
 #interExp <- interExp[interExp$regions == "Autosomal" ,]
 
-#interExp$sexBias[interExp$log2FoldChange > 0] <- "Male"
-#interExp$sexBias[interExp$log2FoldChange < 0] <- "Female"
-interExp$sexBias[interExp$log2FoldChange > 0] <- "Leaf"
-interExp$sexBias[interExp$log2FoldChange < 0] <- "Pollen"
+interExp$sexBias[interExp$log2FoldChange > 0] <- "Male"
+interExp$sexBias[interExp$log2FoldChange < 0] <- "Female"
+#interExp$sexBias[interExp$log2FoldChange > 0] <- "Leaf"
+#interExp$sexBias[interExp$log2FoldChange < 0] <- "Pollen"
 #interExp$sexBias[interExp$log2FoldChange > 0] <- "TX"
 #interExp$sexBias[interExp$log2FoldChange < 0] <- "NC"
 interExp$sexBias[interExp$pvalue >  0.05] <- "Unbiased"
@@ -204,8 +194,8 @@ cbind(
     length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] )/  nrow(nlist) #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]))
   )
 )
-#,row.names = c("Female","Male"))
-,row.names = c("Pollen","Leaf"))
+,row.names = c("Female","Male"))
+#,row.names = c("Pollen","Leaf"))
 #,row.names = c("Texas","NC"))
 
 
@@ -331,16 +321,39 @@ mean(!is.na(interExp$pop0_dnds_NA[interExp$sexBias == "Pollen"]))
 
 title_mk <- expression(paste("dn/ds/",pi, ""[n],"/",pi, ""[s]))
 
-A_mk <-
-ggplot(interExp, aes(y=pop0_mk_NA, x=sexBias)) + 
-  #geom_violin() + 
-  geom_boxplot(width=0.1) +
-  theme_bw()  + theme_bw(base_size = 30) +
-  #facet_grid(. ~ regions) +
-  labs(x = "Expression Bias", y=title_mk,title="A") +
-  scale_x_discrete(limits=c("Leaf","Unbiased","Pollen"))
+interExp$log2FoldChangeAbs <- abs(interExp$log2FoldChange)
+interExp$log2FoldChangeAbsRound <- as.factor(round(interExp$log2FoldChangeAbs,0))
 
-t.test(interExp$pop0_mk_NA[interExp$sexBias == "Unbiased"],interExp$pop0_mk_NA[interExp$sexBias == "Pollen"])
+#A_mk <-
+ggplot(interExp, aes(y=pop0_mk_NA,  x=log2FoldChangeAbs)) + 
+  #geom_violin() + 
+  #geom_boxplot(width=0.1) +
+  geom_point(aes(color=sexBias))+
+  stat_smooth(method = "loess") +
+  theme_bw()  + theme_bw(base_size = 30) + xlim(0,2) + ylim(0,5) + 
+  #facet_grid(. ~ regions) + 
+  labs(x = "log Expression difference", y=title_mk, color="Bias") #+
+  scale_x_discrete(limits=c("Male","Unbiased","Female"))
+
+
+    interExp$pop0_mk_NA[interExp$log2FoldChangeAbsRound == 0 & interExp$sexBias == "Male"]
+  
+  
+ggplot(interExp, aes(y=pop0_mk_NA, x=log2FoldChangeAbsRound, color=sexBias)) + 
+  #geom_density_ridges() +
+  #geom_violin() + 
+  geom_boxplot(width=0.5) +
+  geom_point(position=position_dodge(.5),aes(alpha=0.1) ) + guides(alpha=FALSE) +
+  theme_bw()  + theme_bw(base_size = 30) + 
+  #facet_grid(. ~ regions) +
+  labs(x = "log Expression difference", y=title_mk,color="Bias") +
+  scale_x_discrete(limits=c("0","1")) + ylim(0,5)
+
+aov(pop0_mk_NA ~ log2FoldChangeAbsRound + sexBias + log2FoldChangeAbsRound*sexBias, data=interExp)
+
+
+t.test(interExp$pop0_mk_NA[interExp$log2FoldChangeAbsRound == 0 & interExp$sexBias == "Female"],
+       interExp$pop0_mk_NA[interExp$log2FoldChangeAbsRound == 1 & interExp$sexBias == "Female"])
 t.test(interExp$pop0_mk_NA[interExp$sexBias == "Leaf"],interExp$pop0_mk_NA[interExp$sexBias == "Pollen"])
 t.test(interExp$pop0_mk_NA[interExp$sexBias == "Unbiased"],interExp$pop0_mk_NA[interExp$sexBias == "Leaf"])
 
@@ -366,6 +379,23 @@ ggplot(interExp, aes(x = log2FoldChange, y = pop0_Fst_syn, color=pvalue)) +
     '#8B4BD8'
   ))
 
+# ds 
+
+ggplot(interExp, aes(y = log2FoldChange, x = pop0_neid_syn, color=pvalue)) + 
+geom_point() + 
+  stat_smooth(method = "lm") +
+  # facet_grid(. ~ regions) +
+  labs(y = "log2 Male Expression Bias", x="ds") +
+  theme_bw()  + theme_bw(base_size = 30) + 
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue
+    '#FFF100',  #yellow
+    '#00A550', #green
+    # '#1B75BB', #purple-y
+    '#8B4BD8'
+  ))
+
+
 ####Orthologs####
 
 roth <- fread('rothschildianus.orthologs',header=FALSE)
@@ -379,3 +409,48 @@ names(species) <- c("hast","roth","buc")
 var(between)/var(within) -> (tot - within) / tot
 
 ####relatedness between pollen samples####
+
+
+####to genome####
+interExp <- interExp[!is.na(interExp$pop0_pi_syn),]
+
+interSplit <- separate(interExp, locus, c("locus","transcript","tail"), 
+                       sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+
+genomeConversion <- fread("NCF1_Genome.list",header=FALSE)
+
+#genomeLength <- fread("Genome_length.txt",sep=" ")
+#genome <- data.frame(sqldf('select genomeConversion.*, genomeLength.* from genomeConversion left join genomeLength on genomeConversion.V2 = genomeLength.V1'))
+#genome <- genome[!is.na(genome$V1),]
+
+
+#genome <- genome[genome$V2..14 > 500000,]
+#sort(genome$V2..14)
+
+S11619 <- genomeExp[genomeExp$Scaffold == "ScnbKXS_11619",]
+
+genomeS <- separate(genomeConversion, V1, c("locus","transcript","tail"), 
+                       sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+
+genomeSplit <- separate(genomeS, V2, c("Scaffold","ScaffoldExtra"), 
+                        sep = ";", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+
+
+genomeExp <- data.frame(sqldf('select genomeSplit.*, interSplit.* from genomeSplit left join interSplit on interSplit.transcript = genomeSplit.transcript'))
+
+genomeExp <- genomeExp[!is.na(genomeExp$pop0_pi_syn),]
+
+ggplot(data=genomeExp) + 
+  geom_point(aes(x=V9,y=pop1_pi_syn,color="Texas")) +
+  geom_point(aes(x=V9,y=pop2_pi_syn,color="NC")) +
+  facet_grid(aes(cols=Scaffold)) + 
+  theme_bw()  + theme_bw(base_size = 15) + 
+  theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  labs(x = "Scaffold Posittion", y=title_pisyn,color="Population") +
+  scale_color_manual(values=c( 
+    '#00ADEF', #Blue
+    #'#FFF100',  #yellow
+    #'#00A550', #green
+    # '#1B75BB', #purple-y
+    '#8B4BD8'
+  ))
