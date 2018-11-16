@@ -270,7 +270,7 @@ foreach $file (@files){
 		#Number of populations in ingroup
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
 
-
+		
 		if ($popLoop == 0){
 			$in_position = $position_array[$pop][0];
 			$data[0]=$totdata[$in_position];             
@@ -280,6 +280,7 @@ foreach $file (@files){
 				#$data[$y]=$totdata[$in_position];
 
 			}
+			
 		}
 		elsif ($popLoop == 1){ 
 			#insert outgroup sequence as subset position 0
@@ -291,6 +292,7 @@ foreach $file (@files){
 					print out_fa ">$y\n" , $data[$y], "\n";
 				}
 			}
+			
 		}
 		elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1] }) ){
 			#change outgroup sequences to pop1 sequences
@@ -300,12 +302,15 @@ foreach $file (@files){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
 			}
+			
 		}	 
 		else{
 			print "\nError in popLoops\tpop: $pop\tpoploop: $popLoop\toutpop: $outpop";
 		}                                   
 
-		$numseqs=scalar(@data);
+		$numseqs=scalar(@data)-1;
+		print "\nnumseqs at 309 ", $numseqs;
+
 		if ($numseqs>2){
 				#assign information to variable codons
 
