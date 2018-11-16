@@ -309,7 +309,7 @@ foreach $file (@files){
 		}                                   
 
 		$numseqs=scalar(@data)-1;
-		print "\nnumseqs at 309 ", $numseqs;
+		#print "\nnumseqs at 309 ", $numseqs;
 
 		if ($numseqs>2){
 				#assign information to variable codons

@@ -1,2 +1,0 @@
-locus	pop0_Fst_syn	pop0_d_syn	pop0_d_rep	pop0_dnds_NA	pop0_dxy_NA	pop0_da_NA
-Locus_24208_Transcript_5_Length_1789_genewise_newlength_1789_CDSlength_915.fasta	
