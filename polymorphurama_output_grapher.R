@@ -294,7 +294,7 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid(pop ~ sex) +
+  facet_grid(sex ~ pop) +
   scale_x_discrete(limits=c("A","N","H","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue
@@ -612,6 +612,14 @@ ggplot(Q_data_fst, aes(x=Pop, y=Qfst)) + guides(fill = FALSE) +
 
 
 ####MS####
+#import S for all
+#within <- fread('m_rothschildianus_summarystats_pop_Y.txt')
+#hast_S <- data.frame( cbind( within$locus, within$pop0_sites_syn ))
+#hast_S <- hast_S[hast_S$X2 != 0,]
+#write.csv(hast_S, file = "hast_synsites.txt" )
+#write(hast_S, file = "hast_synsites.txt", append = FALSE, sep = "\n")
+
+
 
 
 ##pi##
