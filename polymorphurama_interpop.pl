@@ -1678,14 +1678,16 @@ foreach $file (@files){
 		}
 		else{$Fst_rep = "NA";}
 
-		if (scalar(@{ $position_array[$pop-1] }) != 0){
-			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[$pop-1] });
-			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[$pop-1] });
-			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[$pop-1] });
-			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[$pop-1] });
-			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2);
 
+
+		if (scalar(@{ $position_array[1] }) != 0){
+			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] });
+			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[1] });
+			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[1] });
+			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
+			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2);
 		}
+
 		else{
 			$dxy_rep_final = "NA";
 			$dxy_syn_final = "NA";
