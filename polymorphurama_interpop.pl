@@ -112,7 +112,7 @@ open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_n
 #open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+#open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
 #open(out_fa,'>', ($d2 . "ingroup" . '.fa')) or die "Could not open outfile\n";
 
@@ -636,7 +636,7 @@ foreach $file (@files){
 										$complex = 'ja';
 										@codon_array_processed = codon_processor(@codon_array, $complex);          # if codon is complicated ($complex = ja) -- return a long list	
 
-										print OUT_DIFF "\nlocus ", $file, "  COMPLEX CODON at positon " ,$pos, "\n";
+									#	print OUT_DIFF "\nlocus ", $file, "  COMPLEX CODON at positon " ,$pos, "\n";
 
 										# print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
 
@@ -653,7 +653,7 @@ foreach $file (@files){
 											#	print "internal counter: $int_counter\n";
 												$int_counter++;
 											}   
-									          print OUT_DIFF join ("-", @{$codon_multipath_processed[$i]}), "\n";
+									         # print OUT_DIFF join ("-", @{$codon_multipath_processed[$i]}), "\n";
 										}
 
 										# print "NNNNNNNNN codons: ", join ("  ", @NNN_codon), "\n";
@@ -713,10 +713,10 @@ foreach $file (@files){
 									       $posOG[2] = (substr($codon_multipath_processed[$j][0], 6, 3));
 										   $posIG[2] = (substr($pos[2], 3, $sizeIG));
 
-										  print OUT_DIFF "\nPath $j \n";
-										  print OUT_DIFF "pos1: ", $pos[0],"\t outgroup ", $posOG[0],"\t ingroup ", $posIG[0], "\n";
-										  print OUT_DIFF "pos2: ", $pos[1],"\t outgroup ", $posOG[1],"\t ingroup ", $posIG[1], "\n";
-										  print OUT_DIFF "pos3: ", $pos[2],"\t outgroup ", $posOG[2],"\t ingroup ", $posIG[2], "\n";    
+										 # print OUT_DIFF "\nPath $j \n";
+										 # print OUT_DIFF "pos1: ", $pos[0],"\t outgroup ", $posOG[0],"\t ingroup ", $posIG[0], "\n";
+										 # print OUT_DIFF "pos2: ", $pos[1],"\t outgroup ", $posOG[1],"\t ingroup ", $posIG[1], "\n";
+										  #print OUT_DIFF "pos3: ", $pos[2],"\t outgroup ", $posOG[2],"\t ingroup ", $posIG[2], "\n";    
 
 										  @freq_NNN = (0,0,0); @freq_R = (0,0,0); @freq_S = (0,0,0); @freq_OG = (0,0,0); @freq_MCC = (0,0,0); @freq_NNN_IG = (0,0,0);
 										  @freq_GR = (0,0,0); @freq_AR = (0,0,0); @freq_TR = (0,0,0); @freq_CR = (0,0,0);
@@ -822,7 +822,7 @@ foreach $file (@files){
 													if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T'))	{$freqS_AT_AT_temp[$freq_AS[$i]]++;	$freqS_AT_AT_temp[$freq_TS[$i]]++;	$freqS_AT_GC_temp[$freq_GS[$i]]++;  $freqS_AT_GC_temp[$freq_CS[$i]]++;  
 																											 $freqR_AT_AT_temp[$freq_AR[$i]]++;	$freqR_AT_AT_temp[$freq_TR[$i]]++;	$freqR_AT_GC_temp[$freq_GR[$i]]++;  $freqR_AT_GC_temp[$freq_CR[$i]]++;}
 
-													print OUT_DIFF "one (or more) poly - case: OG has NNN, and ingroup has NNN\n"
+												#	print OUT_DIFF "one (or more) poly - case: OG has NNN, and ingroup has NNN\n"
 													}
 
 												elsif (($posIG[$i] =~ /NNN/g) == 0)  # either fixed difference, or fixed difference and polymorphic 
@@ -841,7 +841,7 @@ foreach $file (@files){
 
 
 
-															print OUT_DIFF "one replacement divergence - case: OG has NNN, no NNN in ingroup and monomorphic\n";
+															#print OUT_DIFF "one replacement divergence - case: OG has NNN, no NNN in ingroup and monomorphic\n";
 
 															}
 
@@ -860,7 +860,7 @@ foreach $file (@files){
 															if (($freq_GS[$i]>1) or ($freq_CS[$i]>1))  {if (($nuc_NNN_codon eq 'G') or ($nuc_NNN_codon eq 'C')) {$freqS_GC_GC_temp[$numseqs]++;} else {$freqS_AT_GC_temp[$numseqs]++;}}
 															if (($freq_AS[$i]>1) or ($freq_TS[$i]>1))  {if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T')) {$freqS_AT_AT_temp[$numseqs]++;} else {$freqS_GC_AT_temp[$numseqs]++;}}
 
-															print OUT_DIFF "one synonymnous divergence - case: OG has NNN, no NNN in ingroup and monomorphic\n";
+															#print OUT_DIFF "one synonymnous divergence - case: OG has NNN, no NNN in ingroup and monomorphic\n";
 															}
 
 														}
@@ -876,7 +876,7 @@ foreach $file (@files){
 															if (($most_common_codon[$i] =~ /G/g) or ($most_common_codon[$i] =~ /C/g)) {if (($nuc_NNN_codon eq 'G') or ($nuc_NNN_codon eq 'C')) {$freqR_GC_GC_temp[$numseqs]++;} else {$freqR_AT_GC_temp[$numseqs]++;}}
 															if (($most_common_codon[$i] =~ /A/g) or ($most_common_codon[$i] =~ /T/g)) {if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T')) {$freqR_AT_AT_temp[$numseqs]++;} else {$freqR_GC_AT_temp[$numseqs]++;}}
 
-															print OUT_DIFF "one replacement divergence- case: OG has NNN, no NNN in ingroup (i.e. divergence) and polymorphic\n";
+															#print OUT_DIFF "one replacement divergence- case: OG has NNN, no NNN in ingroup (i.e. divergence) and polymorphic\n";
 
 															}
 
@@ -910,18 +910,28 @@ foreach $file (@files){
 																									if($freq_CSB[$i] != 0) {$freq_U_P_temp[$numseqs]++;}	
 																									if($freq_CSD[$i] != 0) {$freq_P_U_temp[$numseqs]++;} }
 
-															print OUT_DIFF "one synonymnous divergence- case: OG has NNN, no NNN in ingroup (i.e. divergence) and polymorphic\n";
+															#print OUT_DIFF "one synonymnous divergence- case: OG has NNN, no NNN in ingroup (i.e. divergence) and polymorphic\n";
 
 															}
 
-														if ('GR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_GR[$i]]++; print OUT_DIFF "GR freq: ", $freq_GR[$i],"\n";}
-														if ('AR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_AR[$i]]++; print OUT_DIFF "AR freq: ", $freq_AR[$i],"\n";}	
-														if ('TR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_TR[$i]]++; print OUT_DIFF "TR freq: ", $freq_TR[$i],"\n";}
-														if ('CR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_CR[$i]]++; print OUT_DIFF "CR freq: ", $freq_CR[$i],"\n";}
-														if ('GS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_GS[$i]]++;	$freq_U_U_temp[$freq_GSU[$i]]++;	$freq_P_P_temp[$freq_GSP[$i]]++;	$freq_U_P_temp[$freq_GSB[$i]]++;	$freq_P_U_temp[$freq_GSD[$i]]++;	print OUT_DIFF "GS freq: ", $freq_GS[$i],"\n";}
-														if ('AS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_AS[$i]]++;	$freq_U_U_temp[$freq_ASU[$i]]++;	$freq_P_P_temp[$freq_ASP[$i]]++;	$freq_U_P_temp[$freq_ASB[$i]]++;	$freq_P_U_temp[$freq_ASD[$i]]++;	print OUT_DIFF "AS freq: ", $freq_AS[$i],"\n";}
-														if ('TS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_TS[$i]]++;	$freq_U_U_temp[$freq_TSU[$i]]++;	$freq_P_P_temp[$freq_TSP[$i]]++;	$freq_U_P_temp[$freq_TSB[$i]]++;	$freq_P_U_temp[$freq_TSD[$i]]++;	print OUT_DIFF "TS freq: ", $freq_TS[$i],"\n";}
-														if ('CS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_CS[$i]]++;	$freq_U_U_temp[$freq_CSU[$i]]++;	$freq_P_P_temp[$freq_CSP[$i]]++;	$freq_U_P_temp[$freq_CSB[$i]]++;	$freq_P_U_temp[$freq_CSD[$i]]++;	print OUT_DIFF "CS freq: ", $freq_CS[$i],"\n";}
+														if ('GR' ne $most_common_codon[$i])	
+														{$poly_freq_Rep_temp[$freq_GR[$i]]++; 
+														#	print OUT_DIFF "GR freq: ", $freq_GR[$i],"\n";
+														}
+														if ('AR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_AR[$i]]++; #print OUT_DIFF "AR freq: ", $freq_AR[$i],"\n";
+													}	
+														if ('TR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_TR[$i]]++; #print OUT_DIFF "TR freq: ", $freq_TR[$i],"\n";
+													}
+														if ('CR' ne $most_common_codon[$i])	{$poly_freq_Rep_temp[$freq_CR[$i]]++; #print OUT_DIFF "CR freq: ", $freq_CR[$i],"\n";
+													}
+														if ('GS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_GS[$i]]++;	$freq_U_U_temp[$freq_GSU[$i]]++;	$freq_P_P_temp[$freq_GSP[$i]]++;	$freq_U_P_temp[$freq_GSB[$i]]++;	$freq_P_U_temp[$freq_GSD[$i]]++;	#print OUT_DIFF "GS freq: ", $freq_GS[$i],"\n";
+													}
+														if ('AS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_AS[$i]]++;	$freq_U_U_temp[$freq_ASU[$i]]++;	$freq_P_P_temp[$freq_ASP[$i]]++;	$freq_U_P_temp[$freq_ASB[$i]]++;	$freq_P_U_temp[$freq_ASD[$i]]++;	#print OUT_DIFF "AS freq: ", $freq_AS[$i],"\n";
+													}
+														if ('TS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_TS[$i]]++;	$freq_U_U_temp[$freq_TSU[$i]]++;	$freq_P_P_temp[$freq_TSP[$i]]++;	$freq_U_P_temp[$freq_TSB[$i]]++;	$freq_P_U_temp[$freq_TSD[$i]]++;	#print OUT_DIFF "TS freq: ", $freq_TS[$i],"\n";
+													}
+														if ('CS' ne $most_common_codon[$i])	{$poly_freq_Syn_temp[$freq_CS[$i]]++;	$freq_U_U_temp[$freq_CSU[$i]]++;	$freq_P_P_temp[$freq_CSP[$i]]++;	$freq_U_P_temp[$freq_CSB[$i]]++;	$freq_P_U_temp[$freq_CSD[$i]]++;	#print OUT_DIFF "CS freq: ", $freq_CS[$i],"\n";
+													}
 
 														if ('GR' ne $most_common_codon[$i])	{if (($most_common_codon[$i] =~ /G/g) or ($most_common_codon[$i] =~ /C/g)) {$freqR_GC_GC_temp[$freq_GR[$i]]++;} else {$freqR_AT_GC_temp[$freq_GR[$i]]++;} }
 														if ('AR' ne $most_common_codon[$i])	{if (($most_common_codon[$i] =~ /A/g) or ($most_common_codon[$i] =~ /T/g)) {$freqR_AT_AT_temp[$freq_AR[$i]]++;} else {$freqR_GC_AT_temp[$freq_AR[$i]]++;} }	
@@ -951,7 +961,7 @@ foreach $file (@files){
 															 $poly_freq_Rep_temp[$freq_NNN[$i]]++;
 															 if (($nuc_NNN_codon eq 'G') or ($nuc_NNN_codon eq 'C')) {if (($posOG[$i] =~ /G/g) or ($posOG[$i] =~ /C/g)) {$freqR_GC_GC_temp[$freq_NNN[$i]]++;} else {$freqR_AT_GC_temp[$freq_NNN[$i]]++;}}
 															 if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T')) {if (($posOG[$i] =~ /A/g) or ($posOG[$i] =~ /T/g)) {$freqR_AT_AT_temp[$freq_NNN[$i]]++;} else {$freqR_GC_AT_temp[$freq_NNN[$i]]++;}}
-															 print OUT_DIFF "one replacement poly- case: OG no NNN, but present in sample\n";
+															# print OUT_DIFF "one replacement poly- case: OG no NNN, but present in sample\n";
 															 }
 
 														if (($posOG[$i]  =~ /S/g))
@@ -966,18 +976,26 @@ foreach $file (@files){
 															 if (($posOG[$i]  =~ /B/g))	{$freq_U_P_temp[$freq_NNN[$i]]++;}
 															 if (($posOG[$i]  =~ /D/g))	{$freq_P_U_temp[$freq_NNN[$i]]++;}
 
-															 print OUT_DIFF "one synonymnous poly- case: OG no NNN, but present in sample\n";
+															# print OUT_DIFF "one synonymnous poly- case: OG no NNN, but present in sample\n";
 
 															}
 
-														if ('GR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_GR[$i]]++; print OUT_DIFF "GR freq: ", $freq_GR[$i],"\n";}
-														if ('AR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_AR[$i]]++; print OUT_DIFF "AR freq: ", $freq_AR[$i],"\n";}	
-														if ('TR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_TR[$i]]++; print OUT_DIFF "TR freq: ", $freq_TR[$i],"\n";}
-														if ('CR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_CR[$i]]++; print OUT_DIFF "CR freq: ", $freq_CR[$i],"\n";}
-														if ('GS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_GS[$i]]++;	$freq_U_U_temp[$freq_GSU[$i]]++;	$freq_P_P_temp[$freq_GSP[$i]]++;	$freq_U_P_temp[$freq_GSB[$i]]++;	$freq_P_U_temp[$freq_GSD[$i]]++;	print OUT_DIFF "GS freq: ", $freq_GS[$i],"\n";}
-														if ('AS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_AS[$i]]++;	$freq_U_U_temp[$freq_ASU[$i]]++;	$freq_P_P_temp[$freq_ASP[$i]]++;	$freq_U_P_temp[$freq_ASB[$i]]++;	$freq_P_U_temp[$freq_ASD[$i]]++;	print OUT_DIFF "AS freq: ", $freq_AS[$i],"\n";}
-														if ('TS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_TS[$i]]++;	$freq_U_U_temp[$freq_TSU[$i]]++;	$freq_P_P_temp[$freq_TSP[$i]]++;	$freq_U_P_temp[$freq_TSB[$i]]++;	$freq_P_U_temp[$freq_TSD[$i]]++;	print OUT_DIFF "TS freq: ", $freq_TS[$i],"\n";}
-														if ('CS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_CS[$i]]++;	$freq_U_U_temp[$freq_CSU[$i]]++;	$freq_P_P_temp[$freq_CSP[$i]]++;	$freq_U_P_temp[$freq_CSB[$i]]++;	$freq_P_U_temp[$freq_CSD[$i]]++;	print OUT_DIFF "CS freq: ", $freq_CS[$i],"\n";}
+														if ('GR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_GR[$i]]++; #print OUT_DIFF "GR freq: ", $freq_GR[$i],"\n";
+													}
+														if ('AR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_AR[$i]]++; #print OUT_DIFF "AR freq: ", $freq_AR[$i],"\n";
+													}	
+														if ('TR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_TR[$i]]++; #print OUT_DIFF "TR freq: ", $freq_TR[$i],"\n";
+													}
+														if ('CR' ne $posOG[$i])	{$poly_freq_Rep_temp[$freq_CR[$i]]++; #print OUT_DIFF "CR freq: ", $freq_CR[$i],"\n";
+													}
+														if ('GS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_GS[$i]]++;	$freq_U_U_temp[$freq_GSU[$i]]++;	$freq_P_P_temp[$freq_GSP[$i]]++;	$freq_U_P_temp[$freq_GSB[$i]]++;	$freq_P_U_temp[$freq_GSD[$i]]++;	#print OUT_DIFF "GS freq: ", $freq_GS[$i],"\n";
+													}
+														if ('AS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_AS[$i]]++;	$freq_U_U_temp[$freq_ASU[$i]]++;	$freq_P_P_temp[$freq_ASP[$i]]++;	$freq_U_P_temp[$freq_ASB[$i]]++;	$freq_P_U_temp[$freq_ASD[$i]]++;	#print OUT_DIFF "AS freq: ", $freq_AS[$i],"\n";
+													}
+														if ('TS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_TS[$i]]++;	$freq_U_U_temp[$freq_TSU[$i]]++;	$freq_P_P_temp[$freq_TSP[$i]]++;	$freq_U_P_temp[$freq_TSB[$i]]++;	$freq_P_U_temp[$freq_TSD[$i]]++;	#print OUT_DIFF "TS freq: ", $freq_TS[$i],"\n";
+													}
+														if ('CS' ne $posOG[$i])	{$poly_freq_Syn_temp[$freq_CS[$i]]++;	$freq_U_U_temp[$freq_CSU[$i]]++;	$freq_P_P_temp[$freq_CSP[$i]]++;	$freq_U_P_temp[$freq_CSB[$i]]++;	$freq_P_U_temp[$freq_CSD[$i]]++;	#print OUT_DIFF "CS freq: ", $freq_CS[$i],"\n";
+													}
 
 														if ('GR' ne $posOG[$i]) {if (($posOG[$i] =~ /G/g) or ($posOG[$i] =~ /C/g)) {$freqR_GC_GC_temp[$freq_GR[$i]]++;} else {$freqR_AT_GC_temp[$freq_GR[$i]]++;} }
 														if ('AR' ne $posOG[$i])	{if (($posOG[$i] =~ /A/g) or ($posOG[$i] =~ /T/g)) {$freqR_AT_AT_temp[$freq_AR[$i]]++;} else {$freqR_GC_AT_temp[$freq_AR[$i]]++;} }
@@ -1002,7 +1020,7 @@ foreach $file (@files){
 
 																if (($nuc_NNN_codon eq 'G') or ($nuc_NNN_codon eq 'C')) {if (($posOG[$i] =~ /G/g) or ($posOG[$i] =~ /C/g)) {$freqR_GC_GC_temp[$numseqs]++;} else {$freqR_AT_GC_temp[$numseqs]++;}}
 																if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T')) {if (($posOG[$i] =~ /A/g) or ($posOG[$i] =~ /T/g)) {$freqR_AT_AT_temp[$numseqs]++;} else {$freqR_GC_AT_temp[$numseqs]++;}}
-																print OUT_DIFF "one replacement divergence - case: OG no NNN, but sample monomorphic\n";
+																#print OUT_DIFF "one replacement divergence - case: OG no NNN, but sample monomorphic\n";
 
 															}
 
@@ -1017,7 +1035,7 @@ foreach $file (@files){
 																if (($nuc_NNN_codon eq 'G') or ($nuc_NNN_codon eq 'C')) {if (($posOG[$i] =~ /G/g) or ($posOG[$i] =~ /C/g)) {$freqS_GC_GC_temp[$numseqs]++;} else {$freqS_AT_GC_temp[$numseqs]++;}}
 																if (($nuc_NNN_codon eq 'A') or ($nuc_NNN_codon eq 'T')) {if (($posOG[$i] =~ /A/g) or ($posOG[$i] =~ /T/g)) {$freqS_AT_AT_temp[$numseqs]++;} else {$freqS_GC_AT_temp[$numseqs]++;}}
 
-																print OUT_DIFF "one synonymnous divergence - case: OG no NNN, but sample monomorphic\n";
+																#print OUT_DIFF "one synonymnous divergence - case: OG no NNN, but sample monomorphic\n";
 
 															}
 
@@ -1034,7 +1052,7 @@ foreach $file (@files){
 																else  {	if (($most_common_codon[$i]=~ /G/g) or ($most_common_codon[$i]=~ /C/g)) {if (($posOG[$i] =~ /G/g) or ($posOG[$i] =~ /C/g)) {$freqR_GC_GC_temp[$numseqs]++;} else {$freqR_GC_AT_temp[$numseqs]++;}}
 																		if (($most_common_codon[$i]=~ /A/g) or ($most_common_codon[$i]=~ /T/g)) {if (($posOG[$i] =~ /A/g) or ($posOG[$i] =~ /T/g)) {$freqR_AT_AT_temp[$numseqs]++;} else {$freqR_AT_GC_temp[$numseqs]++;}}}
 
-																print OUT_DIFF "one replacement divergence - case: OG no NNN, and sample polymorphic\n";
+																#print OUT_DIFF "one replacement divergence - case: OG no NNN, and sample polymorphic\n";
 
 															}
 
@@ -1054,7 +1072,8 @@ foreach $file (@files){
 																if (($posOG[$i]  =~ /B/g))	{$freq_U_P_temp[$numseqs]++;}
 																if (($posOG[$i]  =~ /D/g))	{$freq_P_U_temp[$numseqs]++;}
 
-																print OUT_DIFF "one synonymnous divergence- case: OG no NNN, and sample polymorphic\n";}
+																#print OUT_DIFF "one synonymnous divergence- case: OG no NNN, and sample polymorphic\n";
+															}
 
 															if (('GR' ne $most_common_codon[$i]) and ('GR' ne $posOG[$i])) {$poly_freq_Rep_temp[$freq_GR[$i]]++; }
 															if (('AR' ne $most_common_codon[$i]) and ('AR' ne $posOG[$i])) {$poly_freq_Rep_temp[$freq_AR[$i]]++; }	
@@ -1068,8 +1087,9 @@ foreach $file (@files){
 
 																{
 
-																if ($most_common_codon[$i]=~ /R/g)	{$poly_freq_Rep_temp[$freq_NNN[$i]]++; print OUT_DIFF "NNN-R freq: ", $freq_NNN[$i],"\n";}
-																if ($most_common_codon[$i]=~ /S/g)	{$poly_freq_Syn_temp[$freq_NNN[$i]]++; print OUT_DIFF "NNN-S freq: ", $freq_NNN[$i],"\n";
+																if ($most_common_codon[$i]=~ /R/g)	{$poly_freq_Rep_temp[$freq_NNN[$i]]++; #print OUT_DIFF "NNN-R freq: ", $freq_NNN[$i],"\n";
+															}
+																if ($most_common_codon[$i]=~ /S/g)	{$poly_freq_Syn_temp[$freq_NNN[$i]]++; #print OUT_DIFF "NNN-S freq: ", $freq_NNN[$i],"\n";
 
 																										if ('GS' eq $most_common_codon[$i]) {	if($freq_GSU[$i] != 0) {$freq_U_U_temp[$freq_NNN[$i]]++;}
 																																				if($freq_GSP[$i] != 0) {$freq_P_P_temp[$freq_NNN[$i]]++;}	
@@ -1128,20 +1148,20 @@ foreach $file (@files){
 												else {die, "mutation not assigned";}	
 
 
-										print OUT_DIFF "polytable Repl:\t\t", join ("-", @poly_freq_Rep_temp), "\n";
-										print OUT_DIFF "polytable Syn:\t\t", join ("-", @poly_freq_Syn_temp), "\n";
-										print OUT_DIFF "polytable U -> U:\t", join ("-", @freq_U_U_temp), "\n";
-										print OUT_DIFF "polytable P -> P:\t", join ("-", @freq_P_P_temp), "\n";
-										print OUT_DIFF "polytable U -> P:\t", join ("-", @freq_U_P_temp), "\n";
-										print OUT_DIFF "polytable P -> U:\t", join ("-", @freq_P_U_temp), "\n";
-										print OUT_DIFF "Syn AT -> GC:\t\t", join ("-", @freqS_AT_GC_temp), "\n";
-										print OUT_DIFF "Syn AT -> AT:\t\t", join ("-", @freqS_AT_AT_temp), "\n";
-										print OUT_DIFF "Syn GC -> GC:\t\t", join ("-", @freqS_GC_GC_temp), "\n";
-										print OUT_DIFF "Syn GC -> AT:\t\t", join ("-", @freqS_GC_AT_temp), "\n";
-										print OUT_DIFF "Rep AT -> GC:\t\t", join ("-", @freqR_AT_GC_temp), "\n";
-										print OUT_DIFF "Rep AT -> AT:\t\t", join ("-", @freqR_AT_AT_temp), "\n";
-										print OUT_DIFF "Rep GC -> GC:\t\t", join ("-", @freqR_GC_GC_temp), "\n";
-										print OUT_DIFF "Rep GC -> AT:\t\t", join ("-", @freqR_GC_AT_temp), "\n";
+										#print OUT_DIFF "polytable Repl:\t\t", join ("-", @poly_freq_Rep_temp), "\n";
+										#print OUT_DIFF "polytable Syn:\t\t", join ("-", @poly_freq_Syn_temp), "\n";
+										#print OUT_DIFF "polytable U -> U:\t", join ("-", @freq_U_U_temp), "\n";
+										#print OUT_DIFF "polytable P -> P:\t", join ("-", @freq_P_P_temp), "\n";
+										#print OUT_DIFF "polytable U -> P:\t", join ("-", @freq_U_P_temp), "\n";
+										#print OUT_DIFF "polytable P -> U:\t", join ("-", @freq_P_U_temp), "\n";
+										#print OUT_DIFF "Syn AT -> GC:\t\t", join ("-", @freqS_AT_GC_temp), "\n";
+										#print OUT_DIFF "Syn AT -> AT:\t\t", join ("-", @freqS_AT_AT_temp), "\n";
+										#print OUT_DIFF "Syn GC -> GC:\t\t", join ("-", @freqS_GC_GC_temp), "\n";
+										#print OUT_DIFF "Syn GC -> AT:\t\t", join ("-", @freqS_GC_AT_temp), "\n";
+										#print OUT_DIFF "Rep AT -> GC:\t\t", join ("-", @freqR_AT_GC_temp), "\n";
+										#print OUT_DIFF "Rep AT -> AT:\t\t", join ("-", @freqR_AT_AT_temp), "\n";
+										#print OUT_DIFF "Rep GC -> GC:\t\t", join ("-", @freqR_GC_GC_temp), "\n";
+										#print OUT_DIFF "Rep GC -> AT:\t\t", join ("-", @freqR_GC_AT_temp), "\n";
 
 									     } # end of going through the three positons..
 
@@ -1168,8 +1188,8 @@ foreach $file (@files){
 										$no_mut_current= $no_divS + $no_divR + $no_polyS + $no_polyR;
 										$no_mut_min= $no_divS_min + $no_divR_min + $no_polyS_min + $no_polyR_min;
 
-										print OUT_DIFF "Synonymous: poly: $no_polyS, divergence: $no_divS\n";
-										print OUT_DIFF "Replacement: poly: $no_polyR, divergence: $no_divR\n";
+										#print OUT_DIFF "Synonymous: poly: $no_polyS, divergence: $no_divS\n";
+										#print OUT_DIFF "Replacement: poly: $no_polyR, divergence: $no_divR\n";
 
 									#	print "Synonymous min: poly: $no_polyS_min, divergence: $no_divS_min\n";
 									#	print "Replacement min: poly: $no_polyR_min, divergence: $no_divR_min\n";
@@ -1228,12 +1248,12 @@ foreach $file (@files){
 
 									} # end to loop through all possible paths 
 
-										print OUT_DIFF "polytable  Synonymous min: ", join ("-", @path_min_Syn), "\n";
-										print OUT_DIFF "polytable Replacement min: ", join ("-", @path_min_Rep), "\n";
-										print OUT_DIFF "polytable U -> U min: ", join ("-", @path_min_U_U), "\n";
-										print OUT_DIFF "polytable P -> P min: ", join ("-", @path_min_P_P), "\n";
-										print OUT_DIFF "polytable U -> P min: ", join ("-", @path_min_U_P), "\n";
-										print OUT_DIFF "polytable P -> U min: ", join ("-", @path_min_P_U), "\n";
+										#print OUT_DIFF "polytable  Synonymous min: ", join ("-", @path_min_Syn), "\n";
+										#print OUT_DIFF "polytable Replacement min: ", join ("-", @path_min_Rep), "\n";
+										#print OUT_DIFF "polytable U -> U min: ", join ("-", @path_min_U_U), "\n";
+										#print OUT_DIFF "polytable P -> P min: ", join ("-", @path_min_P_P), "\n";
+										#print OUT_DIFF "polytable U -> P min: ", join ("-", @path_min_U_P), "\n";
+										#print OUT_DIFF "polytable P -> U min: ", join ("-", @path_min_P_U), "\n";
 
 									# add shortest path to @poly_freq_Syn and @poly_freq_Syn
 
@@ -3535,7 +3555,7 @@ if ($complexity eq 'ja')
 
    {
 
-	print OUT_DIFF "\nHash final_hash_minR no. of elements: ", $#final_hash_minR, "\n";
+	#print OUT_DIFF "\nHash final_hash_minR no. of elements: ", $#final_hash_minR, "\n";
 
 
 
@@ -3543,17 +3563,17 @@ if ($complexity eq 'ja')
 
 		{
 
-		print OUT_DIFF "$i is { ";
+		#print OUT_DIFF "$i is { ";
 
 		for $codon (keys % {$final_hash_minR[$codon]})
 
 			{
 
-			print OUT_DIFF "$codon=$final_hash_minR[$i]{$codon} ";
+			#print OUT_DIFF "$codon=$final_hash_minR[$i]{$codon} ";
 
 			}
 
-		print OUT_DIFF "}\n";
+		#print OUT_DIFF "}\n";
 
 		}
 
