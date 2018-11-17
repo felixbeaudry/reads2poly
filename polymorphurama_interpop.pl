@@ -176,7 +176,6 @@ foreach $file (@files){
 	print OUT2 $file, "\t";
 	print OUT5 $file, "\t";
 
-
 	#find outgroup
 	my $outgroup_position = 0;
 	for ($x=0; $x<scalar(@sequence_names); ++$x){
@@ -202,10 +201,7 @@ foreach $file (@files){
 					$r+=1;
 					
 	}	}	}	}
-
-	#print starting info
 	
-
 	my $dxy_syn_tot ;
 	my $dxy_rep_tot ;
 	my $dxy_tot ;
@@ -218,11 +214,10 @@ foreach $file (@files){
 	$numseqstot = $numseqs;
 	@totdata=@data;
 
-
 	#Skip loops if dataset too small
 	if ($numseqs<2){
 		for ($x=0;$x < $number_of_pops;++$x){
-			print "\npop: ",$x,"\tempty"; 
+			#print "\npop: ",$x,"\tempty"; 
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
 					for($z=0;$z<5;++$z){
