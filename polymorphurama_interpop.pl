@@ -1568,9 +1568,9 @@ foreach $file (@files){
 					}
 
 
-					if( $Dxy_syn != 0 & $pi_syn_site != 0 ){
-						if (  ($pi_rep_site / $pi_syn_site) != 0 ) {
-							$alpha =  ( ( $Dxy_rep / $Dxy_syn  ) / (  $pi_rep_site / $pi_syn_site ) );
+					if( $Dxy_syn != 0 & $pi_syn_within[$pop] != 0 ){
+						if (  ($pi_rep_within[$pop]/  $pi_syn_within[$pop]) != 0 ) {
+							$alpha =  ( ( $Dxy_rep / $Dxy_syn  ) / (  $pi_rep_within[$pop] / $pi_syn_within[$pop] ) );
 						}
 						else {$alpha = "NA";}
 					}

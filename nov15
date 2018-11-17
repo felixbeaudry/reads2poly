@@ -10,8 +10,6 @@ do
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/sex/ -p pop -S m -o ${outgroup} -C Y -c Ychrom
 done
 
-
-##
 for outgroup in rothschildianus bucephalophorus
 do
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/fem/N/ -p pop -S f -o ${outgroup} -C N
@@ -33,13 +31,12 @@ perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subset
 done
 
 
-
-
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/A/ -p mpop -S m -o rothschildianus -C A
-
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/A/ -p mpop -S m -o bucephalophorus -C A
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/A/ -p fpop -S f -o rothschildianus -C A
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/A/ -p fpop -S f -o bucephalophorus -C A
 
 ##nov16
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/rna/A/ -p jpop -S m -o rothschildianus -C A
-perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/fem/A/ -p pop -S m -o rothschildianus -C A
+perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/fem/A/ -p pop -S f -o rothschildianus -C A
 perl /ohta/felix.beaudry/scripts/reads2poly/polymorphurama_interpop.pl -i subsets/fem/A/ -p pop -S f -o bucephalophorus -C A
