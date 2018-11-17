@@ -211,6 +211,7 @@ foreach $file (@files){
 	my @pi_syn_within ;
 
 	$numseqs=scalar(@data);
+
 	$numseqstot = $numseqs;
 	@totdata=@data;
 
@@ -289,24 +290,35 @@ foreach $file (@files){
 		#empty within population stats    
 
 		@data=();
-			for ($ind=0; $ind<($numseqstot); $ind++){
-					$poly_freq_Syn[$ind]=0;
-					$poly_freq_Rep[$ind]=0;
-					$poly_freq_Syn_temp[$ind]=0;
-					$poly_freq_Rep_temp[$ind]=0;
-					$freq_P_U[$ind]=0;
-					$freq_U_P[$ind]=0;
-					$freq_P_P[$ind]=0;
-					$freq_U_U[$ind]=0;
-					$freq_P_U_temp[$ind]=0;
-					$freq_U_P_temp[$ind]=0;
-					$freq_P_P_temp[$ind]=0;
-					$freq_U_U_temp[$ind]=0;
-					$freqS_AT_GC[$ind]=0;	$freqS_GC_AT[$ind]=0;	$freqS_AT_AT[$ind]=0;	$freqS_GC_GC[$ind]=0;
-					$freqR_AT_GC[$ind]=0;	$freqR_GC_AT[$ind]=0;	$freqR_AT_AT[$ind]=0;	$freqR_GC_GC[$ind]=0;
-					$freqS_AT_GC_temp[$ind]=0;	$freqS_GC_AT_temp[$ind]=0;	$freqS_AT_AT_temp[$ind]=0;	$freqS_GC_GC_temp[$ind]=0;
-					$freqR_AT_GC_temp[$ind]=0;	$freqR_GC_AT_temp[$ind]=0;	$freqR_AT_AT_temp[$ind]=0;	$freqR_GC_GC_temp[$ind]=0;
+		for ($ind=0; $ind<($numseqstot); $ind++){
+				$poly_freq_Syn[$ind]=0;
+				$poly_freq_Rep[$ind]=0;
+				$poly_freq_Syn_temp[$ind]=0;
+				$poly_freq_Rep_temp[$ind]=0;
+				$freq_P_U[$ind]=0;
+				$freq_U_P[$ind]=0;
+				$freq_P_P[$ind]=0;
+				$freq_U_U[$ind]=0;
+				$freq_P_U_temp[$ind]=0;
+				$freq_U_P_temp[$ind]=0;
+				$freq_P_P_temp[$ind]=0;
+				$freq_U_U_temp[$ind]=0;
+				$freqS_AT_GC[$ind]=0;	$freqS_GC_AT[$ind]=0;	$freqS_AT_AT[$ind]=0;	$freqS_GC_GC[$ind]=0;
+				$freqR_AT_GC[$ind]=0;	$freqR_GC_AT[$ind]=0;	$freqR_AT_AT[$ind]=0;	$freqR_GC_GC[$ind]=0;
+				$freqS_AT_GC_temp[$ind]=0;	$freqS_GC_AT_temp[$ind]=0;	$freqS_AT_AT_temp[$ind]=0;	$freqS_GC_GC_temp[$ind]=0;
+				$freqR_AT_GC_temp[$ind]=0;	$freqR_GC_AT_temp[$ind]=0;	$freqR_AT_AT_temp[$ind]=0;	$freqR_GC_GC_temp[$ind]=0;
 			}
+
+
+		my @poly_freq_Syn_ALL = ();	  
+		my @poly_freq_Rep_ALL = ();         
+
+		my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
+								  # i.e. a singleton is in frequency class $poly_freq_Syn[1]
+		my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
+
+
+	$numseqs=scalar(@data);
 		
 		#Number of populations in ingroup
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
