@@ -109,8 +109,8 @@ open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} 
 open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '2_' . $chromName . '.txt')) or die "Could not open outfile\n";
 
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+#open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+#open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 
@@ -1503,21 +1503,21 @@ foreach $file (@files){
 						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 					}
 
-					print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
-					print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
-					print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
-					print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
+					#print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
+					#print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
+					#print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
+					#print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
 
-					print OUT4 $file, "_GC3 \t", $GC_three, "\t";
-					print OUT4 $file, "_FOP \t", $FOP, "\t";
-					print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
-					print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
-					print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
-					print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
-					print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
-					print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
-					print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
-					print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
+					#print OUT4 $file, "_GC3 \t", $GC_three, "\t";
+					#print OUT4 $file, "_FOP \t", $FOP, "\t";
+					#print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
+					#print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
+					#print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
+					#print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
+					#print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
+					#print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
+					#print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
+					#print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
 
 					push @poly_freq_Syn_ALL; @poly_freq_Syn;
 					push @poly_freq_Rep_ALL; @poly_freq_Rep;
