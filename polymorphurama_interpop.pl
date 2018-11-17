@@ -289,6 +289,24 @@ foreach $file (@files){
 		#empty within population stats    
 
 		@data=();
+			for ($ind=0; $ind<($numseqstot); $ind++){
+					$poly_freq_Syn[$ind]=0;
+					$poly_freq_Rep[$ind]=0;
+					$poly_freq_Syn_temp[$ind]=0;
+					$poly_freq_Rep_temp[$ind]=0;
+					$freq_P_U[$ind]=0;
+					$freq_U_P[$ind]=0;
+					$freq_P_P[$ind]=0;
+					$freq_U_U[$ind]=0;
+					$freq_P_U_temp[$ind]=0;
+					$freq_U_P_temp[$ind]=0;
+					$freq_P_P_temp[$ind]=0;
+					$freq_U_U_temp[$ind]=0;
+					$freqS_AT_GC[$ind]=0;	$freqS_GC_AT[$ind]=0;	$freqS_AT_AT[$ind]=0;	$freqS_GC_GC[$ind]=0;
+					$freqR_AT_GC[$ind]=0;	$freqR_GC_AT[$ind]=0;	$freqR_AT_AT[$ind]=0;	$freqR_GC_GC[$ind]=0;
+					$freqS_AT_GC_temp[$ind]=0;	$freqS_GC_AT_temp[$ind]=0;	$freqS_AT_AT_temp[$ind]=0;	$freqS_GC_GC_temp[$ind]=0;
+					$freqR_AT_GC_temp[$ind]=0;	$freqR_GC_AT_temp[$ind]=0;	$freqR_AT_AT_temp[$ind]=0;	$freqR_GC_GC_temp[$ind]=0;
+			}
 		
 		#Number of populations in ingroup
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
@@ -341,24 +359,7 @@ foreach $file (@files){
 
 				# initialize arrays for polymorphisms ($numseqs+1 for divergence at position $numseqs+1)
 
-				for ($ind=0; $ind<($numseqs); $ind++){
-					$poly_freq_Syn[$ind]=0;
-					$poly_freq_Rep[$ind]=0;
-					$poly_freq_Syn_temp[$ind]=0;
-					$poly_freq_Rep_temp[$ind]=0;
-					$freq_P_U[$ind]=0;
-					$freq_U_P[$ind]=0;
-					$freq_P_P[$ind]=0;
-					$freq_U_U[$ind]=0;
-					$freq_P_U_temp[$ind]=0;
-					$freq_U_P_temp[$ind]=0;
-					$freq_P_P_temp[$ind]=0;
-					$freq_U_U_temp[$ind]=0;
-					$freqS_AT_GC[$ind]=0;	$freqS_GC_AT[$ind]=0;	$freqS_AT_AT[$ind]=0;	$freqS_GC_GC[$ind]=0;
-					$freqR_AT_GC[$ind]=0;	$freqR_GC_AT[$ind]=0;	$freqR_AT_AT[$ind]=0;	$freqR_GC_GC[$ind]=0;
-					$freqS_AT_GC_temp[$ind]=0;	$freqS_GC_AT_temp[$ind]=0;	$freqS_AT_AT_temp[$ind]=0;	$freqS_GC_GC_temp[$ind]=0;
-					$freqR_AT_GC_temp[$ind]=0;	$freqR_GC_AT_temp[$ind]=0;	$freqR_AT_AT_temp[$ind]=0;	$freqR_GC_GC_temp[$ind]=0;
-				}
+
 
 				$no_syn_codons=$no_rep_codons=0; $FOP=$FNOP=0; $no_syn_fourfold_codons=0; $no_syn_fourfold_div=0;
 
@@ -1301,15 +1302,15 @@ foreach $file (@files){
 
 				$pi_syn_total=$pi_rep_total=0;
 
-				for ($ind=1; $ind<$numseqs-1; $ind++){
-					$pi_syn[$ind]=(2*($ind/($numseqs-1))*(1-($ind/($numseqs-1))))*$poly_freq_Syn[$ind];
-					$pi_rep[$ind]=(2*($ind/($numseqs-1))*(1-($ind/($numseqs-1))))*$poly_freq_Rep[$ind];
+				for ($ind=1; $ind<$numseqs; $ind++){
+					$pi_syn[$ind]=(2*($ind/($numseqs))*(1-($ind/($numseqs))))*$poly_freq_Syn[$ind];
+					$pi_rep[$ind]=(2*($ind/($numseqs))*(1-($ind/($numseqs))))*$poly_freq_Rep[$ind];
 					$pi_syn_total=$pi_syn_total+$pi_syn[$ind];
 					$pi_rep_total=$pi_rep_total+$pi_rep[$ind];
 				}
 
-				$pi_syn_total=$pi_syn_total*(($numseqs-1)/($numseqs-2));	
-				$pi_rep_total=$pi_rep_total*(($numseqs-1)/($numseqs-2));
+				$pi_syn_total=$pi_syn_total*(($numseqs)/($numseqs-1));	
+				$pi_rep_total=$pi_rep_total*(($numseqs)/($numseqs-1));
 
 				if ($no_syn_codons>0){
 					$pi_syn_site=$pi_syn_total/$no_syn_codons;
@@ -1644,15 +1645,19 @@ foreach $file (@files){
 	if( scalar(@{$position_array[1]}) > 0 && scalar(@{$position_array[2]}) > 0){
 
 		if ($pi_syn_within[0] != 0 ){
+
+			print "\npi1 $pi_syn_within[1] p2 $pi_syn_within[2] pi0 $pi_syn_within[0]\n";
+
+
 			$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
-			if($Fst_syn < 0){$Fst_syn = 0;}
+			if($Fst_syn < 0){$Fst_syn = NA;}
 		}
 		else{$Fst_syn = "NA";}
 
 		if ($pi_rep_within[0] != 0 ){
 			
 			$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
-			if($Fst_rep < 0){$Fst_rep = 0;}
+			if($Fst_rep < 0){$Fst_rep = NA;}
 		}
 		else{$Fst_rep = "NA";}
 
