@@ -370,7 +370,33 @@ foreach $file (@files){
 				# codon_bias[$ind][$k] = indiv i, codon k which is either preferred or non-preferred
 
 				# initialize arrays for polymorphisms ($numseqs+1 for divergence at position $numseqs+1)
+				for($j=0; $j < $seqlen; $j+=3){
+						for ($ind=0; $ind < $numseqs; $ind++){   
 
+							$k=(($j+3)/3)-1;
+							$codon[$ind][$k] = (substr($data[$ind],$j,3));
+							$aa[$ind][$k]=codon2aa($codon[$ind][$k]); 
+							$codon_bias[$ind][$k]=codonbias($codon[$ind][$k]); 
+
+							if ($aa[$ind][$k] eq '_'){
+								#print "STOP codon found at position $j individual $sequence_names[$ind] in locus $file \n";
+							}
+
+							if (substr($data[$ind],$j,3) =~ tr/://){  # if no gaps returs a zero (symbol for gap "-")
+								$codon_processed[$ind][$k] = 'x';
+							}
+
+							else{
+								$codon_processed[$ind][$k] = 'NNNNNNNNN';
+							}
+
+										# print "codon: ", $codon[$ind][$k], "\n";
+									    #  print "aa: ", $aa[$ind][$k], "\n";
+										#  print "codon processed: ", $codon_processed[$ind][$k], "\n";
+										# print "codon state: ", $codon_bias[$ind][$k], "\n";
+						}
+
+					}
 
 
 				$no_syn_codons=$no_rep_codons=0; $FOP=$FNOP=0; $no_syn_fourfold_codons=0; $no_syn_fourfold_div=0;
