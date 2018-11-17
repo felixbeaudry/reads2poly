@@ -157,6 +157,7 @@ print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_d_rep\tpop0_dnds_NA\tpop0_dxy_
 
 @file=&read_dir($d2,$pattern);
 
+
 foreach $file (@files){
 
 	#reset file 
@@ -171,7 +172,9 @@ foreach $file (@files){
 	@sequence_names= extract_names_from_fasta_data (@file_data);
 	@data = extract_sequence_from_fasta_data (@file_data);
 
-
+	chomp $file;
+	print OUT2 $file, "\t";
+	print OUT5 $file, "\t";
 
 
 	#find outgroup
@@ -201,10 +204,7 @@ foreach $file (@files){
 	}	}	}	}
 
 	#print starting info
-	chomp $file;
-	print "\n", $file, "\tnumseqs: ", $numseqs , "\toutgroup: ", $sequence_names[$outgroup_position];
-	print OUT2 $file, "\t";
-	print OUT5 $file, "\t";
+	
 
 	my $dxy_syn_tot ;
 	my $dxy_rep_tot ;
@@ -257,7 +257,6 @@ foreach $file (@files){
 	my @aa=();
 
 	for($j=0; $j < $seqlen; $j+=3){
-
 		for ($ind=0; $ind < $numseqs; $ind++){   
 
 			$k=(($j+3)/3)-1;
@@ -285,66 +284,59 @@ foreach $file (@files){
 
 	}
 	
+	print "\n", $file, "\tnumseqs: ", $numseqs , "\toutgroup: ", $sequence_names[$outgroup_position];
+
 	my $pop = 0; #start pop subloops
 	my $popLoop = 0; #count for different loops within pops: 0:exclude outgroup, 1:include outgroup, 2:outgroup is other population
 	my $outpop = 0; #count for number of inds in the other population
 
 	while ($pop<$number_of_pops){
-		#empty within population stats
-
-		# array of arrays from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
-		my @poly_freq_Syn_ALL = ();	  
-		my @poly_freq_Rep_ALL = ();         
+		#empty within population stats    
 
 		@data=();
 		
 		#Number of populations in ingroup
 		$number_of_individuals = scalar(@{ $position_array[$pop] });
 
-		if ($popLoop == 0){
-			$in_position = $position_array[$pop][0];
-			$data[0]=$totdata[$in_position];             
+		if ($popLoop == 0){           
 			for ($y=0; $y < $number_of_individuals; $y++){
 				$in_position = $position_array[$pop][$y];
-				$data[$y+1]=$totdata[$in_position];
-				#$data[$y]=$totdata[$in_position];
+				$data[$y]=$totdata[$in_position];
+		}	}
 
-			}
-			
-		}
+		#insert outgroup sequence as subset position 0
 		elsif ($popLoop == 1){ 
-			#insert outgroup sequence as subset position 0
 			$data[0]=$totdata[$outgroup_position]; 
 			for ($y=0; $y < $number_of_individuals + 1; $y++){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
 				if ($pop == 1){
 					print out_fa ">$y\n" , $data[$y], "\n";
-				}
-			}
-			
-		}
+		}	}	}
+				
+		
+		#change outgroup sequences to pop1 sequences
 		elsif ($pop == $number_of_pops -1 && $outpop < scalar(@{$position_array[$pop-1] }) ){
-			#change outgroup sequences to pop1 sequences
+			
 			$out_position = $position_array[($pop-1)][$outpop];
 			$data[0]=$totdata[$out_position];
 			for ($y=0; $y < $number_of_individuals + 1; $y++){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
-			}
+		}	}
 			
-		}	 
+			
 		else{
 			print "\nError in popLoops\tpop: $pop\tpoploop: $popLoop\toutpop: $outpop";
 		}                                   
 
-		$numseqs=scalar(@data)-1;
+		$numseqs=scalar(@data);
 		#print "\n numseqs", $numseqs, "\n";
 
 		if ($numseqs>2){
 			
-			# print "first codon, first indiv: ", $codon[0][0], "\n";
-			#  print "first aa, first indiv: ", $aa[0][0], "\n";
+				# print "first codon, first indiv: ", $codon[0][0], "\n";
+				#  print "first aa, first indiv: ", $aa[0][0], "\n";
 
 				# we have now read in the data into 4 arrays 
 				# codon[$ind][$k] = indiv i, codon k
@@ -354,7 +346,7 @@ foreach $file (@files){
 
 				# initialize arrays for polymorphisms ($numseqs+1 for divergence at position $numseqs+1)
 
-				for ($ind=0; $ind<($numseqs+1); $ind++){
+				for ($ind=0; $ind<($numseqs); $ind++){
 					$poly_freq_Syn[$ind]=0;
 					$poly_freq_Rep[$ind]=0;
 					$poly_freq_Syn_temp[$ind]=0;
@@ -400,7 +392,7 @@ foreach $file (@files){
 
 					if ($switch_gap==0){
 
-							#first count the number of synoymous and replacement sites if there is no gap
+							#first count the number of synonymous and replacement sites if there is no gap
 								for ($x=0; $x<$numseqs; $x++){
 
 							        $num_syn[$x]=countSyn($codon[$x][$pos]);
