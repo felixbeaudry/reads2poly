@@ -138,9 +138,9 @@ for ($x=0; $x<$number_of_pops; ++$x){
 			print OUT2 "_$synrep[$y]\t";
 		}
 	}
-	print OUT2 "pop",$x,"_kaks_NA\t";
-	print OUT2 "pop",$x,"_kxy_NA\t";
-	print OUT2 "pop",$x,"_mk_NA\t";
+	#print OUT2 "pop",$x,"_kaks_NA\t";
+	#print OUT2 "pop",$x,"_kxy_NA\t";
+	#print OUT2 "pop",$x,"_mk_NA\t";
 }
 print OUT2 "\n";
 
@@ -2151,6 +2151,8 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 						$pi_rep_site, "\t", 
 						$TajD_rep, "\t"
 
+						$Dxy_syn, "\t",
+						$Dxy_rep, "\t"
 						;
 
 						$pi_syn_within[$pop] = $pi_syn_site;
