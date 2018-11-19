@@ -268,8 +268,6 @@ foreach $file (@files){
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
 	my $loop = 0;
-
-	#for ($loop=0, $loop < ($number_of_pops + $outpop_tot), $loop++){
 	while($loop < ($number_of_pops + $outpop_tot)){
 
 		if ($pop<$number_of_pops ){
@@ -2200,89 +2198,91 @@ foreach $file (@files){
 							}
 							print OUT2 "$mk\t";
 
-							$pop++;
+						
+						
+
+							if ($third_pos_count>0){
+								$GC_three=$GC_three/$third_pos_count;
+								if (($FOP+$FNOP)>0){
+									$FOP = $FOP/($FOP+$FNOP);
+								}
+							}
+
+
+							else {
+								$GC_three=0;
+								$FOP = 0;
+							}
+
+							if ($pop == 0){	
+								print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+							}
+							elsif ($pop == 1){	
+								print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+							}
+							elsif ($pop == 2){	
+								print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+							}
+		
+							#print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
+							#print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+
+							#print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
+							#print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
+							#print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
+							#print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
+
+							#print OUT4 $file, "_GC3 \t", $GC_three, "\t";
+							#print OUT4 $file, "_FOP \t", $FOP, "\t";
+							#print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
+							#print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
+							#print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
+							#print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
+							#print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
+							#print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
+							#print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
+							#print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
+
+							push @poly_freq_Syn_ALL; @poly_freq_Syn;
+							push @poly_freq_Rep_ALL; @poly_freq_Rep;
+
+							$samplesize[$poly_set]=$numseqs;
+
+							$poly_set++;
+								$pop++;
 						}
 						elsif( $pop == $number_of_pops ){
+
 							$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 							$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 							$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
 							if ($Dxy_syn != 0){
 								$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
 							}
+							#print "\ndiv $outpop: ",$dxy_tot;
 
 						}
-						#$loop++;
-
-					if ($third_pos_count>0){
-						$GC_three=$GC_three/$third_pos_count;
-						if (($FOP+$FNOP)>0){
-							$FOP = $FOP/($FOP+$FNOP);
-						}
-					}
-
-
-					else {
-						$GC_three=0;
-						$FOP = 0;
-					}
-
-				if ($pop == 0){	
-						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-					elsif ($pop == 1){	
-						print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-					elsif ($pop == 2){	
-						print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-						print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-					}
-		
-#print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-#print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
-
-#print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
-#print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
-#print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
-#print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
-
-#print OUT4 $file, "_GC3 \t", $GC_three, "\t";
-#print OUT4 $file, "_FOP \t", $FOP, "\t";
-#print OUT4 $file, "_Syn_AT->GC \t", join ("\t", @freqS_AT_GC), "\t";
-#print OUT4 $file, "_Syn_GC->AT \t", join ("\t", @freqS_GC_AT), "\t";
-#print OUT4 $file, "_Syn_AT->AT \t", join ("\t", @freqS_AT_AT), "\t";
-#print OUT4 $file, "_Syn_GC->GC \t", join ("\t", @freqS_GC_GC), "\t";
-#print OUT4 $file, "_Rep_AT->GC \t", join ("\t", @freqR_AT_GC), "\t";
-#print OUT4 $file, "_Rep_GC->AT \t", join ("\t", @freqR_GC_AT), "\t";
-#print OUT4 $file, "_Rep_AT->AT \t", join ("\t", @freqR_AT_AT), "\t";
-#print OUT4 $file, "_Rep_GC->GC \t", join ("\t", @freqR_GC_GC), "\n";
-
-push @poly_freq_Syn_ALL; @poly_freq_Syn;
-push @poly_freq_Rep_ALL; @poly_freq_Rep;
-
-$samplesize[$poly_set]=$numseqs;
-
-$poly_set++;
-
-} #more than two sequences *END*
+					} #more than two sequences *END*
 	
-	else {
-		print "\npop: ",$pop,"\tLow Sequence Count"; 
-		print OUT2 "NA\t";
-			for ($y=0; $y<2; ++$y){
-				for($z=0;$z<5;++$z){
-					print OUT2 "NA\t";		
-				}
-			}
-		print OUT2 "NA\tNA\tNA\tNA\tNA\t";
-	}
+					else {
+						if ( $pop < $number_of_pops ){
+							print "Low Sequence Count"; 
+							print OUT2 "NA\t";
+								for ($y=0; $y<2; ++$y){
+									for($z=0;$z<5;++$z){
+										print OUT2 "NA\t";		
+									}
+								}
+							print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+							$pop++;
+						}
+					}
 
-
-
-
-$loop++;
-} # loop for each pop
+				$loop++;
+				} # loop for each pop
 
 
 	####Interpop statistics####
@@ -2320,8 +2320,10 @@ $loop++;
 		}
 		else{$Fst_rep = "NA";}
 
+		print "\npop1 length: ",scalar(@{ $position_array[1] });
+
 		if (scalar(@{ $position_array[1] }) != 0){
-			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] });
+			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] }) ;
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[1] });
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[1] });
 			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
