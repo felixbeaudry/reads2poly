@@ -1994,12 +1994,12 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 					if ($no_syn_codons>0){
 						$pi_syn_site=$pi_syn_total/$no_syn_codons;
 						$pi_rep_site=$pi_rep_total/$no_rep_codons;	
-						if ((1-(4/3)*$pi_syn_site)>0){
-							$pi_JC_syn= -0.75*log(1-(4/3)*$pi_syn_site);
-						}
-						if ((1-(4/3)*$pi_rep_site)>0){
-							$pi_JC_rep= -0.75*log(1-(4/3)*$pi_rep_site);
-						}
+						#if ((1-(4/3)*$pi_syn_site)>0){
+						#	$pi_JC_syn= -0.75*log(1-(4/3)*$pi_syn_site);
+						#}
+						#if ((1-(4/3)*$pi_rep_site)>0){
+						#	$pi_JC_rep= -0.75*log(1-(4/3)*$pi_rep_site);
+						#}
 					}
 
 					else{
@@ -2027,13 +2027,13 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 							$D_fourfold = $no_syn_fourfold_div/$no_syn_fourfold_codons;
 						}
 						else {$D_fourfold = 0;}
-						if ((1-(4/3)*$Dxy_syn)>0){
-							$Dxy_JC_syn=  -0.75*log(1-(4/3)*$Dxy_syn);
-						}
-						$Dxy_JC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
-						if ((1-(4/3)*$D_fourfold)>0){
-							$D_JC_fourfold=  -0.75*log(1-(4/3)*$D_fourfold);
-						}
+						#if ((1-(4/3)*$Dxy_syn)>0){
+						#	$Dxy_JC_syn=  -0.75*log(1-(4/3)*$Dxy_syn);
+						#}
+						#$Dxy_JC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
+						#if ((1-(4/3)*$D_fourfold)>0){
+						#	$D_JC_fourfold=  -0.75*log(1-(4/3)*$D_fourfold);
+						#}
 					}
 
 					else{
