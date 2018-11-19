@@ -227,13 +227,13 @@ all_data <- data.frame(
     stats_table(outgroup="bucephalophorus",set="m",chrom="H",pops=pop,popStr="mpop"),
     #H Female
     stats_table(outgroup="rothschildianus",set="f",chrom="H",pops=pop,popStr="fpop"),
-    stats_table(outgroup="bucephalophorus",set="f",chrom="H",pops=pop,popStr="fpop"),
+    stats_table(outgroup="bucephalophorus",set="f",chrom="H",pops=pop,popStr="fpop")
     #A Female
-    stats_table(outgroup="rothschildianus",set="f",chrom="A",pops=pop,popStr="fpop"),
-    stats_table(outgroup="bucephalophorus",set="f",chrom="A",pops=pop,popStr="fpop"),
+   # stats_table(outgroup="rothschildianus",set="f",chrom="A",pops=pop,popStr="fpop"),
+  #  stats_table(outgroup="bucephalophorus",set="f",chrom="A",pops=pop,popStr="fpop"),
     #A Male
-    stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=pop,popStr="mpop"),
-    stats_table(outgroup="bucephalophorus",set="m",chrom="A",pops=pop,popStr="mpop")
+  #  stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=pop,popStr="mpop"),
+   # stats_table(outgroup="bucephalophorus",set="m",chrom="A",pops=pop,popStr="mpop")
   )
   , stringsAsFactors = FALSE)
 all_data$Sex[all_data$sex == "f"] <- "Female"

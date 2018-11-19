@@ -1,9 +1,2 @@
 locus	pop0_Fst_syn	pop0_d_syn	pop0_d_rep	pop0_dnds_NA	pop0_dxy_NA	pop0_da_NA
-Locus_5824_Transcript_4_Length_1320_genewise_newlength_1320_CDSlength_483.fasta	NA	0	0	0	0	-0.00135854730883297
-Locus_5883_Transcript_4_Length_2816_genewise_newlength_2816_CDSlength_2019.fasta	0.136311512060866	0	0	0	0	-0.00306906215256947
-Locus_5887_Transcript_2_Length_3705_genewise_newlength_3705_CDSlength_3270.fasta	NA	0	0	0	0	-0.00178255201150977
-Locus_59_Transcript_6_Length_1891_genewise_newlength_1891_CDSlength_1008.fasta	NA	0	0	0	0	-0.0026390084559454
-Locus_6046_Transcript_10_Length_2870_genewise_newlength_2431_CDSlength_2229.fasta	NA	0	0	0	0	-0.000198243210572967
-Locus_6062_Transcript_4_Length_1855_genewise_newlength_1855_CDSlength_702.fasta	NA	0	0	0	0	0
-Locus_6151_Transcript_5_Length_4734_genewise_newlength_4275_CDSlength_3384.fasta	0.0516999899178494	0	0	0	0	-0.00263706933147978
-Locus_9899_Transcript_2_Length_2213_genewise_newlength_2028_CDSlength_1224.fasta	NA	0	0	0	0	-0.00127597776079139
+Locus_5824_Transcript_4_Length_1320_genewise_newlength_1320_CDSlength_483.fasta	

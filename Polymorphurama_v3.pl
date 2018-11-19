@@ -138,9 +138,9 @@ for ($x=0; $x<$number_of_pops; ++$x){
 			print OUT2 "_$synrep[$y]\t";
 		}
 	}
-	#print OUT2 "pop",$x,"_kaks_NA\t";
-	#print OUT2 "pop",$x,"_kxy_NA\t";
-	#print OUT2 "pop",$x,"_mk_NA\t";
+	print OUT2 "pop",$x,"_kaks_NA\t";
+	print OUT2 "pop",$x,"_kxy_NA\t";
+	print OUT2 "pop",$x,"_mk_NA\t";
 }
 print OUT2 "\n";
 
@@ -247,7 +247,7 @@ foreach $file (@files){
 	
 	$ind=$j=$k=$l=0;
 	
-	#print "\n";
+
 	for($j=0; $j < $seqlen; $j+=3){  
 		for ($ind=0; $ind < $numseqs; $ind++){
 			$k=(($j+3)/3)-1;
@@ -258,21 +258,24 @@ foreach $file (@files){
 			$aa[$ind][$k]=codon2aa($codon[$ind][$k]);
 			if ($aa[$i][$pos] eq 'gap'){
 				$stop_gap_tot[$l] = 1;
-			}
-			  	  	
+			}	  	
 		}
-		#print $stop_gap_tot[$l], " ";
 		$l++;
 	}
-	#print "\n";	
 
 	my $pop = 0;
-	while ($pop<$number_of_pops){
-	#for ($pop=0; $pop<3; ++$pop){
-	print "\npop: $pop\t";
-		
-		@data=();
+	my $outpop = 0;
+	my $outpop_tot = scalar(@{ $position_array[1] });
 
+	print "\nnumpop: $number_of_pops outpop: $outpop_tot\n"; 
+
+	#for($loop=0, $loop < $number_of_pops, $loop++){
+	for($loop=0, $loop < ($number_of_pops + $outpop_tot ), $loop++){
+	
+		#while ($pop<$number_of_pops ){
+			print "\npop: $pop\t";
+
+			@data=();
 			if ($sequence_names[$outgroup_position] =~ $outgroup_string) {
 				$data[0]=$totdata[$outgroup_position];
 			}
@@ -286,6 +289,24 @@ foreach $file (@files){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
 			}
+		#}
+
+		if ( $pop == $number_of_pops ){
+			print "\ndiv: ($loop-$pop)\n";
+			@data=();
+
+			
+			$data[0]=$totdata[$position_array[$pop-1][$outpop]];
+			
+
+			$number_of_individuals = scalar(@{ $position_array[$pop] });
+			for ($y=0; $y < $number_of_individuals; $y++){
+				$in_position = $position_array[$pop][$y];
+				$data[$y+1]=$totdata[$in_position];
+			}
+
+			$outpop++
+		}
 
 		
 
@@ -2132,31 +2153,61 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 
 						$tot_sites = $no_syn_codons + $no_rep_codons;
 
-						print "totalS: $totsnps\tinds: $numseqs\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\tDxy: $Dxy_syn";
+						#if ( $pop < $number_of_pops ){
+							print "totalS: $totsnps\tinds: $numseqs\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\tDxy: $Dxy_syn";
 
-						$loc=substr($file,0,20);
+							$loc=substr($file,0,20);
 
-						print OUT2  
-						$numseqs, "\t", 
+							print OUT2  
+							$numseqs, "\t", 
 
-						$no_syn_codons,"\t", 
-						$thetaS, "\t", 
-						$no_polyS, "\t", 
-						$pi_syn_site, "\t", 
-						$TajD_syn, "\t",
+							$no_syn_codons,"\t", 
+							$thetaS, "\t", 
+							$no_polyS, "\t", 
+							$pi_syn_site, "\t", 
+							$TajD_syn, "\t",
 
-						$no_rep_codons,"\t",
-						$thetaR, "\t", 
-						$no_polyR, "\t",  
-						$pi_rep_site, "\t", 
-						$TajD_rep, "\t",
+							$no_rep_codons,"\t",
+							$thetaR, "\t", 
+							$no_polyR, "\t",  
+							$pi_rep_site, "\t", 
+							$TajD_rep, "\t",
 
-						$Dxy_syn, "\t",
-						$Dxy_rep, "\t"
-						;
+							$Dxy_syn, "\t",
+							$Dxy_rep, "\t"
+							;
 
-						$pi_syn_within[$pop] = $pi_syn_site;
-						$pi_rep_within[$pop] = $pi_rep_site;
+							$pi_syn_within[$pop] = $pi_syn_site;
+							$pi_rep_within[$pop] = $pi_rep_site;
+
+							#to outgroup stats
+							my $knks = "NA";
+							if($Dxy_syn > 0){
+								$knks =  $Dxy_rep /$Dxy_syn ;
+							}
+							print OUT2 "$knks\t";
+							
+							my $kxy = $Dxy_rep + $Dxy_syn;
+							print OUT2 "$kxy\t";
+
+							my $mk = "NA";
+							if ($Dxy_syn > 0 & $pi_syn_site > 0 & ($pi_rep_site/$pi_syn_site) > 0){
+								$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
+							}
+							print OUT2 "$mk\t";
+
+							$pop++;
+						#}
+						#elsif( $pop == $number_of_pops ){
+							$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
+							$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
+							$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+							if ($Dxy_syn != 0){
+								$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
+							}
+
+						#}
+
 
 if ($third_pos_count>0){
 	$GC_three=$GC_three/$third_pos_count;
@@ -2223,7 +2274,10 @@ $poly_set++;
 		print OUT2 "NA\tNA\tNA\tNA\tNA\t";
 	}
 
-++$pop
+
+
+
+
 } # loop for each pop
 
 
@@ -2245,8 +2299,8 @@ $poly_set++;
 		if ($pi_syn_within[0] != 0 ){
 			$Fst_syn = ($pi_syn_within[0] - (($pi_syn_within[1] + $pi_syn_within[2]) / 2)) / $pi_syn_within[0];
 			if($Fst_syn < 0){
-				print "negative ";
-				$Fst_syn = "NA";
+				#print "negative ";
+				$Fst_syn = 0;
 			}
 			else{}
 		}
@@ -2257,7 +2311,7 @@ $poly_set++;
 			
 			$Fst_rep = ($pi_rep_within[0] - (($pi_rep_within[1] + $pi_rep_within[2]) / 2)) / $pi_rep_within[0];
 			if($Fst_rep < 0){
-				$Fst_rep = "NA";
+				$Fst_rep = 0;
 			}
 		}
 		else{$Fst_rep = "NA";}
