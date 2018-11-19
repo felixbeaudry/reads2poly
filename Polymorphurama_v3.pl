@@ -267,12 +267,12 @@ foreach $file (@files){
 	my $outpop = 0;
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
-	
+	my $loop = 0;
 
-	#for($loop=0, $loop < $number_of_pops, $loop++){
-	for($loop=0, $loop < ($number_of_pops + $outpop_tot ), $loop++){
-	
-		#while ($pop<$number_of_pops ){
+	#for ($loop=0, $loop < ($number_of_pops + $outpop_tot), $loop++){
+	while($loop < ($number_of_pops + $outpop_tot)){
+
+		if ($pop<$number_of_pops ){
 			print "\npop: $pop\t";
 
 			@data=();
@@ -288,20 +288,21 @@ foreach $file (@files){
 			for ($y=0; $y < $number_of_individuals; $y++){
 				$in_position = $position_array[$pop][$y];
 				$data[$y+1]=$totdata[$in_position];
+				
 			}
-		#}
+		}
+
+		#print "\npop: $pop numpop: $number_of_pops loop: $loop\n";
 
 		if ( $pop == $number_of_pops ){
-			print "\ndiv: ($loop-$pop)\n";
+			#print "\ndiv: ",($loop-$pop);
 			@data=();
 
+			$data[0]=$totdata[$position_array[$pop-2][$outpop]];
 			
-			$data[0]=$totdata[$position_array[$pop-1][$outpop]];
-			
-
-			$number_of_individuals = scalar(@{ $position_array[$pop] });
+			$number_of_individuals = scalar(@{ $position_array[$pop-1] });
 			for ($y=0; $y < $number_of_individuals; $y++){
-				$in_position = $position_array[$pop][$y];
+				$in_position = $position_array[$pop-1][$y];
 				$data[$y+1]=$totdata[$in_position];
 			}
 
@@ -1936,65 +1937,65 @@ foreach $file (@files){
 
 
 
-$no_polyS=$no_polyR=0;
+					$no_polyS=$no_polyR=0;
 
-for ($ind=1; $ind<$numseqs-1; $ind++)
+					for ($ind=1; $ind<$numseqs-1; $ind++)
 
-	{
+						{
 
-	$no_polyS=$no_polyS+$poly_freq_Syn[$ind];
+						$no_polyS=$no_polyS+$poly_freq_Syn[$ind];
 
-	$no_polyR=$no_polyR+$poly_freq_Rep[$ind];
+						$no_polyR=$no_polyR+$poly_freq_Rep[$ind];
 
-	}
+						}
 
-$no_divS=$poly_freq_Syn[$numseqs];
+					$no_divS=$poly_freq_Syn[$numseqs];
 
-$no_divR=$poly_freq_Rep[$numseqs];
-
-
-
-$no_divP_U=$freq_P_U[$numseqs];		$no_divU_P=$freq_U_P[$numseqs];		$no_divP_P=$freq_P_P[$numseqs];		$no_divU_U=$freq_U_U[$numseqs];
+					$no_divR=$poly_freq_Rep[$numseqs];
 
 
 
-$no_divS_AT_GC=$freqS_AT_GC[$numseqs];		$no_divS_GC_AT=$freqS_GC_AT[$numseqs];		$no_divS_AT_AT=$freqS_AT_AT[$numseqs];		$no_divS_GC_GC=$freqS_GC_GC[$numseqs];
-
-$no_divR_AT_GC=$freqR_AT_GC[$numseqs];		$no_divR_GC_AT=$freqR_GC_AT[$numseqs];		$no_divR_AT_AT=$freqR_AT_AT[$numseqs];		$no_divR_GC_GC=$freqR_GC_GC[$numseqs];
+					$no_divP_U=$freq_P_U[$numseqs];		$no_divU_P=$freq_U_P[$numseqs];		$no_divP_P=$freq_P_P[$numseqs];		$no_divU_U=$freq_U_U[$numseqs];
 
 
 
-if ($freq_cut_off != 0)
+					$no_divS_AT_GC=$freqS_AT_GC[$numseqs];		$no_divS_GC_AT=$freqS_GC_AT[$numseqs];		$no_divS_AT_AT=$freqS_AT_AT[$numseqs];		$no_divS_GC_GC=$freqS_GC_GC[$numseqs];
 
-	{
-
-	$no_polyS_freq=$no_polyR_freq=0;
-
-	for ($ind=1; $ind<$numseqs-1; $ind++)
-
-		{
-
-		if ( ($ind/($numseqs-1)) > $freq_cut_off)
-
-			{
-
-			$no_polyS_freq=$no_polyS_freq+$poly_freq_Syn[$ind];
-
-			$no_polyR_freq=$no_polyR_freq+$poly_freq_Rep[$ind];
-
-			}
-
-		}
-
-	}
+					$no_divR_AT_GC=$freqR_AT_GC[$numseqs];		$no_divR_GC_AT=$freqR_GC_AT[$numseqs];		$no_divR_AT_AT=$freqR_AT_AT[$numseqs];		$no_divR_GC_GC=$freqR_GC_GC[$numseqs];
 
 
 
-$no_syn_codons=$no_syn_codons/$numseqs;
+					if ($freq_cut_off != 0)
 
-$no_rep_codons=$no_rep_codons/$numseqs;
+						{
 
-$no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
+						$no_polyS_freq=$no_polyR_freq=0;
+
+						for ($ind=1; $ind<$numseqs-1; $ind++)
+
+							{
+
+							if ( ($ind/($numseqs-1)) > $freq_cut_off)
+
+								{
+
+								$no_polyS_freq=$no_polyS_freq+$poly_freq_Syn[$ind];
+
+								$no_polyR_freq=$no_polyR_freq+$poly_freq_Rep[$ind];
+
+								}
+
+							}
+
+						}
+
+
+
+					$no_syn_codons=$no_syn_codons/$numseqs;
+
+					$no_rep_codons=$no_rep_codons/$numseqs;
+
+					$no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 
 
 
@@ -2153,13 +2154,14 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 
 						$tot_sites = $no_syn_codons + $no_rep_codons;
 
-						#if ( $pop < $number_of_pops ){
-							print "totalS: $totsnps\tinds: $numseqs\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\tDxy: $Dxy_syn";
+
+						if ( $pop < $number_of_pops ){
+							print "S: $totsnps\tinds: ",$numseqs-1,"\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\tDxy: $Dxy_syn";
 
 							$loc=substr($file,0,20);
 
 							print OUT2  
-							$numseqs, "\t", 
+							$numseqs-1, "\t", 
 
 							$no_syn_codons,"\t", 
 							$thetaS, "\t", 
@@ -2199,8 +2201,8 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 							print OUT2 "$mk\t";
 
 							$pop++;
-						#}
-						#elsif( $pop == $number_of_pops ){
+						}
+						elsif( $pop == $number_of_pops ){
 							$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 							$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 							$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
@@ -2208,21 +2210,21 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 								$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
 							}
 
-						#}
+						}
+						#$loop++;
+
+					if ($third_pos_count>0){
+						$GC_three=$GC_three/$third_pos_count;
+						if (($FOP+$FNOP)>0){
+							$FOP = $FOP/($FOP+$FNOP);
+						}
+					}
 
 
-if ($third_pos_count>0){
-	$GC_three=$GC_three/$third_pos_count;
-	if (($FOP+$FNOP)>0){
-		$FOP = $FOP/($FOP+$FNOP);
-	}
-}
-
-
-else {
-	$GC_three=0;
-	$FOP = 0;
-}
+					else {
+						$GC_three=0;
+						$FOP = 0;
+					}
 
 				if ($pop == 0){	
 						print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
@@ -2279,7 +2281,7 @@ $poly_set++;
 
 
 
-
+$loop++;
 } # loop for each pop
 
 
