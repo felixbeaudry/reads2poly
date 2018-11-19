@@ -2191,8 +2191,10 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 							print OUT2 "$kxy\t";
 
 							my $mk = "NA";
-							if ($Dxy_syn > 0 & $pi_syn_site > 0 & ($pi_rep_site/$pi_syn_site) > 0){
-								$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
+							if ($Dxy_syn > 0 & $pi_syn_site > 0 ){
+								if(($pi_rep_site/$pi_syn_site) > 0) {
+									$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
+								}
 							}
 							print OUT2 "$mk\t";
 
