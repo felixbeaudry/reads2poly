@@ -267,7 +267,7 @@ foreach $file (@files){
 	my $outpop = 0;
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
-	print "\nnumpop: $number_of_pops outpop: $outpop_tot\n"; 
+	
 
 	#for($loop=0, $loop < $number_of_pops, $loop++){
 	for($loop=0, $loop < ($number_of_pops + $outpop_tot ), $loop++){
