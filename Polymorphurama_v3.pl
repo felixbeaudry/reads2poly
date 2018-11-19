@@ -2149,7 +2149,7 @@ $no_syn_fourfold_codons=$no_syn_fourfold_codons/$numseqs;
 						$thetaR, "\t", 
 						$no_polyR, "\t",  
 						$pi_rep_site, "\t", 
-						$TajD_rep, "\t"
+						$TajD_rep, "\t",
 
 						$Dxy_syn, "\t",
 						$Dxy_rep, "\t"
