@@ -200,6 +200,7 @@ foreach $file (@files){
 
 	chomp $file;
 
+	##find sequences in outgroup
 	my $outgroup_position = 0;
 	if (defined $outgroup_string){
 		for ($x=0; $x<scalar(@sequence_names); ++$x){
@@ -240,13 +241,12 @@ foreach $file (@files){
 
 	@totdata=@data;
 
-	#find missing sites in whole set
+	#find missing sites in whole set##
 	my $seqlen = length($data[0]);
 	my $codonCount = length($data[0]) / 3;
 	my @stop_gap_tot = (0) x $codonCount;
 	
 	$ind=$j=$k=$l=0;
-	
 
 	for($j=0; $j < $seqlen; $j+=3){  
 		for ($ind=0; $ind < $numseqs; $ind++){
@@ -263,6 +263,7 @@ foreach $file (@files){
 		$l++;
 	}
 
+	##set pops##
 	my $pop = 0;
 	my $outpop = 0;
 	my $outpop_tot = scalar(@{ $position_array[1] });
@@ -2320,7 +2321,7 @@ foreach $file (@files){
 		}
 		else{$Fst_rep = "NA";}
 
-		print "\npop1 length: ",scalar(@{ $position_array[1] });
+		#print "\npop1 length: ",scalar(@{ $position_array[1] });
 
 		if (scalar(@{ $position_array[1] }) != 0){
 			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] }) ;
