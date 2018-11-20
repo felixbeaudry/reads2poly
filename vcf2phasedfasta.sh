@@ -33,10 +33,11 @@ samtools faidx ${ind}.sex.fasta.sort ${loc}_${chrom} 2>>phase/${ind}/${ind}.fai.
 cat phase/${ind}/${loc}_${chrom}.fasta | grep -v '^>' | grep '^.' | tr -d '[:blank:]' | tr n - | tr , - > phase/${ind}/${loc}_${chrom}.noname.fasta
 echo ">${ind}_${chrom}chrom" | cat - phase/${ind}/${loc}_${chrom}.noname.fasta > temp && mv temp phase/${ind}/${loc}_${chrom}.fasta
 rm phase/${ind}/${loc}_${chrom}.noname.fasta
-done < sex.list
+done < XY.list
 done
-done < male.inds
 
+done < malegen.inds
+#done < male.inds
 
 for chrom in X Y
 do

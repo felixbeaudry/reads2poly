@@ -35,31 +35,9 @@ ylim <- c(min(USA.bbox[2,1]),max(USA.bbox[2,2]))
 plot(USA.states, xlim=xlim, ylim=ylim)
 
 
-#collection points
-
-add.pie(z=c(1), x=-83.14,y=31.28,  col=c(alpha("black")), labels="", radius=(1/2))
-add.pie(z=c(1), x=-81.17,y=31.50,  col=c(alpha("black")), labels="", radius=(1/2))
-add.pie(z=c(1), x=-81.5,y=32.27, col=c(alpha("black")), labels="", radius=(1/2))
-add.pie(z=c(1), x=-83.4,y=30.34,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-82.3,y=29.4, col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-85.50,y=31.4,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-86.59,y=31.4, col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-81.26,y=34.6, col=c(alpha("black")), labels="", radius=(1/2))
-add.pie(z=c(1), x=-79.29,y=34.10, col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-80.48,y=33.15, col=c(alpha("black")), labels="", radius=(1/2))
-add.pie(z=c(1), x=-78.32,y=34.58, col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-76.52,y=35.31,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-77.36,y=35.15,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-93.41,y=31.51, col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-93.18,y=30.53,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-94.47,y=30.41, col=c(alpha("black")), labels="", radius=(2/4))
-add.pie(z=c(1), x=-95.48,y=32.11,  col=c(alpha("black")), labels="", radius=(2/4))
-add.pie(z=c(1), x=-94.59,y=33.10,  col=c(alpha("black")), labels="", radius=(2/4))
-add.pie(z=c(1), x=-96.50,y=33.53,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-95.24,y=34.9,  col=c(alpha("black")), labels="", radius=(2/4))
-add.pie(z=c(1), x=-95.37,y=34.53,  col=c(alpha("black")), labels="", radius=(1/4))
-add.pie(z=c(1), x=-95.54,y=31.33,  col=c(alpha("black")), labels="", radius=(1/4))
-
+hybrid <- fread('hybrid.pop')
+points(hybrid$longitude, hybrid$latitude, pch=21, cex=1)
+points(pop$Longitude, pop$Latitude, pch=20, cex=1)
 
 #autosomal
 add.pie(z=c(0,1), x=-85.50,y=31.43,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(4/7)) #ALBRU
@@ -86,7 +64,10 @@ add.pie(z=c(1,0), x=-94.47,y=30.41,  col=c(alpha("orange"),alpha("blue")), label
 add.pie(z=c(1,0), x=-95.48,y=32.11,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(5/7)) #TXATH
 add.pie(z=c(1,0), x=-94.59,y=33.10,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(1/7)) #TXMTP
 add.pie(z=c(1,0), x=-95.54,y=31.33,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(2/7)) #TXOAK
-add.pie(z=c(1,0), x=-96.51,y=31.7,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(5/7)) #TXROS   
+add.pie(z=c(1,0), x=-96.51,y=31.7,  col=c(alpha("orange"),alpha("blue")), labels="", radius=(5/7)) #TXROS  
+
+
+
 
 #haplotype
 
