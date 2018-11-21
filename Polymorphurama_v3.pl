@@ -104,7 +104,7 @@ open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} 
 open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '2_' . $chromName . '.txt')) or die "Could not open outfile\n";
 
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-#open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
@@ -2183,7 +2183,7 @@ foreach $file (@files){
 
 							#to outgroup stats
 							my $knks = "NA";
-							if($Dxy_syn > 0){
+							if($Dxy_syn > 0 & $Dxy_rep > 0){
 								$knks =  $Dxy_rep /$Dxy_syn ;
 							}
 							print OUT2 "$knks\t";
@@ -2231,10 +2231,10 @@ foreach $file (@files){
 							#print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
 							#print OUT $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 
-							#print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
-							#print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
-							#print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
-							#print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
+							print OUT3 $file, "_P->U\t", join ("\t", @freq_P_U), "\t";
+							print OUT3 $file, "_U->P\t", join ("\t", @freq_U_P), "\t";
+							print OUT3 $file, "_P->P\t", join ("\t", @freq_P_P), "\t";
+							print OUT3 $file, "_U->U\t", join ("\t", @freq_U_U), "\n";
 
 							#print OUT4 $file, "_GC3 \t", $GC_three, "\t";
 							#print OUT4 $file, "_FOP \t", $FOP, "\t";
@@ -2260,7 +2260,7 @@ foreach $file (@files){
 							$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 							$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
 							$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
-							if ($Dxy_syn != 0){
+							if ($Dxy_syn != 0 & $Dxy_rep != 0){
 								$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
 							}
 							#print "\ndiv $outpop: ",$dxy_tot;
@@ -2327,7 +2327,10 @@ foreach $file (@files){
 			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] }) ;
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[1] });
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[1] });
-			$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
+			if($dnds_tot > 0){
+				$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
+			}
+			else{$dnds_tot_final = "NA";}
 			$da = $dxy_syn_final - (($pi_syn_within[1] + $pi_syn_within[2]) / 2);
 		}
 
