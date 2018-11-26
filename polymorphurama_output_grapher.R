@@ -8,6 +8,7 @@ library(tidyr)
 library(plyr)
 library(sqldf)
 library(rapport)
+library(Hmisc)
 
 options(max.print = 1000000)
 
@@ -151,7 +152,7 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,popStr='pop'){
       popCount = paste("pop",(i-1),sep="") 
       pol_sep_comp$pop[pol_sep_comp$pop == popCount] <- pops[i]
     }
-    cbind(pol_sep_comp, "chrom" = chrom)
+    cbind(pol_sep_comp, "chrom" = chrom, "sex" = set)
   }
   
   
@@ -166,7 +167,7 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,popStr='pop'){
       inter_comp$pop[inter_comp$pop == popCount] <- pops[i]
     }
     
-    cbind(inter_comp, "chrom" = chrom)
+    cbind(inter_comp, "chrom" = chrom, "sex" = set)
   }
   filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
   filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,".txt",sep="")
@@ -201,14 +202,40 @@ ms_stat <- function(chrom=NULL,var=NULL,sitemean=NULL,filename=filname){
   return(ms_out)
 }
 
+pop="XY"
+
+t.testloop <- function(chromSet=NULL,var=NULL,pop=NULL,cod=NULL,outgroup=NULL,eLoc=NULL){
+  for (i in 1:(length(chromSet))){
+    for (j in 1:(length(chromSet))){
+      
+      result <- t.test(
+        all_data_var$value[all_data_var$locus %nin% eLoc & all_data_var$chrom == chromSet[i] & all_data_var$var == var & all_data_var$pop == pop & all_data_var$cod == cod & all_data_var$outgroup == outgroup  ]
+        ,
+        all_data_var$value[all_data_var$locus %nin% eLoc & all_data_var$chrom == chromSet[j] & all_data_var$var == var  & all_data_var$pop == pop & all_data_var$cod == cod & all_data_var$outgroup == outgroup  ]
+      )
+      if(result$p.value < 0.05){
+        print(c(chromSet[i],chromSet[j],"pvalue=",result$p.value,'*'))
+      }
+
+      else if(result$p.value != 1){
+        print(c(chromSet[i],chromSet[j],"pvalue=",result$p.value))
+      }
+    }
+  }
+}
+  
 
 ####import####
 
 pop <- c("R.hastatulus","XY","XYY")
 mpop = fpop = pop
-FLNC <- c("XYYt","FL","NC")
+FLNC <- c("FLNC","FL","NC")
 
-all_data <- data.frame(
+TXNC <- c("TXNC","TX","NC")
+TXFL <- c("TXFL","TX","FL")
+phase = X2Y = c("X2Y","X2","2Y") 
+
+ all_data <- data.frame(
   rbind(
     #X Male 
     stats_table(outgroup="bucephalophorus",set="m",chrom="X",pops=pop,popStr="mpop"),
@@ -238,8 +265,21 @@ all_data <- data.frame(
   stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=FLNC,popStr="FLNC"),
   stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=FLNC,popStr="FLNC"),
   stats_table(outgroup="rothschildianus",set="m",chrom="H",pops=FLNC,popStr="FLNC"),
-  stats_table(outgroup="rothschildianus",set="m",chrom="X",pops=FLNC,popStr="FLNC")
+  stats_table(outgroup="rothschildianus",set="m",chrom="X",pops=FLNC,popStr="FLNC"),
   
+  stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=TXNC,popStr="TXNC"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=TXNC,popStr="TXNC"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="H",pops=TXNC,popStr="TXNC"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="X",pops=TXNC,popStr="TXNC"),
+  
+  stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=TXFL,popStr="TXFL"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=TXFL,popStr="TXFL"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="H",pops=TXFL,popStr="TXFL"),
+  stats_table(outgroup="rothschildianus",set="m",chrom="X",pops=TXFL,popStr="TXFL"),
+  
+  stats_table(outgroup="rothschildianus",set="m",chrom="XY",pops=phase,popStr="phase")
+  
+
   )
   , stringsAsFactors = FALSE)
 
@@ -249,31 +289,35 @@ all_data$Sex[all_data$sex == "m"] <- "Male"
 all_data_var <- data.frame(
   rbind(
     #X Male 
-    #  stats_var(outgroup="bucephalophorus",set="m",chrom="X",pops=pop,popStr="mpop"),
+      stats_var(outgroup="bucephalophorus",set="m",chrom="X",pops=pop,popStr="mpop"),
     stats_var(outgroup="rothschildianus",set="m",chrom="X",pops=pop,popStr="mpop"),
     #Y Male
-    #  stats_var(outgroup="bucephalophorus",set="m",chrom="Y",pops=pop,popStr="mpop"),
+      stats_var(outgroup="bucephalophorus",set="m",chrom="Y",pops=pop,popStr="mpop"),
     stats_var(outgroup="rothschildianus",set="m",chrom="Y",pops=pop,popStr="mpop"),
     #N Female
-    #  stats_var(outgroup="bucephalophorus",set="f",chrom="N",pops=pop,popStr="fpop"),
-    #  stats_var(outgroup="rothschildianus",set="f",chrom="N",pops=pop,popStr="fpop"),
+      stats_var(outgroup="bucephalophorus",set="f",chrom="N",pops=pop,popStr="fpop"),
+      stats_var(outgroup="rothschildianus",set="f",chrom="N",pops=pop,popStr="fpop"),
     #X Female
-    #  stats_var(outgroup="bucephalophorus",set="f",chrom="X",pops=pop,popStr="fpop"),
-    #  stats_var(outgroup="rothschildianus",set="f",chrom="X",pops=pop,popStr="fpop"),
+      stats_var(outgroup="bucephalophorus",set="f",chrom="X",pops=pop,popStr="fpop"),
+      stats_var(outgroup="rothschildianus",set="f",chrom="X",pops=pop,popStr="fpop"),
     #H Male
     stats_var(outgroup="rothschildianus",set="m",chrom="H",pops=pop,popStr="mpop"),
-    #  stats_var(outgroup="bucephalophorus",set="m",chrom="H",pops=pop,popStr="mpop"),
+      stats_var(outgroup="bucephalophorus",set="m",chrom="H",pops=pop,popStr="mpop"),
     #H Female
-    #  stats_var(outgroup="rothschildianus",set="f",chrom="H",pops=pop,popStr="fpop"),
-    #  stats_var(outgroup="bucephalophorus",set="f",chrom="H",pops=pop,popStr="fpop"),
+      stats_var(outgroup="rothschildianus",set="f",chrom="H",pops=pop,popStr="fpop"),
+      stats_var(outgroup="bucephalophorus",set="f",chrom="H",pops=pop,popStr="fpop"),
     #A Female
-    #  stats_var(outgroup="rothschildianus",set="f",chrom="A",pops=pop,popStr="fpop"),
-    # stats_var(outgroup="bucephalophorus",set="f",chrom="A",pops=pop,popStr="fpop"),
+      stats_var(outgroup="rothschildianus",set="f",chrom="A",pops=pop,popStr="fpop"),
+     stats_var(outgroup="bucephalophorus",set="f",chrom="A",pops=pop,popStr="fpop"),
     #A Male
-    #  stats_var(outgroup="bucephalophorus",set="m",chrom="A",pops=pop,popStr="mpop"),
-    stats_var(outgroup="rothschildianus",set="m",chrom="A",pops=pop,popStr="mpop")
+      stats_var(outgroup="bucephalophorus",set="m",chrom="A",pops=pop,popStr="mpop"),
+    stats_var(outgroup="rothschildianus",set="m",chrom="A",pops=pop,popStr="mpop"),
+    
+    stats_var(outgroup="rothschildianus",set="m",chrom="XY",pops=phase,popStr="phase")
   )
   , stringsAsFactors = FALSE) 
+
+chromSet <- c("A","H","X","Y")
 
 ####theta####
 all_data_theta <- all_data[all_data$var == "theta" & all_data$cod == "syn"  ,]
@@ -301,13 +345,13 @@ ggplot(all_data_theta, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE)
   ))
 
 ####pi####
+title_pisyn <- expression(paste(pi, ""[syn]))
 
-all_data_pi <- all_data[all_data$sex == "m" & all_data$var == "pi" & all_data$cod == "syn" & all_data$pop != "R.hastatulus" & all_data$outgroup == "rothschildianus",]
 
 #all_data_pi <- all_data[all_data$sex == "m" & all_data$var == "pi" & all_data$cod == "syn" & all_data$outgroup == "rothschildianus" & (all_data$pop == "XY" | all_data$pop == "XYY") ,]
 
-
-title_pisyn <- expression(paste(pi, ""[syn]))
+all_data_pi <- all_data[all_data$sex == "m" & all_data$var == "pi" & all_data$cod == "syn" & all_data$pop != "R.hastatulus" & all_data$outgroup == "rothschildianus",]
+all_data_pi$Pop =factor(all_data_pi$pop, c("XY","XYY", "NC","FL"))
 
 #pi <- 
 ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -317,9 +361,8 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid( . ~ pop ) +
-#  scale_x_discrete(limits=c("A","N","H","X","Y")) +
-  
+ # facet_grid( . ~ pop ) +
+  facet_grid( . ~ Pop ) +
   scale_x_discrete(limits=c("A","H","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
@@ -329,27 +372,54 @@ ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
     '#00A550' #green #A
   ))
 
-all_data_pi$Pop =factor(all_data_pi$pop, c("XY","XYY", "NC","FL"))
 
-ggplot(all_data_pi, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
-  geom_bar(position=position_dodge(), stat="identity" ) +
-  geom_errorbar(aes(ymin=value-se, ymax=value+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
-  theme(strip.background =element_rect(fill="white")) +
-  facet_grid( . ~ Pop ) +
-  #  scale_x_discrete(limits=c("A","N","H","X","Y")) +
-  
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+pivar <- all_data_var[ all_data_var$var == "pi" & all_data_var$cod == "syn" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data_var$outgroup == "rothschildianus",]
+
+
+
+#rate_plot <-
+  ggplot(pivar, aes(x=chrom, y=value, fill=chrom)) + 
+  geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Evolution (dnds)") +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0,2) +
+  theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + #coord_trans( y = "log2")+
+  #facet_grid(. ~ outgroup) +
   scale_fill_manual(values=c( 
-    '#00ADEF', #Blue #X
-    '#FFF100',#yellow #Y
-    #  '#1B75BB', #purple-y #N
+    '#00A550' ,#green #A
     '#ffb14e', #orange #H
-    '#00A550' #green #A
+    '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+    
+    
   ))
 
+  title_pi <- expression(paste(pi))
+  
+  all_data_pi <- all_data[all_data$sex == "m" & all_data$var == "pi" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
+  
+  all_data_pi$Chrom <- factor(all_data_pi$chrom, c("A","H","X","Y"))
+  
+  ggplot(all_data_pi, aes(x=cod, y=value)) + guides(fill = FALSE) +
+    geom_bar(position=position_dodge(), stat="identity" ) +
+    geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                  width=.2,                    # Width of the error bars
+                  position=position_dodge(.9)) + 
+    theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pi) +
+    theme(strip.background =element_rect(fill="white")) +
+    facet_grid(  pop ~ Chrom ) #+
+   # scale_x_discrete(limits=c("A","H","X","Y")) +
+  #  scale_fill_manual(values=c( 
+      '#00ADEF', #Blue #X
+      '#FFF100',#yellow #Y
+      #  '#1B75BB', #purple-y #N
+      '#ffb14e', #orange #H
+      '#00A550' #green #A
+    ))
+  
 
 ####TajD####
 
@@ -379,12 +449,11 @@ multiplot(pi,tajD)
 
 
 ####FST####
+title_fst <- expression(paste("F", ""[ST]))
 
 all_data_fst <- all_data[all_data$sex == "m" & all_data$pop == "R.hastatulus" & all_data$outgroup == "rothschildianus" & all_data$var == "Fst" & all_data$cod == "syn"  ,]
 
-title_fst <- expression(paste("F", ""[ST]))
-
-#fst_plot <-
+fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -411,43 +480,62 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   annotate(geom="text", x = "X", y = 0.15, label = "b", parse = TRUE, size=10) +
   annotate(geom="text", x = "Y", y = 0.45, label = "c", parse = TRUE, size=10) 
 
+t.testloop(chromSet=chromSet,var="Fst",outgroup="rothschildianus",cod="syn",pop="R.hastatulus")
 
+fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
+fst_anova <- aov(value ~ chrom, data=fst_data_var)
+summary(fst_anova) 
 
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "Fst" ])
-##p = 0.4
+FstVar <- all_data_var[all_data_var$var == "Fst" &  all_data_var$sex == "m" & all_data_var$outgroup == "rothschildianus" & all_data_var$pop == "R.hastatulus" & all_data_var$cod == "syn"  ,]
+
+fstVar_plot <- 
+ggplot(FstVar, aes(x=chrom, y=value, fill=chrom)) + 
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 30) + labs(x="",y=title_fst) +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0,0.01) +
+  theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + 
+  scale_fill_manual(values=c( 
+    '#00A550' ,#green #A
+    '#ffb14e', #orange #H
+    '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+  ))
   
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ])
-## p **=4e-04**
+Nm  = ((1 /0.02087) -1)/4 = 
+  11.73/209000
+
+sub_fst <- all_data[all_data$sex == "m" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "rothschildianus" & all_data$var == "Fst" & all_data$cod == "syn"  ,]
+
+fst_sub_plot <-
+  ggplot(sub_fst, aes(x=chrom, y=value, fill=chrom)) +
+  guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_fst) +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  theme(strip.background =element_rect(fill="white")) +
+   facet_grid(. ~ pop) +
+  scale_x_discrete(limits=c("A","H","X","Y")) +
   
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
-  ## p **<2e-16**
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue #X
+    '#FFF100',  #yellow #Y
+    #  '#1B75BB', #purple-y #N
+    '#ffb14e', #orange #H
+    '#00A550' #green #A
+  )) 
   
- t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "Fst" ])
-  ##p = 0.01
- 
- t.test(
-   all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "Fst" ] ,  
-   all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "Fst" ])
- ##p = 2e-15
-  
-  fst_data_var <- all_data_var[ all_data_var$var == "Fst", ]  
-  fst_anova <- aov(value ~ chrom, data=fst_data_var)
-  summary(fst_anova) 
-  
+
 ####dxy####
 
-dxy <- all_data[all_data$var == "dxy" ,]
+dxy <- all_data[all_data$var == "dxy" & all_data$sex == "m" & all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus" ,]
 
-  title_dxy <- expression(paste("D", ""[XY]))
-  
+title_dxy <- expression(paste("d", ""[XY]))
   
 dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -469,39 +557,59 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
     '#ffb14e', #orange #H
     '#00A550' #green #A
   )) +
-
   annotate(geom="text", x = "A", y = 0.003, label = "a", parse = TRUE, size=10) +
   annotate(geom="text", x = "H", y = 0.003, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "X", y = 0.005, label = "b", parse = TRUE, size=10) +
-  annotate(geom="text", x = "Y", y = 0.006, label = "c", parse = TRUE, size=10) 
+  annotate(geom="text", x = "X", y = 0.006, label = "b", parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 0.006, label = "b", parse = TRUE, size=10) 
   
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "dxy" ])
+  
+t.testloop(chromSet=chromSet,var="dxy",outgroup="rothschildianus",cod="NA",pop="R.hastatulus")
 
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ])
+dxyVar <- all_data_var[all_data_var$var == "dxy" & all_data_var$sex == "m" & all_data_var$outgroup == "rothschildianus" & all_data_var$pop == "R.hastatulus" ,]
 
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "dxy" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ])
-
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "dxy" ])
-
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "dxy" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "dxy" ])
-
-  
+dxyVar_plot <- 
+ggplot(dxyVar, aes(x=chrom, y=value, fill=chrom)) + 
+    geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 30) + labs(x="",y=title_dxy) +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0,0.01) +
+  theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + 
+  scale_fill_manual(values=c( 
+    '#00A550' ,#green #A
+    '#ffb14e', #orange #H
+    '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+  ))
   
 multiplot(fst_plot,dxy_plot,cols=2)
+multiplot(fstVar_plot,dxyVar_plot,cols=2)
+
+sub_dxy <- all_data[all_data$sex == "m" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "rothschildianus" & all_data$var == "dxy"   ,]
+
+dxy_sub_plot <-
+ggplot(sub_dxy, aes(x=chrom, y=value, fill=chrom)) +
+  guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_dxy) +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  theme(strip.background =element_rect(fill="white")) +
+  facet_grid(. ~ pop) +
+  scale_x_discrete(limits=c("A","H","X","Y")) +
+  
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue #X
+    '#FFF100',  #yellow #Y
+    #  '#1B75BB', #purple-y #N
+    '#ffb14e', #orange #H
+    '#00A550' #green #A
+  )) 
+
+multiplot(fst_sub_plot,dxy_sub_plot)
 
 ####da####
 
@@ -535,33 +643,13 @@ da_plot <-
   annotate(geom="text", x = "X", y = 0.00125, label = "c", parse = TRUE, size=10) +
   annotate(geom="text", x = "Y", y = 0.0026, label = "d", parse = TRUE, size=10) 
   
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "da" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "da" ])
-  
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "da" ] ,  
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "da" ])
-  
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "A" & all_data_var$var == "da" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "da" ])
-  
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "da" ] ,  
-    all_data_var$value[all_data_var$chrom == "H" & all_data_var$var == "da" ])
-  
-  
-  t.test(
-    all_data_var$value[all_data_var$chrom == "X" & all_data_var$var == "da" ] ,  
-    all_data_var$value[all_data_var$chrom == "Y" & all_data_var$var == "da" ])
 
-  
   multiplot(fst_plot,dxy_plot,da_plot,cols=3)
+  
+  
+#  t = 0.0001284/(2*7e-9)
+  
+
   
 ####kxy####
 kxydxy <- rbind(
@@ -622,7 +710,7 @@ summary(dxy_anova)
 
 ####Ks####
 ks <- rbind(
-  all_data[all_data$var == "k" & all_data$pop == "R.hastatulus" & all_data$cod == "syn" & all_data$Sex == "Male",]
+  all_data[all_data$var == "k" & all_data$pop == "R.hastatulus" & all_data$cod == "syn" & all_data$sex == "m",]
  # all_data[ all_data$var == "d" & all_data$cod == "syn",]
 )
 #ds$outgroup[ds$var == "d"] <- "R.hastatulus"
@@ -635,7 +723,7 @@ ks$Chromosome = factor(ks$chrom, levels=c("A","H","X","Y"))
 #ds$Outgroup =factor(ds$outgroup, c("R.hastatulus","R.rothschildianus", "R.bucephalophorus"))
 ks$Outgroup =factor(ks$outgroup, c("R.rothschildianus", "R.bucephalophorus"))
 
-ks_plot <- 
+#ks_plot <- 
 ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome
                    # , group=1
 )) + #guides(fill = FALSE) +
@@ -646,9 +734,6 @@ ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + guides(fill=FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x="",y="Synonymous Divergence") +
-  # scale_x_discrete(limits=c("R.hastatulus","R.rothschildianus","R.bucephalophorus")) +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  #theme(axis.text.x = element_text(face = "italic")) +
   theme(strip.background =element_rect(fill="white")) +
   facet_grid(. ~ Outgroup) +
  # scale_x_discrete(limits=c("A","N","H","X","Y")) +
@@ -662,13 +747,80 @@ ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome
     '#FFF100'  #yellow #Y
   ))
 
+
+#all_data_var[all_data_var$chrom == "H" & all_data_var$var == "k"  & all_data_var$pop == "R.hastatulus" & all_data_var$cod == 'syn', ]
+
+kvar <- all_data_var[ all_data_var$var == "k" & all_data_var$cod == "syn" & all_data_var$pop == "R.hastatulus" ,]
+
+#kvar_filt <-
+#rbind(
+#kvar[kvar$chrom == "H" & kvar$outgroup == "rothschildianus" & (kvar$value < (ks$value[ks$chrom == "H" & ks$outgroup == "R.rothschildianus"] + ks$se[ks$chrom == "H" & ks$outgroup == "R.rothschildianus"])),],
+#kvar[kvar$chrom == "H" & kvar$outgroup == "bucephalophorus" & (kvar$value < (ks$value[ks$chrom == "H" & ks$outgroup == "R.bucephalophorus"] + ks$se[ks$chrom == "H" & ks$outgroup == "R.bucephalophorus"])),]
+#)
+
+bad_div <- c(kvar$locus[kvar$value > 0.4 & kvar$outgroup == "bucephalophorus"],kvar$locus[kvar$value > 0.3 & kvar$outgroup == "rothschildianus"])
+kvar$outgroup[kvar$outgroup == "rothschildianus"] <- "R.rothschildianus"
+kvar$outgroup[kvar$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
+
+
+
+#bad_div_loc <- unique(data.frame(sqldf('select bad_buc.*, bad_roth.* from bad_buc join bad_roth on bad_buc.locbuc = bad_roth.locroth ')))
+#bad_div_loc <- bad_div_loc$locbuc
+
+
+
+
+#rate_plot <-
+ggplot(kvar[kvar$locus %nin% bad_div,], aes(x=chrom, y=value, fill=chrom)) + 
+#ggplot(kvar, aes(x=chrom, y=value, fill=chrom)) + 
+  
+  geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Synonymous divergence") +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0,2) +
+  theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + #coord_trans( y = "log2")+
+  facet_grid(. ~ outgroup) +
+  scale_fill_manual(values=c( 
+    '#00A550' ,#green #A
+    '#ffb14e', #orange #H
+    '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+  ))
+
+
+all_data_k <- all_data[all_data$sex == "m" & all_data$var == "k" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
+all_data_k <- all_data[all_data$sex == "m" & all_data$var == "k" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "bucephalophorus",]
+
+all_data_k$Chrom <- factor(all_data_k$chrom, c("A","H","X","Y"))
+
+ggplot(all_data_k, aes(x=cod, y=value)) + guides(fill = FALSE) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="divergence") +
+  theme(strip.background =element_rect(fill="white")) +
+  facet_grid(  pop ~ Chrom ) #+
+
+# scale_x_discrete(limits=c("A","H","X","Y")) +
+#  scale_fill_manual(values=c( 
+'#00ADEF', #Blue #X
+'#FFF100',#yellow #Y
+#  '#1B75BB', #purple-y #N
+'#ffb14e', #orange #H
+'#00A550' #green #A
+))
+
 ####Ds####
 ds <- 
    all_data[all_data$Sex =="Male" & all_data$var == "d" & all_data$cod == "syn" & all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus",]
 
 ds$Chromosome = factor(ds$chrom, levels=c("A","H","X","Y"))
 
-ds_plot <- 
+#ds_plot <- 
 ggplot(ds, aes(x=Chromosome, y=value, fill=Chromosome
                # , group=1
 )) + #guides(fill = FALSE) +
@@ -678,7 +830,7 @@ ggplot(ds, aes(x=Chromosome, y=value, fill=Chromosome
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + guides(fill=FALSE) +
-  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Synonymous Divergence") +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x="",y="Mean Synonymous Divergence") +
   # scale_x_discrete(limits=c("R.hastatulus","R.rothschildianus","R.bucephalophorus")) +
   #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
   #theme(axis.text.x = element_text(face = "italic")) +
@@ -699,23 +851,20 @@ ggplot(ds, aes(x=Chromosome, y=value, fill=Chromosome
 
 multiplot(ds_plot,ks_plot,cols=2)
 
-####dnds####
-evo_rate <- rbind(
-  all_data[all_data$var == "kaks" & all_data$pop == "R.hastatulus",]
-  #all_data[all_data$var == "dnds" ,]
-  
-)
 
-#levels(all_data_dxy$outgroup) = c("rothschildianus", "hastatulus","bucephalophorus")
-#evo_rate$outgroup[evo_rate$var == "dnds"] <- "R.hastatulus"
+ds_X2Y <- 
+  all_data_var[ all_data_var$var == "d" & all_data_var$cod == "syn" & all_data_var$outgroup == "rothschildianus"  & all_data_var$pop == "X2Y",]
+
+ggplot(ds_X2Y,aes(x=value)) + geom_histogram()
+
+####dnds####
+evo_rate <-  all_data[all_data$var == "kaks" & all_data$pop == "R.hastatulus" & all_data$sex == "m",]
+  
 evo_rate$outgroup[evo_rate$outgroup == "rothschildianus"] <- "R.rothschildianus"
 evo_rate$outgroup[evo_rate$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
+#evo_rate$Outgroup =factor(evo_rate$outgroup, c("R.rothschildianus", "R.bucephalophorus"))
 
-#evo_rate$Outgroup =factor(evo_rate$outgroup, c("R.hastatulus","R.rothschildianus", "R.bucephalophorus"))
-evo_rate$Outgroup =factor(evo_rate$outgroup, c("R.rothschildianus", "R.bucephalophorus"))
-
-
-rate_plot <-
+#rate_plot <-
 ggplot(evo_rate, aes(x=chrom, y=value, color=chrom)) + guides(color=FALSE) +
   geom_point(position=position_dodge(.9)) +
   geom_errorbar(aes(ymin=value-se, ymax=value+se),
@@ -723,10 +872,8 @@ ggplot(evo_rate, aes(x=chrom, y=value, color=chrom)) + guides(color=FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Divergence (dn/ds)") +
   theme(strip.background =element_rect(fill="white")) +
-#  scale_x_discrete(limits=c("A","N","H","X","Y")) +
-  
   scale_x_discrete(limits=c("A","H","X","Y")) + 
-  facet_grid(. ~ Outgroup) +
+  facet_grid(. ~ outgroup) +
   scale_color_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',  #yellow #Y
@@ -735,7 +882,42 @@ ggplot(evo_rate, aes(x=chrom, y=value, color=chrom)) + guides(color=FALSE) +
     '#00A550' #green #A
   ))
 
+kaksvar <- all_data_var[all_data_var$var == "kaks" & all_data_var$pop == "R.hastatulus" & all_data_var$sex == "m",]
+kaksvar$outgroup[kaksvar$outgroup == "rothschildianus"] <- "R.rothschildianus"
+kaksvar$outgroup[kaksvar$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
 
+kvar <- all_data_var[ all_data_var$var == "k" & all_data_var$cod == "syn" & all_data_var$pop == "R.hastatulus" ,]
+bad_dnds_div <- c(kvar$locus[kvar$value > 0.4 & kvar$outgroup == "bucephalophorus"],kvar$locus[kvar$value > 0.3 & kvar$outgroup == "rothschildianus"])
+kaksvar$value[kaksvar$locus %nin% bad_dnds_div] <- NA
+
+rate_plot <-
+ggplot(kaksvar, aes(x=chrom, y=value, fill=chrom)) + 
+  geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Divergence (dn/ds)") +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0,2) +
+  theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + #coord_trans( y = "log2") +
+  facet_grid(. ~ outgroup) +
+  scale_fill_manual(values=c( 
+    '#00A550' ,#green #A
+    '#ffb14e', #orange #H
+    '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+    
+    
+  )) #+ 
+  
+  annotate(geom="text", x = "A", y = 2, label = '"a"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "H", y = 2, label = '"b"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 2, label = '"a"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 2, label = '"a"', parse = TRUE, size=10) 
+
+t.testloop(chromSet=chromSet,var="kaks",pop="R.hastatulus",cod="NA",outgroup="bucephalophorus",eLoc=bad_dnds_div)
+t.testloop(chromSet=chromSet,var="kaks",pop="R.hastatulus",cod="NA",outgroup="rothschildianus",eLoc=bad_dnds_div)
+  
 ####mk####
 
 mk <- all_data[all_data$var == "mk" & all_data$pop == "R.hastatulus" & all_data$sex == "m"  ,]
@@ -755,10 +937,10 @@ ggplot(mk, aes(x=chrom, y=value, color=chrom)) +
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Adaptation (MK)") +
-  theme(strip.background =element_rect(fill="white")) + ylim(0.5,2) +
+  theme(strip.background =element_rect(fill="white")) + #ylim(0.5,2.1) +
  # scale_x_discrete(limits=c("A","N","H","X","Y")) + guides(color=FALSE) +
   scale_x_discrete(limits=c("A","H","X","Y")) + guides(color=FALSE) + coord_trans( y = "log2")+
-  
+   theme(strip.text = element_text(face = "italic")) +
   facet_grid(. ~ Outgroup) +
   scale_color_manual(values=c( 
     '#00ADEF', #Blue #X
@@ -766,13 +948,50 @@ ggplot(mk, aes(x=chrom, y=value, color=chrom)) +
  #   '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  ))
+  )) + 
+  
+  annotate(geom="text", x = "H", y = 2.1, label = '"*"', parse = TRUE, size=10) 
 
-##test if group mean is diff from zero##
-logmk_N <- data.frame(log(all_data_var$value[all_data_var$var == "mk" & all_data_var$pop == "R.hastatulus" & all_data_var$chrom == "N"]))
-names(logmk_N) <- "logMK"
-ggplot(logmk_N,aes(x=logMK)) + geom_histogram()
-t.test(logmk_N)
+mkvar <- all_data_var[all_data_var$var == "mk" & all_data_var$pop != "R.hastatulus"  ,]
+mkvar$outgroup[mkvar$outgroup == "rothschildianus"] <- "R.rothschildianus"
+mkvar$outgroup[mkvar$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
+
+#adapt_plot <-
+ggplot(mkvar[mkvar$locus %nin% bad_dnds_div,], aes(x=chrom, y=value, fill=chrom)) + 
+#  ggplot(mkvar, aes(x=chrom, y=value, fill=chrom)) + 
+  
+    geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+    theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Adaptation (MK)") +
+  theme(strip.background =element_rect(fill="white")) + ylim(0.001,100) +
+   theme(strip.text = element_text(face = "italic")) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + coord_trans( y = "log10")+
+  facet_grid( pop ~ outgroup) +
+  scale_fill_manual(values=c( 
+    '#00A550' ,#green #A
+    '#ffb14e', #orange #H
+     '#00ADEF', #Blue #X
+    '#FFF100'  #yellow #Y
+    #   '#1B75BB', #purple-y #N
+    
+    
+  )) #+ 
+  
+  annotate(geom="text", x = "A", y = 4, label = '"a"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "H", y = 4, label = '"ab"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 4, label = '"b"', parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 4, label = '"c"', parse = TRUE, size=10) 
+  
+  t.testloop(chromSet=chromSet,var="mk",pop="R.hastatulus",cod="NA",outgroup="bucephalophorus",eLoc=bad_dnds_div)
+  t.testloop(chromSet=chromSet,var="mk",pop="R.hastatulus",cod="NA",outgroup="rothschildianus",eLoc=bad_dnds_div)
+  
+  t.testloop(chromSet=chromSet,var="mk",pop="XY",cod="NA",outgroup="bucephalophorus",eLoc=bad_dnds_div)
+  t.testloop(chromSet=chromSet,var="mk",pop="XY",cod="NA",outgroup="rothschildianus",eLoc=bad_dnds_div)
+  
+  t.testloop(chromSet=chromSet,var="mk",pop="XYY",cod="NA",outgroup="bucephalophorus",eLoc=bad_dnds_div)
+  t.testloop(chromSet=chromSet,var="mk",pop="XYY",cod="NA",outgroup="rothschildianus",eLoc=bad_dnds_div)
+  
 
 
 multiplot(rate_plot,adapt_plot)
@@ -900,13 +1119,6 @@ ms_dxy <- rbind(
 
 
 ####Extra Calculations####
-##fmaleX!=maleX##
-maleX <- data.frame(stats_table(outgroup="rothschildianus",set="XYphased",chrom="X",pops=pop))
-femaleX <- data.frame(stats_table(outgroup="rothschildianus",set="joshFem",chrom="X",pops=pop))
-
-maleX[maleX$var == "pi",]
-femaleX[femaleX$var == "pi",]
-
 ##synsite##
 all_data[all_data$var == "sites" & all_data$cod == "syn" 
          & all_data$pop == "R.hastatulus" & all_data$chrom == "A", ]
@@ -918,36 +1130,96 @@ all_data[all_data$var == "sites" & all_data$cod == "syn"
 (0.00629 / (4 * 7.5e-9) ) * 3.4 
 (0.00629 / (4 * 7.5e-9) ) * 0.079
 
-#Dxy = 2μt
-0.269506300/(2*7.5e-9)
-0.014862532/(2*7.5e-9)
-(115000+35000)-0.014862532/(2*7.5e-9)
 
-#Nem = ¼(fst - 1)  
-(1/0.1165208 - 1)/4
+####X2Y#####
 
-#silene pollen expressed dnds
-s_pollen_dnds <- 
-data.frame(
-  rbind(
-c(0.192, 0.1689), 
-c(0.142 ,0.1436)
-), rownames = c("not pollen","pollen")
+X2Ydata<-cbind(fread('m_rothschildianus_summarystats_phase_XY.txt'),fread('m_rothschildianus_interpop_phase_XY.txt'))
+X2Ydata <- X2Ydata[,-c(51)]
+
+X <- ggplot(X2Ydata,aes(x=pop0_d_syn,y=pop1_kaks_NA)) + geom_point() + ylim(0,2)
+
+Y <- ggplot(X2Ydata,aes(x=pop0_d_syn,y=pop2_kaks_NA)) + geom_point() + ylim(0,2)
+
+multiplot(X,Y)
+
+##cytotype specific mk####
+
+
+rxyyh <- cbind(fread('xyy_rothschildianus_summarystats_pop_h.txt'),"pop"="xyy","outgroup"="rothschildianus","chrom"="h")
+rxyya <- cbind(fread('xyy_rothschildianus_summarystats_pop_a.txt'),"pop"="xyy","outgroup"="rothschildianus","chrom"="a")
+
+rxyh <- cbind(fread('xy_rothschildianus_summarystats_pop_h.txt'),"pop"="xy","outgroup"="rothschildianus","chrom"="h")
+rxya <- cbind(fread('xy_rothschildianus_summarystats_pop_a.txt'),"pop"="xy","outgroup"="rothschildianus","chrom"="a")
+
+bxyyh <- cbind(fread('xyy_bucephalophorus_summarystats_pop_h.txt'),"pop"="xyy","outgroup"="bucephalophorus","chrom"="h")
+bxyya <- cbind(fread('xyy_bucephalophorus_summarystats_pop_a.txt'),"pop"="xyy","outgroup"="bucephalophorus","chrom"="a")
+
+bxyh <- cbind(fread('xy_bucephalophorus_summarystats_pop_h.txt'),"pop"="xy","outgroup"="bucephalophorus","chrom"="h")
+bxya <- cbind(fread('xy_bucephalophorus_summarystats_pop_a.txt'),"pop"="xy","outgroup"="bucephalophorus","chrom"="a")
+
+
+rxyyh <- rxyyh[rxyyh$pop0_k_syn < 0.3,]
+rxyya <- rxyya[rxyya$pop0_k_syn < 0.3,]
+rxyh <- rxyh[rxyh$pop0_k_syn < 0.3,]
+rxya <- rxya[rxya$pop0_k_syn < 0.3,]
+
+bxyyh <- bxyyh[bxyyh$pop0_k_syn < 0.4,]
+bxyya <- bxyya[bxyya$pop0_k_syn < 0.4,]
+bxyh <- bxyh[bxyh$pop0_k_syn < 0.4,]
+bxya <- bxya[bxya$pop0_k_syn < 0.4,]
+
+filtered <- rbind(
+rxyyh[rxyyh$pop0_k_syn < 0.3,],
+rxyya[rxyya$pop0_k_syn < 0.3,],
+rxyh[rxyh$pop0_k_syn < 0.3,],
+rxya[rxya$pop0_k_syn < 0.3,],
+bxyyh[bxyyh$pop0_k_syn < 0.4,],
+bxyya[bxyya$pop0_k_syn < 0.4,],
+bxyh[bxyh$pop0_k_syn < 0.4,],
+bxya[bxya$pop0_k_syn < 0.4,],fill=TRUE
 )
-names(s_pollen_dnds) <- c("mean","se","tissue")
 
-ggplot(s_pollen_dnds, aes(x=tissue, y=mean, color=tissue)) +
-  guides(color = FALSE) +
-  geom_point( ) +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="dnds") +
-#theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-#scale_x_discrete(limits=c("A","H","X","Y")) 
+ggplot(filtered, aes(x=chrom, y=pop0_kaks_NA, fill=chrom)) + 
+  #  ggplot(mkvar, aes(x=chrom, y=value, fill=chrom)) + 
+  geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Substitution (dnds)") +
+  theme(strip.background =element_rect(fill="white")) + 
+  theme(strip.text = element_text(face = "italic")) +
+  #scale_x_discrete(limits=c("A","H","X","Y")) + 
+  guides(fill=FALSE) + coord_trans( y = "log2")+
+  facet_grid( pop ~ outgroup) 
 
-  scale_color_manual(values=c( 
-    'red', 
-    'blue'
-    
-  ))
+
+ggplot(filtered, aes(x=chrom, y=pop0_mk_NA, fill=chrom)) + 
+  #  ggplot(mkvar, aes(x=chrom, y=value, fill=chrom)) + 
+  geom_abline(intercept = 1,slope=0,alpha=0.2) +
+  geom_violin()+
+  geom_boxplot(width=0.1)+
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Adaptation (MK)") +
+  theme(strip.background =element_rect(fill="white")) + 
+  theme(strip.text = element_text(face = "italic")) +
+  #scale_x_discrete(limits=c("A","H","X","Y")) + 
+  guides(fill=FALSE) + coord_trans( y = "log2")+
+  facet_grid( pop ~ outgroup) 
+
+t.test(
+  log(filtered$pop0_kaks_NA[filtered$pop == "xyy" & filtered$outgroup == "bucephalophorus" & filtered$chrom == "h" ]),
+  log(filtered$pop0_kaks_NA[filtered$pop == "xyy" & filtered$outgroup == "bucephalophorus" & filtered$chrom == "a" ])
+       )
+
+t.test(
+  log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "bucephalophorus" & filtered$chrom == "h" ]),
+  log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "bucephalophorus" & filtered$chrom == "a" ])
+)
+
+t.test(
+  log(filtered$pop0_kaks_NA[filtered$pop == "xyy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "h" ]),
+  log(filtered$pop0_kaks_NA[filtered$pop == "xyy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "a" ])
+)
+
+t.test(
+  log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "h" ]),
+  log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "a" ])
+)

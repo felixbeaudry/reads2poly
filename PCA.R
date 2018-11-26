@@ -46,15 +46,25 @@ GBSpca <- PCA(GBSs[,-(1:4)], graph = FALSE)
  
  GBSeig <- GBSpca$eig
  
-#XYXYYPCAplot <- 
-   ggplot(GBScoordsN,aes(x=-(Dim.1), y=Dim.2, label=state,color=state)) + geom_text(size=10) + 
-   theme_bw(base_size = 18) + guides(color = FALSE) +
+
+ GBScoordsN$State <- factor(GBScoordsN$state,c("FL","GA","NC","SC","AL","OK","LA","TX"))
+ 
+# XYXYYPCAplot <- 
+ ggplot(GBScoordsN,aes(x=-(Dim.1), y=Dim.2, color=State)) + geom_point(size=2) + 
+   theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
      labs(x = "PCA1 (4.98%)",y = "PCA2 (2.74%)") +
-     scale_color_manual(values=c( 
-       '#add8e6','#acbdd7','#aba0c6','#ad81b4','#b35f9e','#c12571','#ac0231','#8b0000'))
-    #      AL       FL       GA          LA        NC      OK          SC        TX
-
+   scale_color_manual(values=c( 
+     "#ffd700",#AL 
+     "#ffb14e", #FL
+     "#fa8775", #GA
+     "#ea5f94", #LA 
+     "#cd34b5", #NC
+     "#9d02d7", #OK 
+     "#0000ff", #SC 
+     "#000000" #TX
+   ))
+ 
 ##for illustrative purposes
 name_colors <- cbind(dim1 = c(1,2,3,4,5,6,7,8),dim2 = c(1,2,3,4,5,6,7,8),state=c("AL","FL","GA", "LA", "NC","OK","SC","TX"))
 ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(size=10) + 
@@ -62,8 +72,16 @@ ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(siz
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
   labs(x = "PCA1 (4.98%)",y = "PCA2 (2.74%)") +
   scale_color_manual(values=c( 
-    '#add8e6','#acbdd7','#aba0c6','#ad81b4','#b35f9e','#c12571','#ac0231','#8b0000'))
-#      AL       FL       GA          LA        NC      OK          SC        TX
+    "#ffd700",#AL 
+    "#ffb14e", #FL
+    "#fa8775", #GA
+    "#ea5f94", #LA 
+    "#cd34b5", #NC
+    "#9d02d7", #OK 
+    "#0000ff", #SC 
+    "#000000" #TX
+  ))
+                                                
 
 
 
@@ -79,14 +97,23 @@ ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(siz
  
  GBSXYYeig <- GBSXYYpca$eig
  
- #XYYPCAplot <- 
-   ggplot(GBSXYYcoordsN,aes(x=Dim.2, y=Dim.1, label=state,color=state)) + geom_text(size=10) + 
- theme_bw(base_size = 18) + guides(color = FALSE) +
+ GBSXYYcoordsN$State <- factor(GBSXYYcoordsN$state,c("FL","GA","NC","SC","AL"))
+ 
+ XYYPCAplot <- 
+   ggplot(GBSXYYcoordsN,aes(x=Dim.2, y=Dim.1, color=State)) + geom_abline(intercept=12,slope=1,alpha=0.3) +
+     geom_point(size=2) + 
+ theme_bw(base_size = 18) + guides(size = FALSE,color=FALSE) +
+     
    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
-     labs(x = "PCA2 (3.17%)",y = "PCA1 (3.31%)") +
+     labs(x = "PCA2 (3.17%)",y = "PCA1 (3.31%)",color="State") +
      scale_color_manual(values=c( 
-       '#add8e6','#acbdd7','#aba0c6','#b35f9e','#ac0231'))
-   #      AL       FL       GA          NC          SC               
+       "#ffd700",#AL 
+       "#ffb14e", #FL
+       "#fa8775", #GA
+       "#ea5f94", #LA 
+       "#cd34b5" #NC
+ 
+     ))              
    
 
    locDimXYY <- data.frame(sqldf('select localdf.Latitude, localdf.Longitude, GBSXYYcoordsN.* 
@@ -120,15 +147,18 @@ ggplot(name_colors,aes(x=dim1, y=dim2, label=state,color=state)) + geom_text(siz
  
  GBSXYeig <- GBSXYpca$eig
 
+ GBSXYcoordsN$State <- factor(GBSXYcoordsN$state,c("OK","LA","TX"))
  
  XYPCAplot <- 
-   ggplot(GBSXYcoordsN,aes(x=Dim.1, y=Dim.2, label=state,color=state)) + geom_text(size=10) + 
-   theme_bw(base_size = 18) + guides(color = FALSE) +
+   ggplot(GBSXYcoordsN,aes(x=Dim.1, y=Dim.2, color=State)) + geom_point(size=2) + 
+   theme_bw(base_size = 18) + guides(size = FALSE,color=FALSE) +
    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
      labs(x = "PCA1 (5.95%)",y = "PCA2 (5.03%)") +
      scale_color_manual(values=c( 
-       '#ad81b4','#c12571','#8b0000'))
-   #       LA       OK          TX
+         "#9d02d7", #OK 
+         "#0000ff", #SC 
+         "#000000" #TX
+       ))
      
  
  locDimXY <- data.frame(sqldf('select localdf.Latitude, localdf.Longitude, GBSXYcoordsN.* 

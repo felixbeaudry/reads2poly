@@ -551,3 +551,30 @@ ggplot(data=genomeExp) +
     # '#1B75BB', #purple-y
     '#8B4BD8'
   ))
+
+
+##silene pollen expressed dnds##
+s_pollen_dnds <- 
+  data.frame(
+    rbind(
+      c(0.192, 0.1689), 
+      c(0.142 ,0.1436)
+    ), rownames = c("not pollen","pollen")
+  )
+names(s_pollen_dnds) <- c("mean","se","tissue")
+
+ggplot(s_pollen_dnds, aes(x=tissue, y=mean, color=tissue)) +
+  guides(color = FALSE) +
+  geom_point( ) +
+  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="dnds") +
+  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
+  #scale_x_discrete(limits=c("A","H","X","Y")) 
+  
+  scale_color_manual(values=c( 
+    'red', 
+    'blue'
+    
+  ))
