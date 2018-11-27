@@ -169,20 +169,7 @@ foreach $file (@files){
 	$numseqs=scalar(@data);
 
 	#Skip loops if dataset too small
-	if ($numseqs<2){
-		for ($x=0;$x < $number_of_pops;++$x){
-			print "\npop: ",$x,"\tempty"; 
-				print OUT2 "NA\t";
-				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<5;++$z){
-						print OUT2 "NA\t";		
-					}
-				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
-		}
-		$pop=$number_of_pops;
-	}
-
+	
     my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
 	my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
 	my @freq_P_U = ();	# preferred to unpreferred
@@ -269,6 +256,21 @@ foreach $file (@files){
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
 	my $loop = 0;
+
+	if ($numseqs<2){
+		for ($x=0;$x < $number_of_pops;++$x){
+			print "\npop: ",$x,"\tempty"; 
+				print OUT2 "NA\t";
+				for ($y=0; $y<2; ++$y){
+					for($z=0;$z<5;++$z){
+						print OUT2 "NA\t";		
+					}
+				}
+			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+		}
+		$loop = ($number_of_pops + $outpop_tot);
+	}
+
 	while($loop < ($number_of_pops + $outpop_tot)){
 
 		if ($pop<$number_of_pops ){

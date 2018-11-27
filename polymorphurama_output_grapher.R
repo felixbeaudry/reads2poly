@@ -453,7 +453,7 @@ title_fst <- expression(paste("F", ""[ST]))
 
 all_data_fst <- all_data[all_data$sex == "m" & all_data$pop == "R.hastatulus" & all_data$outgroup == "rothschildianus" & all_data$var == "Fst" & all_data$cod == "syn"  ,]
 
-fst_plot <-
+#fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -612,10 +612,11 @@ ggplot(sub_dxy, aes(x=chrom, y=value, fill=chrom)) +
 multiplot(fst_sub_plot,dxy_sub_plot)
 
 ####da####
+da <- all_data[all_data$var == "da" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "rothschildianus",]
 
-da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus" & all_data$outgroup == "rothschildianus",]
+#da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus" & all_data$outgroup == "rothschildianus",]
 
-title_da <- expression(paste("D", ""[A]))
+title_da <- expression(paste("d", ""[A]))
 
 da_plot <- 
   ggplot(da, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -626,7 +627,7 @@ da_plot <-
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_da) +
   theme(strip.background =element_rect(fill="white")) +
-  # facet_grid(. ~ Sex) + 
+   facet_grid(. ~ pop) + 
   #  scale_x_discrete(limits=c("A","N","H","X","Y")) +
   scale_x_discrete(limits=c("A","H","X","Y")) +
   
@@ -636,7 +637,7 @@ da_plot <-
     #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  ))  +
+  ))  #+
   
   annotate(geom="text", x = "A", y = 0.0005, label = "a", parse = TRUE, size=10) +
   annotate(geom="text", x = "H", y = 0.00075, label = "b", parse = TRUE, size=10) +
@@ -649,7 +650,9 @@ da_plot <-
   
 #  t = 0.0001284/(2*7e-9)
   
-
+  multiplot(fst_sub_plot,dxy_sub_plot,da_plot)
+  
+  2.362389e-03/(2*7e-9)
   
 ####kxy####
 kxydxy <- rbind(
@@ -1001,8 +1004,8 @@ multiplot(rate_plot,adapt_plot)
 Q_data_pi <- data.frame( cbind(
     c("XY","XYY"),
     c(
-    all_data_pi$value[all_data_pi$chrom == "X" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus" & all_data_pi$sex == "f" ] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus" & all_data_pi$sex == "f"  ],
-    all_data_pi$value[all_data_pi$chrom == "X" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus" & all_data_pi$sex == "f"  ] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus" & all_data_pi$sex == "f"  ]
+    all_data_pi$value[all_data_pi$chrom == "X" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus"  ] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XY" & all_data_pi$outgroup == "rothschildianus" ],
+    all_data_pi$value[all_data_pi$chrom == "X" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus"   ] / all_data_pi$value[all_data_pi$chrom == "A" & all_data_pi$pop == "XYY" & all_data_pi$outgroup == "rothschildianus"  ]
     ),
     c("pi","pi")
   ) 
@@ -1020,7 +1023,7 @@ Q_data_pi$Q<- type.convert(Q_data_pi$Q, na.strings = "NA", as.is = FALSE, dec = 
 Q_data_fst <-
   data.frame(cbind(
       "R.hastatulus",
-      log((1- (2*all_data_fst$value[all_data_fst$chrom == "X" & all_data_fst$outgroup == "rothschildianus" & all_data_fst$sex == "f"]))) / log((1-(2*all_data_fst$value[all_data_fst$chrom == "A" & all_data_fst$outgroup == "rothschildianus" & all_data_fst$sex == "f"]))),
+      log((1- (2*all_data_fst$value[all_data_fst$chrom == "X" & all_data_fst$outgroup == "rothschildianus" ]))) / log((1-(2*all_data_fst$value[all_data_fst$chrom == "A" & all_data_fst$outgroup == "rothschildianus" ]))),
       "Fst"
       )
     )
@@ -1033,7 +1036,7 @@ Q_data_fst$Q<- type.convert(Q_data_fst$Q, na.strings = "NA", as.is = FALSE, dec 
 Q_data_dxy <-
   data.frame(cbind(
     "R.hastatulus",
-    dxy$value[dxy$chrom == "X" & dxy$outgroup == "rothschildianus" & dxy$sex == "f"] /  dxy$value[dxy$chrom == "A" & dxy$outgroup == "rothschildianus" & dxy$sex == "f"],
+    dxy$value[dxy$chrom == "X" & dxy$outgroup == "rothschildianus" ] /  dxy$value[dxy$chrom == "A" & dxy$outgroup == "rothschildianus" ],
     "Dxy"
   )
   )
