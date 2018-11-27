@@ -2157,7 +2157,7 @@ foreach $file (@files){
 
 
 						if ( $pop < $number_of_pops ){
-							print "S: $totsnps\tinds: ",$numseqs-1,"\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\tDxy: $Dxy_syn";
+							print "S: $totsnps\tinds: ",$numseqs-1,"\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\t";
 
 							$loc=substr($file,0,20);
 
@@ -2174,32 +2174,45 @@ foreach $file (@files){
 							$thetaR, "\t", 
 							$no_polyR, "\t",  
 							$pi_rep_site, "\t", 
-							$TajD_rep, "\t",
+							$TajD_rep, "\t"
 
-							$Dxy_syn, "\t",
-							$Dxy_rep, "\t"
+
 							;
 
 							$pi_syn_within[$pop] = $pi_syn_site;
 							$pi_rep_within[$pop] = $pi_rep_site;
 
 							#to outgroup stats
-							my $knks = "NA";
-							if($Dxy_syn > 0 & $Dxy_rep > 0){
-								$knks =  $Dxy_rep /$Dxy_syn ;
-							}
-							print OUT2 "$knks\t";
-							
-							my $kxy = $Dxy_rep + $Dxy_syn;
-							print OUT2 "$kxy\t";
 
-							my $mk = "NA";
-							if ($Dxy_syn > 0 & $pi_syn_site > 0 ){
-								if(($pi_rep_site/$pi_syn_site) > 0) {
-									$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
+							if ($sequence_names[$outgroup_position] =~ $outgroup_string) {
+								print "Dxy: $Dxy_syn";
+								
+								print OUT2 $Dxy_syn, "\t", $Dxy_rep, "\t";
+
+								my $knks = "NA";
+								if($Dxy_syn > 0 & $Dxy_rep > 0){
+									$knks =  $Dxy_rep /$Dxy_syn ;
 								}
+								print OUT2 "$knks\t";
+								
+								my $kxy = $Dxy_rep + $Dxy_syn;
+								print OUT2 "$kxy\t";
+
+								my $mk = "NA";
+								if ($Dxy_syn > 0 & $pi_syn_site > 0 ){
+									if(($pi_rep_site/$pi_syn_site) > 0) {
+										$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
+									}
+								}
+								print OUT2 "$mk\t";
 							}
-							print OUT2 "$mk\t";
+							else{
+								print "Dxy: NA";
+								print OUT2 "NA", "\t", "NA", "\t";
+								print OUT2 "NA\t";
+								print OUT2 "NA\t";
+								print OUT2 "NA\t";
+							}
 
 						
 						
