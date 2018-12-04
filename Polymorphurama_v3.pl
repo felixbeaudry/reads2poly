@@ -230,22 +230,27 @@ foreach $file (@files){
 
 	#find missing sites in whole set##
 	my $seqlen = length($data[0]);
+
 	my $codonCount = length($data[0]) / 3;
+
 	my @stop_gap_tot = (0) x $codonCount;
+
+
 	
 	$ind=$j=$k=$l=0;
 
 	for($j=0; $j < $seqlen; $j+=3){  
 		for ($ind=0; $ind < $numseqs; $ind++){
 			$k=(($j+3)/3)-1;
+
 			$codon[$ind][$k] = (substr($data[$ind],$j,3));
 			if( $codon[$ind][$k] =~ "N"){
 				$stop_gap_tot[$l] = 1;
 			}
 			$aa[$ind][$k]=codon2aa($codon[$ind][$k]);
-			if ($aa[$i][$pos] eq 'gap'){
+			if ($aa[$ind][$k] eq 'gap'){
 				$stop_gap_tot[$l] = 1;
-			}	  	
+			}
 		}
 		$l++;
 	}
