@@ -2157,7 +2157,7 @@ foreach $file (@files){
 
 
 						if ( $pop < $number_of_pops ){
-							print "S: $totsnps\tinds: ",$numseqs-1,"\tsites: $tot_sites\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\t";
+							print "inds: ",$numseqs-1,"\tsites: $tot_sites\tS: $totsnps\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\t";
 
 							$loc=substr($file,0,20);
 
