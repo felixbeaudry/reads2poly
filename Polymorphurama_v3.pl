@@ -234,7 +234,7 @@ foreach $file (@files){
 	my $codonCount = length($data[0]) / 3;
 
 	my @stop_gap_tot = (0) x $codonCount;
-
+	my $toofew = 0;
 
 	
 	$ind=$j=$k=$l=0;
@@ -242,25 +242,51 @@ foreach $file (@files){
 	for($j=0; $j < $seqlen; $j+=3){  
 		for ($ind=0; $ind < $numseqs; $ind++){
 			$k=(($j+3)/3)-1;
-
+			
 			$codon[$ind][$k] = (substr($data[$ind],$j,3));
 			if( $codon[$ind][$k] =~ "N"){
 				$stop_gap_tot[$l] = 1;
+				
 			}
-			$aa[$ind][$k]=codon2aa($codon[$ind][$k]);
-			if ($aa[$ind][$k] eq 'gap'){
-				$stop_gap_tot[$l] = 1;
+			else{
+				$aa[$ind][$k]=codon2aa($codon[$ind][$k]);
+				if ($aa[$ind][$k] eq 'gap'){
+					$stop_gap_tot[$l] = 1;
+					
+				}
 			}
+		}
+		if($stop_gap_tot[$l] == 1){
+			$toofew+=1;
 		}
 		$l++;
 	}
 
-	##set pops##
 	my $pop = 0;
 	my $outpop = 0;
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
 	my $loop = 0;
+
+	###too few sites
+	if( ($toofew / $codonCount) > 0.8){
+		print "\nToo few sites"; 
+		for ($x=0;$x < $number_of_pops;++$x){
+				print OUT2 "NA\t";
+				for ($y=0; $y<2; ++$y){
+					for($z=0;$z<5;++$z){
+						print OUT2 "NA\t";		
+					}
+				}
+			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+		}
+		$loop = ($number_of_pops + $outpop_tot);
+
+	}
+
+
+	##set pops##
+
 
 	if ($numseqs<2){
 		for ($x=0;$x < $number_of_pops;++$x){
