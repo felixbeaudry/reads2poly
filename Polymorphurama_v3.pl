@@ -138,13 +138,14 @@ for ($x=0; $x<$number_of_pops; ++$x){
 			print OUT2 "_$synrep[$y]\t";
 		}
 	}
-	print OUT2 "pop",$x,"_kaks_NA\t";
-	print OUT2 "pop",$x,"_kxy_NA\t";
-	print OUT2 "pop",$x,"_mk_NA\t";
+	print OUT2 "pop",$x,"_pi_rate\t";
+	print OUT2 "pop",$x,"_k_rate\t";
+	print OUT2 "pop",$x,"_k_sum\t";
+	print OUT2 "pop",$x,"_mk_rate\t";
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_d_rep\tpop0_dnds_NA\tpop0_dxy_NA\tpop0_da_NA\n";
+print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_d_rep\tpop0_d_rate\tpop0_d_sum\tpop0_da_NA\n";
 
 $poly_set=0;
 
@@ -2223,6 +2224,12 @@ foreach $file (@files){
 
 
 							;
+							my $pirate = "NA";
+							if($pi_syn_site != 0){
+								my $pirate = $pi_rep_site / $pi_syn_site;
+							}
+							
+							print OUT2 $pirate, "\t";
 
 							$pi_syn_within[$pop] = $pi_syn_site;
 							$pi_rep_within[$pop] = $pi_rep_site;

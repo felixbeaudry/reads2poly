@@ -99,7 +99,8 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
   
   ##filter for min 80% of inds and greater than 50 sites
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8)  & in_read$pop0_sites_syn >= 50 & in_read$pop0_k_syn < ksyn]
+  #coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8)  & in_read$pop0_sites_syn >= 50 & in_read$pop0_k_syn < ksyn]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8)  & in_read$pop0_sites_syn >= 50 ]
   
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -150,7 +151,9 @@ stats_var <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,popStr='pop',k
   
   in_read <- fread(filename_wIn)
   seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
-  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8) & in_read$pop0_sites_syn >= 50 & in_read$pop0_k_syn < ksyn]
+  #coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8) & in_read$pop0_sites_syn >= 50 & in_read$pop0_k_syn < ksyn]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8) & in_read$pop0_sites_syn >= 50 ]
+  
   in_read_cov <- in_read[in_read$locus %in% coverage_list ]
   in_bet <- fread(filename_btw)
   in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
@@ -212,16 +215,17 @@ phase = X2Y = c("X2Y","X2","2Y")
   rbind(
     #X  
     #stats_table(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_table(outgroup="rothschildianus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_table(outgroup="rothschildianus",set="sub5",chrom="X",pops=pop,popStr="pop"),
     #Y 
    # stats_table(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_table(outgroup="rothschildianus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_table(outgroup="rothschildianus",set="sub5",chrom="Y",pops=pop,popStr="pop"),
     #A 
   #  stats_table(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_table(outgroup="rothschildianus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_table(outgroup="rothschildianus",set="sub5",chrom="A",pops=pop,popStr="pop"),
     #H 
   #  stats_table(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_table(outgroup="rothschildianus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.3),
+  #  stats_table(outgroup="rothschildianus",set="sub5",chrom="H",pops=pop,popStr="pop"),
+ # stats_table(outgroup="rothschildianus",set="sub5",chrom="N",pops=pop,popStr="pop"),
   
   stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=FLNC,popStr="FLNC"),
   stats_table(outgroup="rothschildianus",set="m",chrom="A",pops=FLNC,popStr="FLNC"),
@@ -296,7 +300,7 @@ ggplot(all_data_theta, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE)
 title_pisyn <- expression(paste(pi, ""[syn]))
 title_pi <- expression(paste(pi))
 
-all_data_pi_syn <- all_data[ all_data$sex == "sub4" & all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus" ,]
+all_data_pi_syn <- all_data[  all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus" ,]
 
 #pi <- 
 ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -307,7 +311,7 @@ ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
    facet_grid( . ~ pop ) +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  scale_x_discrete(limits=c("A","H","X","N","Y")) #+
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',#yellow #Y
@@ -341,7 +345,7 @@ ggplot(all_data_pi_syn_sub, aes(x=chrom, y=value, fill=chrom)) + guides(fill = F
 all_data_pi <- all_data[ all_data$var == "pi" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
 all_data_pi$Chrom <- factor(all_data_pi$chrom, c("A","H","X","Y"))
 
-psynprep_plot  <-
+#psynprep_plot  <-
 ggplot(all_data_pi, aes(x=cod, y=value)) + guides(fill = FALSE) +
     geom_bar(position=position_dodge(), stat="identity" ) +
     geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
@@ -381,7 +385,7 @@ title_fst <- expression(paste("F", ""[ST]))
 
 all_data_fst <- all_data[ all_data$pop == "R.hastatulus" & all_data$var == "Fst" & all_data$cod == "syn" & all_data$outgroup == "rothschildianus" ,]
 
-#fst_plot <-
+ fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -399,12 +403,12 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  )) #+
+  )) +
   
-  annotate(geom="text", x = "A", y = 0.1, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "H", y = 0.1, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "X", y = 0.15, label = "b", parse = TRUE, size=10) +
-  annotate(geom="text", x = "Y", y = 0.45, label = "c", parse = TRUE, size=10) 
+  annotate(geom="text", x = "A", y = 0.075, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "H", y = 0.125, label = "b", parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 0.25, label = "c", parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 0.6, label = "d", parse = TRUE, size=10) 
 
 t.testloop(chromSet=chromSet,var="Fst",outgroup="rothschildianus",cod="syn",pop="R.hastatulus")
 
@@ -455,9 +459,9 @@ sub_fst <- all_data[all_data$sex == "m" & (all_data$pop == "FLNC" | all_data$pop
   
 ####dxy####
 title_dxy <- expression(paste("d", ""[XY]))
-dxy <- all_data[all_data$var == "dxy" & all_data$sex == "m" & all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus" ,]
+dxy <- all_data[all_data$var == "dxy" &  all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus" ,]
 
-#dxy_plot <- 
+dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   #geom_point(position=position_dodge(), stat="identity" ) +
   geom_bar(position=position_dodge(), stat="identity" ) +
