@@ -269,7 +269,21 @@ foreach $file (@files){
 	my $loop = 0;
 
 	###too few sites
-	if( ($toofew / $codonCount) > 0.8){
+	if ($codonCount == 0){
+		print "\nToo few sites"; 
+		for ($x=0;$x < $number_of_pops;++$x){
+				print OUT2 "NA\t";
+				for ($y=0; $y<2; ++$y){
+					for($z=0;$z<5;++$z){
+						print OUT2 "NA\t";		
+					}
+				}
+			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+		}
+		$loop = ($number_of_pops + $outpop_tot);
+
+	}
+	elsif( ($toofew / $codonCount) > 0.8){
 		print "\nToo few sites"; 
 		for ($x=0;$x < $number_of_pops;++$x){
 				print OUT2 "NA\t";

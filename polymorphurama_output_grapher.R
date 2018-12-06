@@ -211,16 +211,16 @@ phase = X2Y = c("X2Y","X2","2Y")
  all_data <- data.frame(
   rbind(
     #X  
-    stats_table(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
+    #stats_table(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
     stats_table(outgroup="rothschildianus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.3),
     #Y 
-    stats_table(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
+   # stats_table(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
     stats_table(outgroup="rothschildianus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.3),
     #A 
-    stats_table(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
+  #  stats_table(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
     stats_table(outgroup="rothschildianus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.3),
     #H 
-    stats_table(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
+  #  stats_table(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
     stats_table(outgroup="rothschildianus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.3),
   
   stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=FLNC,popStr="FLNC"),
@@ -246,18 +246,19 @@ phase = X2Y = c("X2Y","X2","2Y")
 
 all_data_var <- data.frame(
   rbind(
-    stats_var(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
+  #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
     stats_var(outgroup="rothschildianus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.3),
     #Y Male
-    stats_var(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
+  #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
     stats_var(outgroup="rothschildianus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.3),
     
-    stats_var(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
+  #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
     stats_var(outgroup="rothschildianus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.3),
     #H 
-    stats_var(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_var(outgroup="rothschildianus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.3)
-    
+  #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
+    stats_var(outgroup="rothschildianus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.3),
+  
+  stats_var(outgroup="NA",set="sub4",chrom="XY",pops=X2Y,popStr="X2Y")
     
   )
   , stringsAsFactors = FALSE) 
@@ -615,7 +616,7 @@ ggplot(evo_rate, aes(x=chrom, y=value, color=chrom)) + guides(color=FALSE) +
     '#00A550' #green #A
   ))
 
-kaksvar <- all_data_var[all_data_var$var == "kaks" & all_data_var$pop == "R.hastatulus" ,]
+kaksvar <- all_data_var[all_data_var$var == "kaks" &  (all_data_var$pop == "XY" | all_data_var$pop == "XYY") ,]
 kaksvar$outgroup[kaksvar$outgroup == "rothschildianus"] <- "R.rothschildianus"
 kaksvar$outgroup[kaksvar$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
 
@@ -624,11 +625,11 @@ ggplot(kaksvar, aes(x=chrom, y=value, fill=chrom)) +
   geom_abline(intercept = 1,slope=0,alpha=0.2) +
   geom_violin()+
   geom_boxplot(width=0.1)+
-  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Divergence (dn/ds)") +
+  theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of selection (dn/ds)") +
   theme(strip.background =element_rect(fill="white")) + #ylim(0,10) +
   theme(strip.text = element_text(face = "italic")) +
-  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + #coord_trans( y = "log2") +
-  facet_grid(. ~ outgroup) +
+  scale_x_discrete(limits=c("A","H","X","Y")) + guides(fill=FALSE) + coord_trans( y = "log2") +
+  facet_grid( pop ~ outgroup) +
   scale_fill_manual(values=c( 
     '#00A550' ,#green #A
     '#ffb14e', #orange #H
@@ -644,15 +645,15 @@ ggplot(kaksvar, aes(x=chrom, y=value, fill=chrom)) +
   annotate(geom="text", x = "X", y = 2, label = '"a"', parse = TRUE, size=10) +
   annotate(geom="text", x = "Y", y = 2, label = '"a"', parse = TRUE, size=10) 
 
-t.testloop(chromSet=chromSet,var="kaks",pop="R.hastatulus",cod="NA",outgroup="bucephalophorus")
-t.testloop(chromSet=chromSet,var="kaks",pop="R.hastatulus",cod="NA",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="kaks",pop="XY",cod="NA",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="kaks",pop="XYY",cod="NA",outgroup="rothschildianus")
 
 all_data_k <- all_data[ all_data$var == "k" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
 
-all_data_k$Chrom <- factor(all_data_pi$chrom, c("A","H","X","Y"))
+all_data_k$Chrom <- factor(all_data_k$chrom, c("A","H","X","Y"))
 
 
-ksynkrep_plot <-
+#ksynkrep_plot <-
 ggplot(all_data_k, aes(x=cod, y=value)) + guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
@@ -662,7 +663,7 @@ ggplot(all_data_k, aes(x=cod, y=value)) + guides(fill = FALSE) +
   theme(strip.background =element_rect(fill="white")) +
   facet_grid( pop ~ Chrom ) 
 
-t.testloop(chromSet=chromSet,var="k",pop="XY",cod="rep",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="k",pop="XYY",cod="rep",outgroup="rothschildianus")
 
  multiplot(psynprep_plot,ksynkrep_plot,cols=2) 
 ####mk####
@@ -1011,15 +1012,17 @@ totpioe <-
  multiplot(totpioe,XYpioe,XYYpioe,cols=3) 
   
  ####X2Y#####
-
-X2Ydata<-cbind(fread('m_rothschildianus_summarystats_phase_XY.txt'),fread('m_rothschildianus_interpop_phase_XY.txt'))
-X2Ydata <- X2Ydata[,-c(51)]
-
-X <- ggplot(X2Ydata,aes(x=pop0_d_syn,y=pop1_kaks_NA)) + geom_point() + ylim(0,2)
-
-Y <- ggplot(X2Ydata,aes(x=pop0_d_syn,y=pop2_kaks_NA)) + geom_point() + ylim(0,2)
-
-multiplot(X,Y)
+ title_dsyn <- expression(paste("X-Y d", ""[syn]))
+ 
+ dsVar <- all_data_var[all_data_var$var == "d" & all_data_var$cod == "syn" & all_data_var$chrom == "XY" ,]
+ 
+ 
+ ggplot(dsVar,aes(x=value)) + geom_histogram(binwidth = 0.005) + 
+   theme_bw()  + theme_bw(base_size = 18) + labs(x=title_dsyn)
+ 
+ ggplot(dsVar,aes(x=value)) + geom_density()+ 
+   theme_bw()  + theme_bw(base_size = 18) + labs(x=title_dsyn)
+ 
 
 ##cytotype specific mk####
 
