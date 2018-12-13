@@ -190,7 +190,7 @@ rownames(colData) <- colnames(allExp[,-c(1,2)])
 ##Define bias analysis##
 #dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ sex)
 #dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~  pop)
-dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ sex + tissue )
+dds <- DESeqDataSetFromMatrix(countData = treads, colData = colData, design = ~ tissue )
 
 dds <- dds[ rowSums(counts(dds)) > 1, ] #filter for rows with info
 dss <- DESeq(dds)
@@ -258,7 +258,7 @@ scale_fill_manual(values=c(
   '#00A550', #green
  # '#1B75BB', #purple-y
   '#8B4BD8'
-)) + 
+)) #+ 
   xlim(-3,3)
 
 ####regionStacks####
@@ -266,20 +266,20 @@ scale_fill_manual(values=c(
 stacks <- data.frame(
 cbind(
   rbind(
-    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) /  nrow(xylist), #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ])),
-    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) /  nrow(xylist)#/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]))
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange < 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'XY' ]) /  nrow(xylist), #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ])),
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange > 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'XY' ]) /  nrow(xylist)#/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'XY' ]))
   ),
   rbind(
-    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ] ) /  nrow(alist), # / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ])),
-    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ] ) /  nrow(alist)#/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]))
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange < 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'Autosomal' ] ) /  nrow(alist), # / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ])),
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange > 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'Autosomal' ] ) /  nrow(alist)#/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Autosomal' ]))
   ),
   rbind(
-    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ] )/  nrow(hlist), #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ])),
-    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ] )/  nrow(hlist) #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]))
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange < 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'Hemizygous' ] )/  nrow(hlist), #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ])),
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange > 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'Hemizygous' ] )/  nrow(hlist) #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'Hemizygous' ]))
   ),
   rbind(
-    length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] )/  nrow(nlist), # / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ])),
-    length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ] )/  nrow(nlist) #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]))
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange < 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'NeoXY' ] )/  nrow(nlist), # / (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ])),
+    length(regionsExp$log2FoldChange[regionsExp$log2FoldChange > 0 & regionsExp$pvalue <  0.05 & regionsExp$regions == 'NeoXY' ] )/  nrow(nlist) #/ (  length(interExp$log2FoldChange[interExp$log2FoldChange < 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]) +length(interExp$log2FoldChange[interExp$log2FoldChange > 0 & interExp$pvalue <  0.05 & interExp$regions == 'NeoXY' ]))
   )
 )
 #,row.names = c("Female","Male"))
@@ -553,28 +553,3 @@ ggplot(data=genomeExp) +
   ))
 
 
-##silene pollen expressed dnds##
-s_pollen_dnds <- 
-  data.frame(
-    rbind(
-      c(0.192, 0.1689), 
-      c(0.142 ,0.1436)
-    ), rownames = c("not pollen","pollen")
-  )
-names(s_pollen_dnds) <- c("mean","se","tissue")
-
-ggplot(s_pollen_dnds, aes(x=tissue, y=mean, color=tissue)) +
-  guides(color = FALSE) +
-  geom_point( ) +
-  geom_errorbar(aes(ymin=mean-se, ymax=mean+se),
-                width=.2,                    # Width of the error bars
-                position=position_dodge(.9)) + 
-  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="dnds") +
-  #theme(axis.text.x = element_text(angle = 20, hjust = 1))  +
-  #scale_x_discrete(limits=c("A","H","X","Y")) 
-  
-  scale_color_manual(values=c( 
-    'red', 
-    'blue'
-    
-  ))

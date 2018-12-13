@@ -224,7 +224,7 @@ phase = X2Y = c("X2Y","X2","2Y")
     stats_table(outgroup="rothschildianus",set="sub5",chrom="A",pops=pop,popStr="pop"),
     #H 
   #  stats_table(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
-  #  stats_table(outgroup="rothschildianus",set="sub5",chrom="H",pops=pop,popStr="pop"),
+    stats_table(outgroup="rothschildianus",set="sub5",chrom="H",pops=pop,popStr="pop"),
  # stats_table(outgroup="rothschildianus",set="sub5",chrom="N",pops=pop,popStr="pop"),
   
   stats_table(outgroup="rothschildianus",set="m",chrom="Y",pops=FLNC,popStr="FLNC"),
@@ -251,16 +251,16 @@ phase = X2Y = c("X2Y","X2","2Y")
 all_data_var <- data.frame(
   rbind(
   #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_var(outgroup="rothschildianus",set="sub4",chrom="X",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_var(outgroup="rothschildianus",set="sub5",chrom="X",pops=pop,popStr="pop"),
     #Y Male
   #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_var(outgroup="rothschildianus",set="sub4",chrom="Y",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_var(outgroup="rothschildianus",set="sub5",chrom="Y",pops=pop,popStr="pop"),
     
   #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_var(outgroup="rothschildianus",set="sub4",chrom="A",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_var(outgroup="rothschildianus",set="sub5",chrom="A",pops=pop,popStr="pop"),
     #H 
   #  stats_var(outgroup="bucephalophorus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.4),
-    stats_var(outgroup="rothschildianus",set="sub4",chrom="H",pops=pop,popStr="pop",ksyn = 0.3),
+    stats_var(outgroup="rothschildianus",set="sub5",chrom="H",pops=pop,popStr="pop"),
   
   stats_var(outgroup="NA",set="sub4",chrom="XY",pops=X2Y,popStr="X2Y")
     
@@ -300,7 +300,7 @@ ggplot(all_data_theta, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE)
 title_pisyn <- expression(paste(pi, ""[syn]))
 title_pi <- expression(paste(pi))
 
-all_data_pi_syn <- all_data[  all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus" ,]
+all_data_pi_syn <- all_data[all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus" ,]
 
 #pi <- 
 ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -311,7 +311,7 @@ ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
    facet_grid( . ~ pop ) +
-  scale_x_discrete(limits=c("A","H","X","N","Y")) #+
+  scale_x_discrete(limits=c("A","H","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',#yellow #Y
@@ -342,7 +342,7 @@ ggplot(all_data_pi_syn_sub, aes(x=chrom, y=value, fill=chrom)) + guides(fill = F
     '#00A550' #green #A
   ))
 
-all_data_pi <- all_data[ all_data$var == "pi" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
+all_data_pi <- all_data[ all_data$var == "pi" & all_data$cod != "rate" & (all_data$pop == "XY" | all_data$pop == "XYY") & all_data$outgroup == "rothschildianus",]
 all_data_pi$Chrom <- factor(all_data_pi$chrom, c("A","H","X","Y"))
 
 #psynprep_plot  <-
@@ -354,6 +354,16 @@ ggplot(all_data_pi, aes(x=cod, y=value)) + guides(fill = FALSE) +
     theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pi) +
     theme(strip.background =element_rect(fill="white")) +
     facet_grid(  pop ~ Chrom ) 
+
+
+t.testloop(chromSet=chromSet,var="pi",pop="XYY",cod="rep",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="pi",pop="XYY",cod="syn",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="pi",pop="XY",cod="rep",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="pi",pop="XY",cod="syn",outgroup="rothschildianus")
+
+t.testloop(chromSet=chromSet,var="pi",pop="XY",cod="rate",outgroup="rothschildianus")
+t.testloop(chromSet=chromSet,var="pi",pop="XYY",cod="rate",outgroup="rothschildianus")
+
   
 ####TajD####
 all_data_tajD <- all_data[all_data$var == "tajD" & all_data$cod == "syn" & all_data$outgroup == "rothschildianus"& (all_data$pop == "XY" | all_data$pop == "XYY") ,]
@@ -405,10 +415,10 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
     '#00A550' #green #A
   )) +
   
-  annotate(geom="text", x = "A", y = 0.075, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "H", y = 0.125, label = "b", parse = TRUE, size=10) +
-  annotate(geom="text", x = "X", y = 0.25, label = "c", parse = TRUE, size=10) +
-  annotate(geom="text", x = "Y", y = 0.6, label = "d", parse = TRUE, size=10) 
+  annotate(geom="text", x = "A", y = 0.1, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "H", y = 0.1, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 0.2, label = "b", parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 0.5, label = "c", parse = TRUE, size=10) 
 
 t.testloop(chromSet=chromSet,var="Fst",outgroup="rothschildianus",cod="syn",pop="R.hastatulus")
 
@@ -459,7 +469,7 @@ sub_fst <- all_data[all_data$sex == "m" & (all_data$pop == "FLNC" | all_data$pop
   
 ####dxy####
 title_dxy <- expression(paste("d", ""[XY]))
-dxy <- all_data[all_data$var == "dxy" &  all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus" ,]
+dxy <- all_data[all_data$var == "d" & all_data$cod == "sum" &  all_data$outgroup == "rothschildianus" & all_data$pop == "R.hastatulus" ,]
 
 dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -479,14 +489,14 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  )) #+
-  annotate(geom="text", x = "A", y = 0.003, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "H", y = 0.003, label = "a", parse = TRUE, size=10) +
-  annotate(geom="text", x = "X", y = 0.006, label = "b", parse = TRUE, size=10) +
-  annotate(geom="text", x = "Y", y = 0.006, label = "b", parse = TRUE, size=10) 
+  )) +
+  annotate(geom="text", x = "A", y = 0.0035, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "H", y = 0.0035, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 0.0055, label = "b", parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 0.007, label = "c", parse = TRUE, size=10) 
   
-  
-t.testloop(chromSet=chromSet,var="dxy",outgroup="rothschildianus",cod="NA",pop="R.hastatulus")
+
+t.testloop(chromSet=chromSet,var="d",outgroup="rothschildianus",cod="sum",pop="R.hastatulus")
 
 dxyVar <- all_data_var[all_data_var$var == "dxy" &  all_data_var$outgroup == "rothschildianus" & all_data_var$pop == "R.hastatulus" ,]
 
@@ -877,6 +887,8 @@ all_data[all_data$var == "sites" & all_data$cod == "syn"
 
 (0.00629 / (4 * 7.5e-9) ) * 3.4 
 (0.00629 / (4 * 7.5e-9) ) * 0.079
+
+(0.00276 / (2 * 7.5e-9) ) 
 
 ####S####
 

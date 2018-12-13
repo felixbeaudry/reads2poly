@@ -279,7 +279,7 @@ foreach $file (@files){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
@@ -293,15 +293,11 @@ foreach $file (@files){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
 	}
-
-
-	##set pops##
-
 
 	if ($numseqs<2){
 		for ($x=0;$x < $number_of_pops;++$x){
@@ -312,11 +308,12 @@ foreach $file (@files){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 	}
 
+	##set pops##
 	while($loop < ($number_of_pops + $outpop_tot)){
 
 		if ($pop<$number_of_pops ){
@@ -2201,6 +2198,10 @@ foreach $file (@files){
 
 						$tot_sites = $no_syn_codons + $no_rep_codons;
 
+						my $pirate = "NA";
+						if($pi_syn_site != 0){
+							my $pirate = $pi_rep_site / $pi_syn_site;
+						}
 
 						if ( $pop < $number_of_pops ){
 							print "inds: ",$numseqs-1,"\tsites: $tot_sites\tS: $totsnps\ttheta: $thetaS\tpi: $pi_syn_site\ttajima's D: $TajD_syn\t";
@@ -2220,16 +2221,11 @@ foreach $file (@files){
 							$thetaR, "\t", 
 							$no_polyR, "\t",  
 							$pi_rep_site, "\t", 
-							$TajD_rep, "\t"
+							$TajD_rep, "\t",
 
-
+							$pirate, "\t"
 							;
-							my $pirate = "NA";
-							if($pi_syn_site != 0){
-								my $pirate = $pi_rep_site / $pi_syn_site;
-							}
 							
-							print OUT2 $pirate, "\t";
 
 							$pi_syn_within[$pop] = $pi_syn_site;
 							$pi_rep_within[$pop] = $pi_rep_site;
@@ -2237,18 +2233,15 @@ foreach $file (@files){
 							#to outgroup stats
 
 							if ($sequence_names[$outgroup_position] =~ $outgroup_string) {
-								print "Dxy: $Dxy_syn";
 								
-								print OUT2 $Dxy_syn, "\t", $Dxy_rep, "\t";
-
 								my $knks = "NA";
 								if($Dxy_syn > 0 & $Dxy_rep > 0){
 									$knks =  $Dxy_rep /$Dxy_syn ;
 								}
-								print OUT2 "$knks\t";
+								
 								
 								my $kxy = $Dxy_rep + $Dxy_syn;
-								print OUT2 "$kxy\t";
+								
 
 								my $mk = "NA";
 								if ($Dxy_syn > 0 & $pi_syn_site > 0 ){
@@ -2256,14 +2249,13 @@ foreach $file (@files){
 										$mk = ( $Dxy_rep / $Dxy_syn ) / ($pi_rep_site/$pi_syn_site) ;
 									}
 								}
-								print OUT2 "$mk\t";
+
+								print "Dxy: $Dxy_syn";
+								print OUT2 "$Dxy_syn\t$Dxy_rep\t$knks\t$kxy\t$mk\t";
 							}
 							else{
 								print "Dxy: NA";
-								print OUT2 "NA", "\t", "NA", "\t";
-								print OUT2 "NA\t";
-								print OUT2 "NA\t";
-								print OUT2 "NA\t";
+								print OUT2 "NA\tNA\tNA\tNA\tNA\t";
 							}
 
 						
@@ -2344,13 +2336,16 @@ foreach $file (@files){
 										print OUT2 "NA\t";		
 									}
 								}
-							print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+							print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 							$pop++;
 						}
 					}
 
 				$loop++;
 				} # loop for each pop
+
+
+
 
 
 	####Interpop statistics####
