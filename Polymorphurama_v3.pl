@@ -2221,9 +2221,9 @@ foreach $file (@files){
 							$thetaR, "\t", 
 							$no_polyR, "\t",  
 							$pi_rep_site, "\t", 
-							$TajD_rep, "\t",
+							$TajD_rep, "\t"
 
-							$pirate, "\t"
+							
 							;
 							
 
@@ -2251,11 +2251,11 @@ foreach $file (@files){
 								}
 
 								print "Dxy: $Dxy_syn";
-								print OUT2 "$Dxy_syn\t$Dxy_rep\t$knks\t$kxy\t$mk\t";
+								print OUT2 "$Dxy_syn\t$Dxy_rep\t$pirate\t$knks\t$kxy\t$mk\t";
 							}
 							else{
 								print "Dxy: NA";
-								print OUT2 "NA\tNA\tNA\tNA\tNA\t";
+								print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 							}
 
 						
