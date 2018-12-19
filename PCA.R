@@ -202,3 +202,80 @@ RNAtree$tip.label <- RNAID$ID
 plot(RNAtree,show.tip.label=TRUE,type = "unrooted", lab4ut="axial",cex=1.5,rotate.tree=-20)
 
 RNApca <- PCA(RNAs[,-(1:3)], graph = FALSE)
+summary(RNApca)
+
+RNAcoord <-RNApca$ind$coord
+RNAcoords <- setDT(data.frame(RNAcoord), keep.rownames = TRUE)[]
+#RNAcoordsN <- separate(RNAcoords, rn, c("pop","ind"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+RNAcoords$State <- RNAs$State
+
+RNApca_eig <- RNApca$eig
+
+RNAcoords$state <- factor(RNAcoords$State,c("FL","GA","NC","SC","AL","OK","LA","TX"))
+
+PCA_RNA_plot <- 
+  ggplot(RNAcoords,aes(x=-(Dim.1), y=Dim.2, color=state)) + geom_point(size=4) + 
+  theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  labs(x = "PCA1 (15.89%)",y = "PCA2 (4.88%)") +
+  scale_color_manual(values=c( 
+    "#ffd700",#AL 
+    "#ffb14e", #FL
+    "#fa8775", #GA
+    "#ea5f94", #LA 
+    "#cd34b5", #NC
+    "#9d02d7", #OK 
+    "#0000ff", #SC 
+    "#000000" #TX
+  ))
+  
+  ##XY##
+  
+  RNApcaXY <- PCA(RNAs[c(1:12,32,38:39,43:47),-(1:3)], graph = FALSE)
+  summary(RNApcaXY)
+  
+  RNAcoordXY <-RNApcaXY$ind$coord
+  RNAcoordsXY <- setDT(data.frame(RNAcoordXY), keep.rownames = TRUE)[]
+  #RNAcoordsN <- separate(RNAcoords, rn, c("pop","ind"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+  RNAcoordsXY$State <- RNAs[c(1:12,32,38:39,43:47),(1:3)]$State
+  
+  RNAcoordsXY$state <- factor(RNAcoordsXY$State,c("LA","OK","TX"))
+  
+  XY_PCA_RNA_plot <- 
+  ggplot(RNAcoordsXY,aes(x=Dim.1, y=Dim.2, color=state)) + geom_point(size=4) + 
+    theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(x = "PCA1 (10.01%)",y = "PCA2 (9.61%)") +
+    scale_color_manual(values=c( "#ea5f94",    "#9d02d7",    "#000000"  ))
+  
+  ##XYY##
+  
+  RNApcaXYY <- PCA(RNAs[-c(1:12,32,38:39,43:47),-(1:3)], graph = FALSE)
+  summary(RNApcaXYY)
+  
+  RNAcoordXYY <-RNApcaXYY$ind$coord
+  RNAcoordsXYY <- setDT(data.frame(RNAcoordXYY), keep.rownames = TRUE)[]
+  #RNAcoordsN <- separate(RNAcoords, rn, c("pop","ind"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+  RNAcoordsXYY$State <- RNAs[-c(1:12,32,38:39,43:47),(1:3)]$State
+  
+  RNAcoordsXYY$state <- factor(RNAcoordsXYY$State,c("FL","GA","NC","SC","AL"))
+  
+  
+   XYY_PCA_RNA_plot <- 
+  ggplot(RNAcoordsXYY,aes(x=-(Dim.2), y=Dim.1, color=state)) + geom_point(size=4) + 
+    theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+    labs(y = "PCA1 (8.51%)",x = "PCA2 (7.92%)") +
+    scale_color_manual(values=c( 
+      "#ffd700",#AL 
+      "#ffb14e", #FL
+      "#fa8775", #GA
+
+      "#cd34b5", #NC
+ 
+      "#0000ff" #SC 
+
+    ))
+
+   multiplot(PCA_RNA_plot,XY_PCA_RNA_plot,XYY_PCA_RNA_plot,cols=3)
+   
