@@ -387,7 +387,7 @@ multiplot(pi,tajD)
 ####FST####
 title_fst <- expression(paste("F", ""[ST]))
 
-all_data_fst <- all_data[ all_data$pop == "R.hastatulus" & all_data$var == "Fst" & all_data$cod == "syn" &  all_data$sex == "male"  ,]
+all_data_fst <- all_data[ all_data$pop == "R.hastatulus" & all_data$var == "Fst" & all_data$cod == "syn"   ,]
 
  fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
@@ -398,7 +398,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_fst) +
   theme(strip.background =element_rect(fill="white")) +
-  #facet_grid(. ~ sex) +
+  facet_grid(. ~ sex) +
   scale_x_discrete(limits=c("A","N","X","Y")) +
   
   scale_fill_manual(values=c( 
@@ -407,7 +407,7 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  )) +
+  )) #+
   
   annotate(geom="text", x = "A", y = 0.1, label = "a", parse = TRUE, size=10) +
   annotate(geom="text", x = "N", y = 0.15, label = "b", parse = TRUE, size=10) +
@@ -463,7 +463,7 @@ fst_sub_plot <-
   
 ####dxy####
 title_dxy <- expression(paste("d", ""[XY]))
-dxy <- all_data[all_data$var == "d" & all_data$cod == "sum" &  all_data$pop == "R.hastatulus" &  all_data$outgroup == "NA" &  all_data$sex == "male" ,]
+dxy <- all_data[all_data$var == "d" & all_data$cod == "sum" &  all_data$pop == "R.hastatulus" &  all_data$outgroup == "NA"  ,]
 
 dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -474,7 +474,7 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_dxy) +
   theme(strip.background =element_rect(fill="white")) +
-  #facet_grid(. ~ sex) + 
+  facet_grid(. ~ sex) + 
   scale_x_discrete(limits=c("A","N","X","Y")) +
   
   scale_fill_manual(values=c( 
@@ -483,7 +483,7 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  )) +
+  )) #+
   annotate(geom="text", x = "A", y = 0.003, label = "a", parse = TRUE, size=10) +
   annotate(geom="text", x = "N", y = 0.002, label = "b", parse = TRUE, size=10) +
   annotate(geom="text", x = "X", y = 0.0055, label = "c", parse = TRUE, size=10) +
@@ -538,9 +538,9 @@ ggplot(sub_dxy, aes(x=chrom, y=value, fill=chrom)) +
 multiplot(fst_sub_plot,dxy_sub_plot)
 
 ####da####
-da <- all_data[all_data$var == "da" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "NA",]
+#da <- all_data[all_data$var == "da" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "NA",]
 
-#da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus" & all_data$sex == "male" ,]
+da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus"  ,]
 
 title_da <- expression(paste("d", ""[A]))
 
@@ -554,7 +554,7 @@ da_plot <-
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_da) +
   theme(strip.background =element_rect(fill="white")) +
    facet_grid(. ~ pop) + 
-   # facet_grid(. ~ sex) + 
+    facet_grid(. ~ sex) + 
   #  scale_x_discrete(limits=c("A","N","H","X","Y")) +
   scale_x_discrete(limits=c("A","N","X","Y")) +
   
@@ -574,7 +574,7 @@ da_plot <-
   t.testloop(chromSet=chromSet,var="da",cod="NA",outgroup="NA",pop="R.hastatulus",sex="male")
   
   
-  multiplot(fst_plot,dxy_plot,da_plot,cols=3)
+  multiplot(fst_plot,dxy_plot,da_plot)
   multiplot(fst_sub_plot,dxy_sub_plot,da_plot)
   
   ds <- all_data[all_data$var == "d" & all_data$cod == "syn"  ,]
@@ -583,7 +583,7 @@ da_plot <-
   
   
 ####Ks####
-ks <- all_data[all_data$var == "k" & (all_data$pop == "XY" | all_data$pop == "XYY")  & all_data$cod == "syn",]
+ks <- all_data[all_data$var == "d" & (all_data$pop == "XY" | all_data$pop == "XYY")  & all_data$cod == "syn",]
 
 ks$Chromosome = factor(ks$chrom, levels=c("A","H","X","Y"))
 #ks$Outgroup = factor(ks$outgroup, levels=c("R.rothschildianus", "R.bucephalophorus"))
