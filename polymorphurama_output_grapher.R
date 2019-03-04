@@ -231,12 +231,12 @@ phase = X2Y = c("X2Y","X2","2Y")
   stats_table(outgroup="NA",set="male",chrom="X",pops=FLNC,popStr="FLNC"),
   
   stats_table(outgroup="NA",set="male",chrom="Y",pops=TXNC,popStr="TXNC"),
-  #stats_table(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
+  stats_table(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
   stats_table(outgroup="NA",set="male",chrom="N",pops=TXNC,popStr="TXNC"),
   stats_table(outgroup="NA",set="male",chrom="X",pops=TXNC,popStr="TXNC"),
   
   stats_table(outgroup="NA",set="male",chrom="Y",pops=TXFL,popStr="TXFL"),
-  #stats_table(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
+  stats_table(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
   stats_table(outgroup="NA",set="male",chrom="N",pops=TXFL,popStr="TXFL"),
   stats_table(outgroup="NA",set="male",chrom="X",pops=TXFL,popStr="TXFL")
   
@@ -538,7 +538,6 @@ ggplot(sub_dxy, aes(x=chrom, y=value, fill=chrom)) +
 multiplot(fst_sub_plot,dxy_sub_plot)
 
 ####da####
-#da <- all_data[all_data$var == "da" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "NA",]
 
 da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus"  ,]
 
@@ -575,7 +574,37 @@ da_plot <-
   
   
   multiplot(fst_plot,dxy_plot,da_plot)
-  multiplot(fst_sub_plot,dxy_sub_plot,da_plot)
+  
+da_sub <- all_data[all_data$var == "da" & (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "NA",]
+  
+da_sub_plot <- 
+  ggplot(da_sub, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
+  #geom_point(position=position_dodge(), stat="identity" ) +
+  geom_bar(position=position_dodge(), stat="identity" ) +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
+                width=.2,                    # Width of the error bars
+                position=position_dodge(.9)) + 
+  theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_da) +
+  theme(strip.background =element_rect(fill="white")) +
+  facet_grid(. ~ pop) + 
+  #facet_grid(. ~ sex) + 
+  #  scale_x_discrete(limits=c("A","N","H","X","Y")) +
+  scale_x_discrete(limits=c("A","N","X","Y")) +
+  
+  scale_fill_manual(values=c( 
+    '#00ADEF', #Blue #X
+    '#FFF100',  #yellow #Y
+    #  '#1B75BB', #purple-y #N
+    '#ffb14e', #orange #H
+    '#00A550' #green #A
+  ))  #+
+
+annotate(geom="text", x = "A", y = 0.0005, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "N", y = 0.0005, label = "a", parse = TRUE, size=10) +
+  annotate(geom="text", x = "X", y = 0.0015, label = "b", parse = TRUE, size=10) +
+  annotate(geom="text", x = "Y", y = 0.003, label = "c", parse = TRUE, size=10)   
+  
+  multiplot(fst_sub_plot,dxy_sub_plot,da_sub_plot)
   
   ds <- all_data[all_data$var == "d" & all_data$cod == "syn"  ,]
   
@@ -583,9 +612,9 @@ da_plot <-
   
   
 ####Ks####
-ks <- all_data[all_data$var == "d" & (all_data$pop == "XY" | all_data$pop == "XYY")  & all_data$cod == "syn",]
+ks <- all_data[all_data$var == "d" & all_data$pop == "R.hastatulus" & all_data$cod == "syn" & all_data$sex == "male",]
 
-ks$Chromosome = factor(ks$chrom, levels=c("A","H","X","Y"))
+ks$Chromosome = factor(ks$chrom, levels=c("A","N","X","Y"))
 #ks$Outgroup = factor(ks$outgroup, levels=c("R.rothschildianus", "R.bucephalophorus"))
 
 #ks_plot <- 
@@ -596,8 +625,8 @@ ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome )) +
                 position=position_dodge(.9)) + guides(fill=FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x="",y="Synonymous Divergence (Ks)") +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid(. ~ outgroup) +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  #facet_grid(. ~ outgroup) +
+  scale_x_discrete(limits=c("A","N","X","Y")) +
   scale_fill_manual(values=c( 
     '#00A550', #green #A
 #    '#1B75BB', #purple-y #N
@@ -606,30 +635,34 @@ ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome )) +
     '#FFF100'  #yellow #Y
   ))
 
+t.testloop(chromSet=chromSet,var="d",cod="syn",outgroup="NA",pop="R.hastatulus",sex="male")
+
 
 ####dnds####
-evo_rate <-  all_data[all_data$var == "kaks" & all_data$pop == "R.hastatulus",]
-  
-evo_rate$outgroup[evo_rate$outgroup == "rothschildianus"] <- "R.rothschildianus"
-evo_rate$outgroup[evo_rate$outgroup == "bucephalophorus"] <- "R.bucephalophorus"
+evo_rate <-  all_data[all_data$var == "d" & all_data$pop == "R.hastatulus" & all_data$cod == "rate" & all_data$sex == "male",]
+
+evo_rate$Chromosome = factor(evo_rate$chrom, levels=c("A","N","X","Y"))
 
 #rate_plot <-
-ggplot(evo_rate, aes(x=chrom, y=value, color=chrom)) + guides(color=FALSE) +
-  geom_point(position=position_dodge(.9)) +
-  geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
+ggplot(evo_rate, aes(x=Chromosome, y=value, fill=Chromosome)) + guides(fill=FALSE) +
+  geom_bar(position=position_dodge(), stat="identity") +
+  geom_errorbar(aes(ymin=value-se, ymax=value+se),
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 18) + labs(x="",y="Rate of Divergence (dn/ds)") +
   theme(strip.background =element_rect(fill="white")) +
-  scale_x_discrete(limits=c("A","H","X","Y")) + 
-  facet_grid(. ~ outgroup) +
-  scale_color_manual(values=c( 
+  scale_x_discrete(limits=c("A","N","X","Y")) + 
+  #facet_grid(. ~ outgroup) +
+  scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',  #yellow #Y
- #   '#1B75BB', #purple-y #N
+    #  '#1B75BB', #purple-y #N
     '#ffb14e', #orange #H
     '#00A550' #green #A
-  ))
+  )) 
+
+t.testloop(chromSet=chromSet,var="d",pop="R.hastatulus",cod="rate",outgroup="NA",sex="male")
+
 
 kaksvar <- all_data_var[all_data_var$var == "kaks" &  (all_data_var$pop == "XY" | all_data_var$pop == "XYY") ,]
 kaksvar$outgroup[kaksvar$outgroup == "rothschildianus"] <- "R.rothschildianus"
