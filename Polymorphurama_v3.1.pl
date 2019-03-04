@@ -104,7 +104,7 @@ open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} 
 open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '2_' . $chromName . '.txt')) or die "Could not open outfile\n";
 
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
-open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+#open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
@@ -171,20 +171,6 @@ foreach $file (@files){
 
 	#Skip loops if dataset too small
 	
-    my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
-	my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
-	my @freq_P_U = ();	# preferred to unpreferred
-	my @freq_U_P = ();	# unpreferred to preferred
-	my @freq_P_P = ();	# preferred to preferred
-	my @freq_U_U = ();	# unpreferred to unpreferred
-	my @freqS_AT_GC = (); # changes AT to GC
-	my @freqS_GC_AT = (); # changes GC to AT
-	my @freqS_AT_AT = (); # changes AT to AT
-	my @freqS_GC_GC = (); # changes GC to GC
-	my @freqR_AT_GC = (); # changes AT to GC
-	my @freqR_GC_AT = (); # changes GC to AT
-	my @freqR_AT_AT = (); # changes AT to AT
-	my @freqR_GC_GC = (); # changes GC to GC
 
 	chomp $file;
 
@@ -315,6 +301,22 @@ foreach $file (@files){
 
 	##set pops##
 	while($loop < ($number_of_pops + $outpop_tot)){
+
+		my @poly_freq_Syn = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1) i.e. a singleton is in frequency class $poly_freq_Syn[1]
+		my @poly_freq_Rep = ();	  # array from 1 to numseq with count of polymorphic variants in each frequency class (from 1 to numseq-1)
+		my @freq_P_U = ();	# preferred to unpreferred
+		my @freq_U_P = ();	# unpreferred to preferred
+		my @freq_P_P = ();	# preferred to preferred
+		my @freq_U_U = ();	# unpreferred to unpreferred
+		my @freqS_AT_GC = (); # changes AT to GC
+		my @freqS_GC_AT = (); # changes GC to AT
+		my @freqS_AT_AT = (); # changes AT to AT
+		my @freqS_GC_GC = (); # changes GC to GC
+		my @freqR_AT_GC = (); # changes AT to GC
+		my @freqR_GC_AT = (); # changes GC to AT
+		my @freqR_AT_AT = (); # changes AT to AT
+		my @freqR_GC_GC = (); # changes GC to GC
+
 
 		if ($pop<$number_of_pops ){
 			print "\npop: $pop\t";
@@ -2258,9 +2260,6 @@ foreach $file (@files){
 								print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
 							}
 
-						
-						
-
 							if ($third_pos_count>0){
 								$GC_three=$GC_three/$third_pos_count;
 								if (($FOP+$FNOP)>0){
@@ -2274,17 +2273,20 @@ foreach $file (@files){
 								$FOP = 0;
 							}
 
+							$poly_freq_Syn[0]=int($no_syn_codons);
+							$poly_freq_Rep[0]=int($no_rep_codons);
+
 							if ($pop == 0){	
-								print OUTpop0 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-								print OUTpop0 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+								print OUTpop0 $file, ".Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop0 $file, ".Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 							}
 							elsif ($pop == 1){	
-								print OUTpop1 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-								print OUTpop1 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+								print OUTpop1 $file, ".Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop1 $file, ".Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 							}
 							elsif ($pop == 2){	
-								print OUTpop2 $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
-								print OUTpop2 $file, "_Rep\t" , join ("\t", @poly_freq_Rep), "\n";
+								print OUTpop2 $file, ".Syn\t", join ("\t", @poly_freq_Syn), "\t";
+								print OUTpop2 $file, ".Rep\t" , join ("\t", @poly_freq_Rep), "\n";
 							}
 		
 							#print OUT $file, "_Syn\t", join ("\t", @poly_freq_Syn), "\t";
