@@ -211,36 +211,45 @@ TXFL <- c("TXFL","TX","FL")
 
 phase = X2Y = c("X2Y","X2","2Y") 
 
+rna_rothschildianus_summarystats_phase_X2Y
+
  all_data <- data.frame(
   rbind(
     #X  
-    stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop"),
-    stats_table(outgroup="NA",set="female",chrom="X",pops=pop,popStr="fpop"),
+#    stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop"),
+#    stats_table(outgroup="NA",set="female",chrom="X",pops=pop,popStr="fpop"),
     #Y 
-    stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop"),
+#    stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop"),
     #A 
-    stats_table(outgroup="NA",set="female",chrom="A",pops=pop,popStr="fpop"),
-    stats_table(outgroup="NA",set="male",chrom="A",pops=pop,popStr="mpop"),
+#    stats_table(outgroup="NA",set="female",chrom="A",pops=pop,popStr="fpop"),
+#    stats_table(outgroup="NA",set="male",chrom="A",pops=pop,popStr="mpop"),
     #N
-    stats_table(outgroup="NA",set="male",chrom="N",pops=pop,popStr="mpop"),
-    stats_table(outgroup="NA",set="female",chrom="N",pops=pop,popStr="fpop"),
+#    stats_table(outgroup="NA",set="male",chrom="N",pops=pop,popStr="mpop"),
+#    stats_table(outgroup="NA",set="female",chrom="N",pops=pop,popStr="fpop"),
 
-  stats_table(outgroup="NA",set="male",chrom="Y",pops=FLNC,popStr="FLNC"),
-  stats_table(outgroup="NA",set="male",chrom="A",pops=FLNC,popStr="FLNC"),
-  stats_table(outgroup="NA",set="male",chrom="N",pops=FLNC,popStr="FLNC"),
-  stats_table(outgroup="NA",set="male",chrom="X",pops=FLNC,popStr="FLNC"),
+#  stats_table(outgroup="NA",set="male",chrom="Y",pops=FLNC,popStr="FLNC"),
+#  stats_table(outgroup="NA",set="male",chrom="A",pops=FLNC,popStr="FLNC"),
+#  stats_table(outgroup="NA",set="male",chrom="N",pops=FLNC,popStr="FLNC"),
+#  stats_table(outgroup="NA",set="male",chrom="X",pops=FLNC,popStr="FLNC"),
   
-  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXNC,popStr="TXNC"),
-  stats_table(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
-  stats_table(outgroup="NA",set="male",chrom="N",pops=TXNC,popStr="TXNC"),
-  stats_table(outgroup="NA",set="male",chrom="X",pops=TXNC,popStr="TXNC"),
+#  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXNC,popStr="TXNC"),
+#  stats_table(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
+#  stats_table(outgroup="NA",set="male",chrom="N",pops=TXNC,popStr="TXNC"),
+#  stats_table(outgroup="NA",set="male",chrom="X",pops=TXNC,popStr="TXNC"),
   
-  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXFL,popStr="TXFL"),
-  stats_table(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
-  stats_table(outgroup="NA",set="male",chrom="N",pops=TXFL,popStr="TXFL"),
-  stats_table(outgroup="NA",set="male",chrom="X",pops=TXFL,popStr="TXFL")
+#  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXFL,popStr="TXFL"),
+#  stats_table(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
+#  stats_table(outgroup="NA",set="male",chrom="N",pops=TXFL,popStr="TXFL"),
+#  stats_table(outgroup="NA",set="male",chrom="X",pops=TXFL,popStr="TXFL")
   
-  
+     stats_table(outgroup="rothschildianus",set="rna",chrom="X2Y",pops=X2Y,popStr="phase"),
+     stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop"),
+     stats_table(outgroup="rothschildianus",set="fem",chrom="N",pops=pop,popStr="pop")
+     
+
+     #filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+     
+     
   )
   , stringsAsFactors = FALSE)
 
@@ -296,6 +305,8 @@ title_pisyn <- expression(paste(pi, ""[syn]))
 title_pi <- expression(paste(pi))
 
 all_data_pi_syn <- all_data[all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY")  ,]
+((.00276+.00297) - ((.0022+0.0012)/2)) / (2 * 7e-9)
+
 
 #pi <- 
 ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -314,6 +325,7 @@ ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE
     '#ffb14e', #orange #H
     '#00A550' #green #A
   ))
+
 
 #pop subsets (NCFL)
 all_data_pi_syn_sub <- all_data[all_data$var == "pi" & all_data$sex == "male" & (all_data$chrom == "Y" | all_data$chrom == "X") & all_data$cod == "syn" & (all_data$pop == "XY" | all_data$pop == "XYY" | all_data$pop == "NC" | all_data$pop == "FL" ) & all_data$outgroup == "NA",]
@@ -537,6 +549,10 @@ ggplot(sub_dxy, aes(x=chrom, y=value, fill=chrom)) +
 
 multiplot(fst_sub_plot,dxy_sub_plot)
 
+sub_d_syn <- all_data[ (all_data$pop == "FLNC" | all_data$pop == "TXNC" | all_data$pop == "TXFL" ) & all_data$outgroup == "NA" & all_data$var == "d" & all_data$cod == "syn"  ,]
+
+(.00275 - (.00016+.0002)/2) / (2 * 7e-9)
+
 ####da####
 
 da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus"  ,]
@@ -612,18 +628,20 @@ annotate(geom="text", x = "A", y = 0.0005, label = "a", parse = TRUE, size=10) +
   
   
 ####Ks####
-ks <- all_data[all_data$var == "d" & all_data$pop == "R.hastatulus" & all_data$cod == "syn" & all_data$sex == "male",]
-
-ks$Chromosome = factor(ks$chrom, levels=c("A","N","X","Y"))
+#ks <- all_data[all_data$var == "d" & all_data$pop == "R.hastatulus" & all_data$cod == "syn" & all_data$sex == "male",]
+  ks <- all_data[all_data$var == "k" & all_data$cod == "syn",]
+  ks_sub <- ks[c(1,2,4,7),]
+  
+  ks_sub$Chromosome <- factor( c("Y","X","A","N"))
 #ks$Outgroup = factor(ks$outgroup, levels=c("R.rothschildianus", "R.bucephalophorus"))
 
 #ks_plot <- 
-ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome )) + 
+ggplot(ks_sub, aes(x=Chromosome, y=value, fill=Chromosome )) + 
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
                 width=.4,                    # Width of the error bars
                 position=position_dodge(.9)) + guides(fill=FALSE) +
-  theme_bw()  + theme_bw(base_size = 30) + labs(x="",y="Synonymous Divergence (Ks)") +
+  theme_bw()  + theme_bw(base_size = 30) + labs(x="",y="Ks") +
   theme(strip.background =element_rect(fill="white")) +
   #facet_grid(. ~ outgroup) +
   scale_x_discrete(limits=c("A","N","X","Y")) +
@@ -636,6 +654,7 @@ ggplot(ks, aes(x=Chromosome, y=value, fill=Chromosome )) +
   ))
 
 t.testloop(chromSet=chromSet,var="d",cod="syn",outgroup="NA",pop="R.hastatulus",sex="male")
+
 
 
 ####dnds####
@@ -1154,3 +1173,131 @@ t.test(
   log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "h" ]),
   log(filtered$pop0_kaks_NA[filtered$pop == "xy" & filtered$outgroup == "rothschildianus" & filtered$chrom == "a" ])
 )
+
+
+####bootstrap####
+
+stats_table_boot <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=NULL,popStr='pop',ksyn=1){ 
+  
+  ##Calculate summary for within population statistics
+  summaryStats <- function(in_mat=NULL,pops=NULL,chrom=NULL,set=NULL){
+    pol_melt <- melt(in_mat,id.vars = "locus",verbose=FALSE)
+    pol_sep <- separate(pol_melt, variable, c("pop","var","cod"), 
+                        sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+    pol_sep_comp <- pol_sep[complete.cases(pol_sep), ]
+    
+    for (i in 1:(length(pops))){
+      popCount = paste("pop",(i-1),sep="") 
+      pol_sep_comp$pop[pol_sep_comp$pop == popCount] <- pops[i]
+    }
+    summary <- summarySE(pol_sep_comp, measurevar="value", groupvars=c("var","pop","cod"))
+    cbind(summary, "chrom" = chrom, "sex" = set)
+    
+  }
+  
+  ##Calculate summary for between population statistics
+  summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL,set=NULL){
+    inter_melt <- melt(inter,id.vars = "locus",verbose=FALSE)
+    inter_sep <- separate(inter_melt, variable, c("pop","var","cod"), 
+                          sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+    inter_comp <- inter_sep[complete.cases(inter_sep), ]
+    
+    for (i in 1:(length(pops))){
+      popCount = paste("pop",(i-1),sep="") 
+      inter_comp$pop[inter_comp$pop == popCount] <- pops[i]
+    }
+    
+    inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
+    cbind(inter_summary, "chrom" = chrom, "sex" = set)
+  }
+  
+  ##import files
+  filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+  filename_btw <- paste(set,"_",outgroup,"_interpop_",popStr,"_",chrom,".txt",sep="")
+  in_read <- fread(filename_wIn)
+  in_bet <- fread(filename_btw)
+  
+  ##filter for min 80% of inds and greater than 50 sites
+  seqMax <- max(in_read$pop0_seqs_NA[!is.na(in_read$pop0_seqs_NA)])
+  #coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8)  & in_read$pop0_sites_syn >= 50 & in_read$pop0_k_syn < ksyn]
+  coverage_list <- in_read$locus[in_read$pop0_seqs_NA >= (seqMax * 0.8)  & in_read$pop0_sites_syn >= 50 ]
+  
+  in_read_cov <- in_read[in_read$locus %in% coverage_list ]
+  in_bet_cov <- in_bet[in_bet$locus %in% coverage_list ]
+  
+  sample_tot <- length(in_read_cov$locus)
+  
+  sample_sub <- sample(1:sample_tot, sample_tot*.8, replace=FALSE)
+  
+  in_read_cov <- in_read_cov[sample_sub, ]
+  in_bet_cov <- in_bet_cov[sample_sub, ]
+  
+  ##intake and bind
+  stats_wIn <- summaryStats(in_mat=in_read_cov ,pops=pops,chrom=chrom,set=set)
+  stats_btw <- summaryStatsInter(inter=in_bet_cov,pops=pops,chrom=chrom,set=set)
+  stats_bind <- cbind(rbind(stats_wIn,stats_btw),outgroup=outgroup,stringsAsFactors=FALSE)
+  return(stats_bind)
+}
+
+YYboot <- c(1:100)
+neoXYboot <- c(1:100)
+
+for( i in c(1:100)){
+
+all_data_boot <- data.frame(
+  rbind(
+    #X  
+    stats_table_boot(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop"),
+    stats_table_boot(outgroup="NA",set="female",chrom="X",pops=pop,popStr="fpop"),
+    #Y 
+    stats_table_boot(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop"),
+    #A 
+    stats_table_boot(outgroup="NA",set="female",chrom="A",pops=pop,popStr="fpop"),
+    stats_table_boot(outgroup="NA",set="male",chrom="A",pops=pop,popStr="mpop"),
+    #N
+    stats_table_boot(outgroup="NA",set="male",chrom="N",pops=pop,popStr="mpop"),
+    stats_table_boot(outgroup="NA",set="female",chrom="N",pops=pop,popStr="fpop"),
+    
+    stats_table_boot(outgroup="NA",set="male",chrom="Y",pops=FLNC,popStr="FLNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="A",pops=FLNC,popStr="FLNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="N",pops=FLNC,popStr="FLNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="X",pops=FLNC,popStr="FLNC"),
+    
+    stats_table_boot(outgroup="NA",set="male",chrom="Y",pops=TXNC,popStr="TXNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="N",pops=TXNC,popStr="TXNC"),
+    stats_table_boot(outgroup="NA",set="male",chrom="X",pops=TXNC,popStr="TXNC"),
+    
+    stats_table_boot(outgroup="NA",set="male",chrom="Y",pops=TXFL,popStr="TXFL"),
+    stats_table_boot(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
+    stats_table_boot(outgroup="NA",set="male",chrom="N",pops=TXFL,popStr="TXFL"),
+    stats_table_boot(outgroup="NA",set="male",chrom="X",pops=TXFL,popStr="TXFL")
+  )
+  , stringsAsFactors = FALSE)
+
+
+
+#neo-X neo-Y divergence 
+all_data_pi_syn_boot <- all_data_boot[all_data_boot$var == "pi" & all_data_boot$cod == "syn" &  (all_data_boot$pop == "XY" | all_data_boot$pop == "XYY")  ,]
+
+neoXYboot[i] <- ((.00276+.00297) - ((all_data_pi_syn_boot[9,5]+all_data_pi_syn_boot[10,5])/2)) / (2 * 7e-9)
+
+#Y-Y divergence
+all_data_pi_syn_sub_boot <- all_data_boot[all_data_boot$var == "pi" & all_data_boot$sex == "male" & (all_data_boot$chrom == "Y" | all_data_boot$chrom == "X") & all_data_boot$cod == "syn" & (all_data_boot$pop == "XY" | all_data_boot$pop == "XYY" | all_data_boot$pop == "NC" | all_data_boot$pop == "FL" ) & all_data_boot$outgroup == "NA",]
+
+sub_d_syn_boot <- all_data_boot[ (all_data_boot$pop == "FLNC" | all_data_boot$pop == "TXNC" | all_data_boot$pop == "TXFL" ) & all_data_boot$outgroup == "NA" & all_data_boot$var == "d" & all_data_boot$cod == "syn"  ,]
+
+YYboot[i] <- (sub_d_syn_boot[9,5] - (all_data_pi_syn_sub_boot[11,5]+all_data_pi_syn_sub_boot[3,5])/2) / (2 * 7e-9)
+}
+
+
+
+#YYboot_error <- 
+  qt(0.975,df=length(YYboot)-1)*sd(YYboot)/sqrt(length(YYboot))
+#neoXYboot_error <- 
+  qt(0.975,df=length(neoXYboot)-1)*sd(neoXYboot)/sqrt(length(neoXYboot))
+
+
+
+ggplot(data=data.frame(YYboot),aes(x=YYboot)) + geom_density()
+ggplot(data=data.frame(neoXYboot),aes(x=neoXYboot)) + geom_density()

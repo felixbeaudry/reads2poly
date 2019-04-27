@@ -191,33 +191,42 @@ fviz_dend(GBScut, rect = TRUE, cex = 0.5,
 
 ####################RNA
 
-RNA <-  fread("allpops_aa.vclean.n012")
-RNAID<-fread('name_aa.txt',header=T)
-RNAs <- data.frame(c(RNAID,RNA[,-1]), row.names=1)
+RNAsub <- fread("rhast.leaf.N.clean.012")
+RNAsubInds <- fread("rhast.leaf.N.clean.012.indv",header=FALSE)
+RNAs <- data.frame(cbind.data.frame(RNAsubInds,RNAsub[,-1]), row.names=1)
+RNAID<-fread('name_aa2.txt',header=T)
+
+
+#RNA <-  fread("allpops_aa.vclean.n012")
+#RNAID<-fread('name_aa.txt',header=T)
+#RNAs <- data.frame(c(RNAID,RNA[,-1]), row.names=1)
 #RNAs <- data.frame(c(RNA[,-1]))
 
 pwRNA<-dist.gene(RNAs,method = "pairwise")
 RNAtree<-nj(as.dist(pwRNA))
-RNAtree$tip.label <- RNAID$ID
-plot(RNAtree,show.tip.label=TRUE,type = "unrooted", lab4ut="axial",cex=1.5,rotate.tree=-20)
+#RNAtree$tip.label <- RNAID$ID
+
+plot(RNAtree,show.tip.label=TRUE,type = "unrooted", lab4ut="axial",cex=1.5,rotate.tree=-110)
 
 RNApca <- PCA(RNAs[,-(1:3)], graph = FALSE)
 summary(RNApca)
 
 RNAcoord <-RNApca$ind$coord
 RNAcoords <- setDT(data.frame(RNAcoord), keep.rownames = TRUE)[]
+RNAcoord <- cbind.data.frame(RNAcoords,RNAID)
 #RNAcoordsN <- separate(RNAcoords, rn, c("pop","ind"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
-RNAcoords$State <- RNAs$State
+#RNAcoords$State <- RNAs$State
 
 RNApca_eig <- RNApca$eig
 
-RNAcoords$state <- factor(RNAcoords$State,c("FL","GA","NC","SC","AL","OK","LA","TX"))
+#RNAcoords$state <- factor(RNAcoords$State,c("FL","GA","NC","SC","AL","OK","LA","TX"))
 
-PCA_RNA_plot <- 
-  ggplot(RNAcoords,aes(x=-(Dim.1), y=Dim.2, color=state)) + geom_point(size=4) + 
+#PCA_RNA_plot <- 
+  ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,shape=Sex)) + 
+    geom_point(size=4) + 
   theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
-  labs(x = "PCA1 (15.89%)",y = "PCA2 (4.88%)") +
+  labs(x = "PCA1 (10.62%)",y = "PCA2 (8.32%)",title="Neo-sex-linked") #+
   scale_color_manual(values=c( 
     "#ffd700",#AL 
     "#ffb14e", #FL
