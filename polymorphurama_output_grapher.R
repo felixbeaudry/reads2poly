@@ -211,48 +211,26 @@ TXFL <- c("TXFL","TX","FL")
 
 phase = X2Y = c("X2Y","X2","2Y") 
 
-rna_rothschildianus_summarystats_phase_X2Y
-
- all_data <- data.frame(
+all_data <- data.frame(
   rbind(
-    #X  
-#    stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop"),
-#    stats_table(outgroup="NA",set="female",chrom="X",pops=pop,popStr="fpop"),
-    #Y 
-#    stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop"),
-    #A 
-#    stats_table(outgroup="NA",set="female",chrom="A",pops=pop,popStr="fpop"),
-#    stats_table(outgroup="NA",set="male",chrom="A",pops=pop,popStr="mpop"),
-    #N
-#    stats_table(outgroup="NA",set="male",chrom="N",pops=pop,popStr="mpop"),
-#    stats_table(outgroup="NA",set="female",chrom="N",pops=pop,popStr="fpop"),
 
-#  stats_table(outgroup="NA",set="male",chrom="Y",pops=FLNC,popStr="FLNC"),
-#  stats_table(outgroup="NA",set="male",chrom="A",pops=FLNC,popStr="FLNC"),
-#  stats_table(outgroup="NA",set="male",chrom="N",pops=FLNC,popStr="FLNC"),
-#  stats_table(outgroup="NA",set="male",chrom="X",pops=FLNC,popStr="FLNC"),
   
-#  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXNC,popStr="TXNC"),
-#  stats_table(outgroup="NA",set="male",chrom="A",pops=TXNC,popStr="TXNC"),
-#  stats_table(outgroup="NA",set="male",chrom="N",pops=TXNC,popStr="TXNC"),
-#  stats_table(outgroup="NA",set="male",chrom="X",pops=TXNC,popStr="TXNC"),
-  
-#  stats_table(outgroup="NA",set="male",chrom="Y",pops=TXFL,popStr="TXFL"),
-#  stats_table(outgroup="NA",set="male",chrom="A",pops=TXFL,popStr="TXFL"),
-#  stats_table(outgroup="NA",set="male",chrom="N",pops=TXFL,popStr="TXFL"),
-#  stats_table(outgroup="NA",set="male",chrom="X",pops=TXFL,popStr="TXFL")
-  
-     stats_table(outgroup="rothschildianus",set="rna",chrom="X2Y",pops=X2Y,popStr="phase"),
-     stats_table(outgroup="rothschildianus",set="rna",chrom="A",pops=pop,popStr="pop"),
-     stats_table(outgroup="rothschildianus",set="fem",chrom="N",pops=pop,popStr="pop")
+     stats_table(outgroup="NA",set="loose",chrom="X",pops=pop,popStr="fpop")
+     ,stats_table(outgroup="NA",set="loose",chrom="A",pops=pop,popStr="fpop")
+     ,stats_table(outgroup="NA",set="loose",chrom="N",pops=pop,popStr="fpop")
+     ,stats_table(outgroup="NA",set="strict",chrom="A",pops=pop,popStr="mpop")
+     ,stats_table(outgroup="NA",set="strict",chrom="N",pops=pop,popStr="mpop")
      
 
-     #filename_wIn <- paste(set,"_",outgroup,"_summarystats_",popStr,"_",chrom,".txt",sep="")
+     ,stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop")
+     ,stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop")
      
      
   )
-  , stringsAsFactors = FALSE)
+, stringsAsFactors = FALSE)
 
+
+all_data$sex[all_data$sex == "male"] <- "strict"
 
 all_data_var <- data.frame(
   rbind(
@@ -288,9 +266,8 @@ ggplot(all_data_theta, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE)
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_thetasyn) +
   #theme(axis.text.x = element_text(angle = 40, hjust = 1)) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid( pop ~ .) +
- # scale_x_discrete(limits=c("A","N","H","X","Y")) +
-  scale_x_discrete(limits=c("A","H","X","Y")) +
+  facet_grid( sex ~ pop) +
+  scale_x_discrete(limits=c("A","N","X","Y")) +
   
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
@@ -305,8 +282,7 @@ title_pisyn <- expression(paste(pi, ""[syn]))
 title_pi <- expression(paste(pi))
 
 all_data_pi_syn <- all_data[all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY")  ,]
-((.00276+.00297) - ((.0022+0.0012)/2)) / (2 * 7e-9)
-
+#((.00276+.00297) - ((.0022+0.0012)/2)) / (2 * 7e-9)
 
 #pi <- 
 ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
@@ -401,7 +377,7 @@ title_fst <- expression(paste("F", ""[ST]))
 
 all_data_fst <- all_data[ all_data$pop == "R.hastatulus" & all_data$var == "Fst" & all_data$cod == "syn"   ,]
 
- fst_plot <-
+ #fst_plot <-
 ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
  guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -477,7 +453,7 @@ fst_sub_plot <-
 title_dxy <- expression(paste("d", ""[XY]))
 dxy <- all_data[all_data$var == "d" & all_data$cod == "sum" &  all_data$pop == "R.hastatulus" &  all_data$outgroup == "NA"  ,]
 
-dxy_plot <- 
+#dxy_plot <- 
 ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   #geom_point(position=position_dodge(), stat="identity" ) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -559,7 +535,7 @@ da <- all_data[all_data$var == "da" & all_data$pop == "R.hastatulus"  ,]
 
 title_da <- expression(paste("d", ""[A]))
 
-da_plot <- 
+#da_plot <- 
   ggplot(da, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
   #geom_point(position=position_dodge(), stat="identity" ) +
   geom_bar(position=position_dodge(), stat="identity" ) +
@@ -1301,3 +1277,6 @@ YYboot[i] <- (sub_d_syn_boot[9,5] - (all_data_pi_syn_sub_boot[11,5]+all_data_pi_
 
 ggplot(data=data.frame(YYboot),aes(x=YYboot)) + geom_density()
 ggplot(data=data.frame(neoXYboot),aes(x=neoXYboot)) + geom_density()
+
+
+

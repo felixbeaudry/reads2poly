@@ -251,6 +251,8 @@ foreach $file (@files){
 
 	my $pop = 0;
 	my $outpop = 0;
+	#my $outpop_tot = 0;
+	#if()
 	my $outpop_tot = scalar(@{ $position_array[1] });
 
 	my $loop = 0;
@@ -269,8 +271,7 @@ foreach $file (@files){
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
-	}
-	elsif( ($toofew / $codonCount) > 0.8){
+	}elsif( ($toofew / $codonCount) > 0.8){
 		print "\nToo few sites"; 
 		for ($x=0;$x < $number_of_pops;++$x){
 				print OUT2 "NA\t";
@@ -283,9 +284,7 @@ foreach $file (@files){
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
-	}
-
-	if ($numseqs<2){
+	}elsif (($numseqs<2) || (undef $numseqs)){
 		for ($x=0;$x < $number_of_pops;++$x){
 			print "\npop: ",$x,"\tempty"; 
 				print OUT2 "NA\t";
