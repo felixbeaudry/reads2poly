@@ -60,7 +60,7 @@ summarySE <- function(data=NULL, measurevar, groupvars=NULL, na.rm=FALSE, conf.i
 stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=NULL,popStr='pop',ksyn=1){ 
 
   ##Calculate summary for within population statistics
-  summaryStats <- function(in_mat=NULL,pops=NULL,chrom=NULL,set=NULL){
+  summaryStats <- function(in_mat=NULL,pops=NULL,chrom=NULL,set=NULL,popStr=popStr){
     pol_melt <- melt(in_mat,id.vars = "locus",verbose=FALSE)
     pol_sep <- separate(pol_melt, variable, c("pop","var","cod"), 
                         sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
@@ -71,12 +71,12 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
       pol_sep_comp$pop[pol_sep_comp$pop == popCount] <- pops[i]
     }
     summary <- summarySE(pol_sep_comp, measurevar="value", groupvars=c("var","pop","cod"))
-    cbind(summary, "chrom" = chrom, "sex" = set)
+    cbind(summary, "chrom" = chrom, "set" = set, "sex"= popStr)
 
   }
   
   ##Calculate summary for between population statistics
-  summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL,set=NULL){
+  summaryStatsInter <- function(inter=NULL,pops=NULL,chrom=NULL,set=NULL,popStr=popStr){
     inter_melt <- melt(inter,id.vars = "locus",verbose=FALSE)
     inter_sep <- separate(inter_melt, variable, c("pop","var","cod"), 
                           sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
@@ -88,7 +88,7 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
     }
     
     inter_summary <- summarySE(inter_comp, measurevar="value", groupvars=c("var","pop","cod"))
-    cbind(inter_summary, "chrom" = chrom, "sex" = set)
+    cbind(inter_summary, "chrom" = chrom, "set" = set, "sex"= popStr)
   }
 
   ##import files
@@ -112,8 +112,8 @@ stats_table <- function(outgroup=NULL,set=NULL,chrom=NULL,pops=NULL,subsetList=N
   #}
   
   ##intake and bind
-  stats_wIn <- summaryStats(in_mat=in_read_cov ,pops=pops,chrom=chrom,set=set)
-  stats_btw <- summaryStatsInter(inter=in_bet_cov,pops=pops,chrom=chrom,set=set)
+  stats_wIn <- summaryStats(in_mat=in_read_cov ,pops=pops,chrom=chrom,set=set,popStr=popStr)
+  stats_btw <- summaryStatsInter(inter=in_bet_cov,pops=pops,chrom=chrom,set=set,popStr=popStr)
   stats_bind <- cbind(rbind(stats_wIn,stats_btw),outgroup=outgroup,stringsAsFactors=FALSE)
   return(stats_bind)
 }
@@ -203,34 +203,49 @@ t.testloop <- function(chromSet=NULL,var=NULL,pop=NULL,cod=NULL,outgroup=NULL,se
 
 ####import####
 
-pop <- c("R.hastatulus","XY","XYY")
+pop = mpop = fpop = c("R.hastatulus","XY","XYY")
 
-FLNC <- c("FLNC","FL","NC")
-TXNC <- c("TXNC","TX","NC")
-TXFL <- c("TXFL","TX","FL")
+#FLNC <- c("FLNC","FL","NC")
+#TXNC <- c("TXNC","TX","NC")
+#TXFL <- c("TXFL","TX","FL")
 
-phase = X2Y = c("X2Y","X2","2Y") 
+#phase = X2Y = c("X2Y","X2","2Y") 
 
 all_data <- data.frame(
   rbind(
 
-  
-     stats_table(outgroup="NA",set="loose",chrom="X",pops=pop,popStr="fpop")
-     ,stats_table(outgroup="NA",set="loose",chrom="A",pops=pop,popStr="fpop")
-     ,stats_table(outgroup="NA",set="loose",chrom="N",pops=pop,popStr="fpop")
-     ,stats_table(outgroup="NA",set="strict",chrom="A",pops=pop,popStr="mpop")
-     ,stats_table(outgroup="NA",set="strict",chrom="N",pops=pop,popStr="mpop")
-     
+    stats_table(outgroup="NA",set="loose",chrom="A",pops=pop,popStr="mpop")
+    
+    ,stats_table(outgroup="NA",set="strict",chrom="A",pops=pop,popStr="mpop")
+    ,stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop")
+    ,stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop")
+    
+    ,stats_table(outgroup="NA",set="strict",chrom="A",pops=pop,popStr="jmpop")
+    ,stats_table(outgroup="NA",set="strict",chrom="X",pops=pop,popStr="jmpop")
+    ,stats_table(outgroup="NA",set="strict",chrom="Y",pops=pop,popStr="jmpop")
+    
+    ,stats_table(outgroup="NA",set="loose",chrom="A",pops=pop,popStr="fpop")
+    ,stats_table(outgroup="NA",set="loose",chrom="X",pops=pop,popStr="fpop")
+    ,stats_table(outgroup="NA",set="loose",chrom="N",pops=pop,popStr="fpop")
+    
+    ,stats_table(outgroup="NA",set="strict",chrom="A",pops=fpop,popStr="fpop")
+    ,stats_table(outgroup="NA",set="strict",chrom="N",pops=pop,popStr="fpop")
+    ,stats_table(outgroup="NA",set="strict",chrom="X",pops=pop,popStr="fpop")
 
-     ,stats_table(outgroup="NA",set="male",chrom="Y",pops=pop,popStr="mpop")
-     ,stats_table(outgroup="NA",set="male",chrom="X",pops=pop,popStr="mpop")
-     
-     
   )
 , stringsAsFactors = FALSE)
 
+all_data$set[all_data$set == "male"] <- "strict"
 
-all_data$sex[all_data$sex == "male"] <- "strict"
+all_data$sex <- as.character(all_data$sex)
+all_data$sex[all_data$sex == "mpop"] <- "Male"
+all_data$sex[all_data$sex == "fpop"] <- "Female"
+#fixed$Type <- as.factor(fixed$Type)
+
+
+
+
+
 
 all_data_var <- data.frame(
   rbind(
@@ -285,20 +300,22 @@ all_data_pi_syn <- all_data[all_data$var == "pi" & all_data$cod == "syn" &  (all
 #((.00276+.00297) - ((.0022+0.0012)/2)) / (2 * 7e-9)
 
 #pi <- 
-ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
+ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE) +
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid( pop ~ sex) +
+  facet_grid(sex ~ set) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
+  
   scale_x_discrete(limits=c("A","N","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
-    '#FFF100',#yellow #Y
- #   '#1B75BB', #purple-y #N
-    '#ffb14e', #orange #H
+ #   '#FFF100',#yellow #Y
+ #  '#1B75BB', #purple-y #N
+ #   '#ffb14e', #orange #H
     '#00A550' #green #A
   ))
 
@@ -352,21 +369,23 @@ t.testloop(chromSet=chromSet,var="pi",pop="XYY",cod="rate",outgroup="rothschildi
 all_data_tajD <- all_data[all_data$var == "tajD" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY") ,]
 
 #tajD <- 
-ggplot(all_data_tajD, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) + 
+ggplot(all_data_tajD, aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE) + 
   geom_bar(position=position_dodge(), stat="identity" ) +
   geom_errorbar(aes(ymin=value-ci, ymax=value+ci),
                 width=.2,                    # Width of the error bars
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Tajima's D") +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid( pop ~ sex)+
+  facet_grid( sex ~ set)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
+  
   scale_x_discrete(limits=c("A","N","X","Y")) +
   
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
-    '#FFF100',  #yellow #Y
+ #   '#FFF100',  #yellow #Y
  #   '#1B75BB', #purple-y #N
-    '#ffb14e', #orange #H
+#    '#ffb14e', #orange #H
     '#00A550' #green #A
   ))
 
@@ -386,8 +405,9 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_fst) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid(. ~ sex) +
+  facet_grid(sex ~ set) +
   scale_x_discrete(limits=c("A","N","X","Y")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
   
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
@@ -462,8 +482,9 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_dxy) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid(. ~ sex) + 
+  facet_grid( sex ~ set) + 
   scale_x_discrete(limits=c("A","N","X","Y")) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
   
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
@@ -544,11 +565,11 @@ title_da <- expression(paste("d", ""[A]))
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_da) +
   theme(strip.background =element_rect(fill="white")) +
-   facet_grid(. ~ pop) + 
-    facet_grid(. ~ sex) + 
+ 
+    facet_grid( sex ~ set) + 
   #  scale_x_discrete(limits=c("A","N","H","X","Y")) +
   scale_x_discrete(limits=c("A","N","X","Y")) +
-  
+    theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',  #yellow #Y
