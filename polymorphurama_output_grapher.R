@@ -231,6 +231,8 @@ all_data <- data.frame(
     ,stats_table(outgroup="NA",set="strict",chrom="A",pops=fpop,popStr="fpop")
     ,stats_table(outgroup="NA",set="strict",chrom="N",pops=pop,popStr="fpop")
     ,stats_table(outgroup="NA",set="strict",chrom="X",pops=pop,popStr="fpop")
+    
+
 
   )
 , stringsAsFactors = FALSE)
@@ -240,6 +242,7 @@ all_data$set[all_data$set == "male"] <- "strict"
 all_data$sex <- as.character(all_data$sex)
 all_data$sex[all_data$sex == "mpop"] <- "Male"
 all_data$sex[all_data$sex == "fpop"] <- "Female"
+all_data$sex[all_data$sex == "jmpop"] <- "Male-Hough"
 #fixed$Type <- as.factor(fixed$Type)
 
 
@@ -308,7 +311,7 @@ ggplot(all_data_pi_syn, aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE)
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_pisyn) +
   theme(strip.background =element_rect(fill="white")) +
   facet_grid(sex ~ set) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  #+
   
   scale_x_discrete(limits=c("A","N","X","Y")) +
   scale_fill_manual(values=c( 
@@ -377,7 +380,7 @@ ggplot(all_data_tajD, aes(x=chrom, y=value, fill=pop)) + #guides(fill = FALSE) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y="Tajima's D") +
   theme(strip.background =element_rect(fill="white")) +
   facet_grid( sex ~ set)+
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) # +
   
   scale_x_discrete(limits=c("A","N","X","Y")) +
   
@@ -406,9 +409,10 @@ ggplot(all_data_fst, aes(x=chrom, y=value, fill=chrom)) +
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_fst) +
   theme(strip.background =element_rect(fill="white")) +
   facet_grid(sex ~ set) +
-  scale_x_discrete(limits=c("A","N","X","Y")) +
-  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
   
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  #+
+
+scale_x_discrete(limits=c("A","N","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',  #yellow #Y
@@ -482,10 +486,11 @@ ggplot(dxy, aes(x=chrom, y=value, fill=chrom)) + guides(fill = FALSE) +
                 position=position_dodge(.9)) + 
   theme_bw()  + theme_bw(base_size = 30) + labs(x = "", y=title_dxy) +
   theme(strip.background =element_rect(fill="white")) +
-  facet_grid( sex ~ set) + 
-  scale_x_discrete(limits=c("A","N","X","Y")) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank())  +
   
+  facet_grid( sex ~ set) +
+  
+  scale_x_discrete(limits=c("A","N","X","Y")) +
   scale_fill_manual(values=c( 
     '#00ADEF', #Blue #X
     '#FFF100',  #yellow #Y

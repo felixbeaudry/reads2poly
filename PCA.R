@@ -221,13 +221,34 @@ RNApca_eig <- RNApca$eig
 
 #RNAcoords$state <- factor(RNAcoords$State,c("FL","GA","NC","SC","AL","OK","LA","TX"))
 
+#RNAcoord_sub <- RNAcoord[RNAcoord$Pop != "TX",]
+
 #PCA_RNA_plot <- 
-  ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,shape=Sex)) + 
-    geom_point(size=4) + 
+ # ggplot(RNAcoord,aes(x=-(Dim.2), y=Dim.1, color=Pop,shape=Sex)) + 
+  #  ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,shape=Sex)) + 
+      ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,label=rn)) + 
+      
+  #  ggplot(RNAcoord_sub,aes(x=Dim.1, y=Dim.2, color=Sex,label=rn)) + 
+    
+    geom_label() +
+  #  geom_point(size=4) + 
   theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
-  labs(x = "PCA1 (10.62%)",y = "PCA2 (8.32%)",title="Neo-sex-linked") #+
-  scale_color_manual(values=c( 
+    #labs(x = "PCA2 (9.61%)",y = "PCA1 (25.88%)",title="Anc-sex-linked") +
+      labs(x = "PCA1 (21.91%)",y = "PCA2 (6.48%)",title="Neo-sex-linked") +
+    
+  
+    scale_color_manual(values=c( 
+      "#0000FF" #AL 
+      
+     , "#3B53A3" #FL
+      ,"#EB2726" #NC 
+     ,"#FCE162" #TX
+    ))
+    
+    
+    
+    scale_color_manual(values=c( 
     "#ffd700",#AL 
     "#ffb14e", #FL
     "#fa8775", #GA
