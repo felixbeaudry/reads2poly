@@ -102,7 +102,6 @@ for ($x=0;$x<$number_of_pops;$x++){
 open (OUTpop0, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '0_' .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUTpop1, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '1_' . $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUTpop2, '>', ( $d2 .$ext . $outgroup_string . '_frequencies_' . $opts{p} . '2_' . $chromName . '.txt')) or die "Could not open outfile\n";
-
 open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT3, '>', ($d2 . $ext . $outgroup_string . '_codonbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
@@ -116,6 +115,7 @@ $vars[2] = "S";
 $vars[3] = "pi";
 $vars[4] = "tajD";
 $vars[5] = "k";
+$vars[6] = "kJC";
 
 my @synrep = ();
 $synrep[0] = "syn";
@@ -132,7 +132,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 		}
 	}
 	for ($y=0; $y<2; ++$y){
-		for($z=5;$z<6;++$z){
+		for($z=5;$z<7;++$z){
 			print OUT2 "pop",$x;
 			print OUT2 "_$vars[$z]";
 			print OUT2 "_$synrep[$y]\t";
@@ -141,11 +141,12 @@ for ($x=0; $x<$number_of_pops; ++$x){
 	print OUT2 "pop",$x,"_pi_rate\t";
 	print OUT2 "pop",$x,"_k_rate\t";
 	print OUT2 "pop",$x,"_k_sum\t";
+	print OUT2 "pop",$x,"_kJC_sum\t";
 	print OUT2 "pop",$x,"_mk_rate\t";
 }
 print OUT2 "\n";
 
-print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_d_rep\tpop0_d_rate\tpop0_d_sum\tpop0_da_NA\n";
+print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_dJC_syn\tpop0_d_rep\tpop0_dJC_rep\tpop0_d_rate\tpop0_d_sum\tpop0_dJC_sum\tpop0_da_NA\n";
 
 $poly_set=0;
 
@@ -2094,13 +2095,15 @@ foreach $file (@files){
 							$D_fourfold = $no_syn_fourfold_div/$no_syn_fourfold_codons;
 						}
 						else {$D_fourfold = 0;}
-						#if ((1-(4/3)*$Dxy_syn)>0){
-						#	$Dxy_JC_syn=  -0.75*log(1-(4/3)*$Dxy_syn);
-						#}
-						#$Dxy_JC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
-						#if ((1-(4/3)*$D_fourfold)>0){
-						#	$D_JC_fourfold=  -0.75*log(1-(4/3)*$D_fourfold);
-						#}
+						if ((1-(4/3)*$Dxy_syn)>0){
+							$Dxy_JC_syn=  -0.75*log(1-(4/3)*$Dxy_syn);
+						}
+						if ((1-(4/3)*$Dxy_syn)>0){
+							$Dxy_JC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
+						}
+						if ((1-(4/3)*$D_fourfold)>0){
+							$D_JC_fourfold=  -0.75*log(1-(4/3)*$D_fourfold);
+						}
 					}
 
 					else{
@@ -2239,9 +2242,22 @@ foreach $file (@files){
 								if($Dxy_syn > 0 & $Dxy_rep > 0){
 									$knks =  $Dxy_rep /$Dxy_syn ;
 								}
-								
+
+								my $DxyJC_syn = "NA";
+								if ((1-(4/3)*$Dxy_syn)>0){
+									$DxyJC_syn =  -0.75*log(1-(4/3)*$Dxy_syn);
+								}
+								my $DxyJC_rep = "NA";
+								if ((1-(4/3)*$Dxy_rep)>0){
+									$DxyJC_rep=  -0.75*log(1-(4/3)*$Dxy_rep);
+								}
+							
 								
 								my $kxy = $Dxy_rep + $Dxy_syn;
+								my $kxyJC = "NA";
+								if ((1-(4/3)*$kxy)>0){
+									$kxyJC=  -0.75*log(1-(4/3)*$kxy);
+								}
 								
 
 								my $mk = "NA";
@@ -2252,7 +2268,7 @@ foreach $file (@files){
 								}
 
 								print "Dxy: $Dxy_syn";
-								print OUT2 "$Dxy_syn\t$Dxy_rep\t$pirate\t$knks\t$kxy\t$mk\t";
+								print OUT2 "$Dxy_syn\t$DxyJC_syn\t$Dxy_rep\t$DxyJC_rep\t$pirate\t$knks\t$kxy\t$kxyJC\t$mk\t";
 							}
 							else{
 								print "Dxy: NA";
@@ -2387,9 +2403,25 @@ foreach $file (@files){
 		#print "\npop1 length: ",scalar(@{ $position_array[1] });
 
 		if (scalar(@{ $position_array[1] }) != 0){
-			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] }) ;
+			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] })
+
+			my $dxyJC_syn_final = "NA";
+			if ((1-(4/3)*$dxy_syn_final)>0){
+				$dxyJC_syn_final =  -0.75*log(1-(4/3)*$dxy_syn_final);
+			}
+
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[1] });
+			my $dxyJC_rep_final = "NA";
+			if ((1-(4/3)*$dxy_rep_final)>0){
+				$dxyJC_rep_final =  -0.75*log(1-(4/3)*$dxy_rep_final);
+			}
+
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[1] });
+			my $dxyJC_tot_final = "NA";
+			if ((1-(4/3)*$dxy_tot_final)>0){
+				$dxyJC_tot_final =  -0.75*log(1-(4/3)*$dxy_tot_final);
+			}
+
 			if($dnds_tot > 0){
 				$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
 			}
@@ -2401,6 +2433,9 @@ foreach $file (@files){
 			$dxy_rep_final = "NA";
 			$dxy_syn_final = "NA";
 			$dxy_tot_final = "NA";
+			$dxyJC_rep_final = "NA";
+			$dxyJC_syn_final = "NA";
+			$dxyJC_tot_final = "NA";
 			$dnds_tot_final = "NA";
 			$da = "NA";
 		}
@@ -2421,7 +2456,7 @@ foreach $file (@files){
 	}
 
 	print OUT2 "\n";
-	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t", $dxy_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\t", $da, "\n" ;
+	print OUT5 $Fst_syn, "\t", $dxy_syn_final, "\t",$dxyJC_syn_final, "\t", $dxy_rep_final, "\t",$dxyJC_rep_final, "\t", $dnds_tot_final, "\t", $dxy_tot_final, "\t", $dxyJC_tot_final, "\t", $da, "\n" ;
 
 
 print "\n";
