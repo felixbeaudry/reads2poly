@@ -192,6 +192,7 @@ fviz_dend(GBScut, rect = TRUE, cex = 0.5,
 ####################RNA
 
 RNAsub <- fread("rhast.leaf.N.clean.012")
+RNAsub[RNAsub == -1] <- NA
 RNAsubInds <- fread("rhast.leaf.N.clean.012.indv",header=FALSE)
 RNAs <- data.frame(cbind.data.frame(RNAsubInds,RNAsub[,-1]), row.names=1)
 RNAID<-fread('name_aa2.txt',header=T)
@@ -225,13 +226,13 @@ RNApca_eig <- RNApca$eig
 
 #PCA_RNA_plot <- 
  # ggplot(RNAcoord,aes(x=-(Dim.2), y=Dim.1, color=Pop,shape=Sex)) + 
-  #  ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,shape=Sex)) + 
+ #   ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,shape=Sex)) + 
       ggplot(RNAcoord,aes(x=-(Dim.1), y=Dim.2, color=Pop,label=rn)) + 
       
   #  ggplot(RNAcoord_sub,aes(x=Dim.1, y=Dim.2, color=Sex,label=rn)) + 
     
     geom_label() +
-  #  geom_point(size=4) + 
+    geom_point(size=4) + 
   theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
     #labs(x = "PCA2 (9.61%)",y = "PCA1 (25.88%)",title="Anc-sex-linked") +
@@ -309,3 +310,54 @@ RNApca_eig <- RNApca$eig
 
    multiplot(PCA_RNA_plot,XY_PCA_RNA_plot,XYY_PCA_RNA_plot,cols=3)
    
+   install.packages("seqinr")
+   library(seqinr)
+   
+DNA <-  read.fasta(file = "NXY_edit.fa", as.string = FALSE, seqtype = "DNA")
+
+seqs <- rbind(DNA[[1]],DNA[[2]] ) 
+for (se in c(3:65)){
+  seqs <- rbind(seqs,DNA[[se]] ) 
+}
+
+
+#seqs[100,44] does not exist
+
+for (pos in c(1:12046)){
+  for (ind in c(2:65)){
+    if(seqs[ind,pos] == "-" | seqs[ind,pos] == "N"){seqs[ind,pos] = NA}
+    else if(seqs[1,pos] == seqs[ind,pos] ){seqs[ind,pos] = 0}
+    else if(seqs[1,pos] != seqs[ind,pos] ){seqs[ind,pos] = 1}   
+    }
+  
+}
+
+seqs <- seqs[-1,]
+
+seqs[seqs != 0 & seqs != 1] <- NA
+
+seq <- seqs
+
+write.table(seq, file = "seq.csv", append = FALSE, quote = FALSE, sep = " ", 
+            eol = "\n", na = "NA", dec = ".", row.names = FALSE, 
+            col.names = FALSE, qmethod = c("escape", "double"))
+
+seqs<-fread('seq.csv')
+seqsnames <-fread('NXY_names.list.txt',header=TRUE)
+
+
+NphasePCA <- PCA(seqs, graph = FALSE)
+
+Nphasecoord <-NphasePCA$ind$coord
+Nphasecoords <- setDT(data.frame(Nphasecoord), keep.rownames = TRUE)[]
+#RNAcoordsN <- separate(RNAcoords, rn, c("pop","ind"), sep = "_", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
+
+NphasePCA$eig
+Nphasecoord <- cbind.data.frame(Nphasecoords,seqsnames)
+
+  ggplot(Nphasecoord,aes(x=Dim.1, y=Dim.2, color=Chrom)) + 
+    geom_point(size=4) + 
+  theme_bw(base_size = 18) + guides(alpha = FALSE, size = FALSE) +
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank()) + 
+  labs(x = "PCA1 (23.8%)",y = "PCA2 (9.84%)") 
+  
