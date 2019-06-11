@@ -2272,7 +2272,7 @@ foreach $file (@files){
 							}
 							else{
 								print "Dxy: NA";
-								print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
+								print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\tNA\t";
 							}
 
 							if ($third_pos_count>0){
