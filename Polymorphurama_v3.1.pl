@@ -2403,10 +2403,10 @@ foreach $file (@files){
 		#print "\npop1 length: ",scalar(@{ $position_array[1] });
 
 		if (scalar(@{ $position_array[1] }) != 0){
-			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] })
+			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] });
 
 			my $dxyJC_syn_final = "NA";
-			if ((1-(4/3)*$dxy_syn_final)>0){
+			if ( (1-(4/3)*$dxy_syn_final) >0){
 				$dxyJC_syn_final =  -0.75*log(1-(4/3)*$dxy_syn_final);
 			}
 
