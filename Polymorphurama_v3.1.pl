@@ -264,11 +264,11 @@ foreach $file (@files){
 		for ($x=0;$x < $number_of_pops;++$x){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<5;++$z){
+					for($z=0;$z<6;++$z){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
@@ -277,11 +277,11 @@ foreach $file (@files){
 		for ($x=0;$x < $number_of_pops;++$x){
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<5;++$z){
+					for($z=0;$z<6;++$z){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 
@@ -290,11 +290,11 @@ foreach $file (@files){
 			print "\npop: ",$x,"\tempty"; 
 				print OUT2 "NA\t";
 				for ($y=0; $y<2; ++$y){
-					for($z=0;$z<5;++$z){
+					for($z=0;$z<6;++$z){
 						print OUT2 "NA\t";		
 					}
 				}
-			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\t";
+			print OUT2 "NA\tNA\tNA\tNA\tNA\tNA\tNA\t";
 		}
 		$loop = ($number_of_pops + $outpop_tot);
 	}
