@@ -2374,6 +2374,9 @@ foreach $file (@files){
 	my $dxy_tot_final;
 	my $dnds_tot_final;
 	my $da;
+	my $dxyJC_tot_final ;
+	my $dxyJC_syn_final ;
+	my $dxyJC_rep_final ;
 
 	print "\nBetween populations 1 & 2\t";
 
@@ -2405,22 +2408,23 @@ foreach $file (@files){
 		if (scalar(@{ $position_array[1] }) != 0){
 			$dxy_syn_final = $dxy_syn_tot / scalar(@{ $position_array[1] });
 
-			my $dxyJC_syn_final = "NA";
+			
 			if ( (1-(4/3)*$dxy_syn_final) >0){
 				$dxyJC_syn_final =  -0.75*log(1-(4/3)*$dxy_syn_final);
-			}
+			}else{ $dxyJC_syn_final = NA;}
+
 
 			$dxy_rep_final = $dxy_rep_tot / scalar(@{ $position_array[1] });
-			my $dxyJC_rep_final = "NA";
+
 			if ((1-(4/3)*$dxy_rep_final)>0){
 				$dxyJC_rep_final =  -0.75*log(1-(4/3)*$dxy_rep_final);
-			}
+			}else{ $dxyJC_rep_final = NA;}
 
 			$dxy_tot_final = $dxy_tot / scalar(@{ $position_array[1] });
-			my $dxyJC_tot_final = "NA";
+			
 			if ((1-(4/3)*$dxy_tot_final)>0){
 				$dxyJC_tot_final =  -0.75*log(1-(4/3)*$dxy_tot_final);
-			}
+			}else{ $dxyJC_tot_final = NA;}
 
 			if($dnds_tot > 0){
 				$dnds_tot_final = $dnds_tot / scalar(@{ $position_array[1] });
@@ -2439,7 +2443,7 @@ foreach $file (@files){
 			$dnds_tot_final = "NA";
 			$da = "NA";
 		}
-		print "Dxy: ",$dxy_tot_final;
+		print "Dxy: ",$dxyJC_tot_final;
 
 
 
