@@ -1,5 +1,4 @@
 #### TOP ####
-setwd('~/Google Drive/Research/Data/')
 library(data.table)
 library(ggplot2)
 library(reshape2)
@@ -227,6 +226,7 @@ t2.testloop <- function(frame=NA){
 
 
 ####import####
+setwd('~/Google Drive/Research/Data/')
 
 pop = mpop = fpop = c("R.hastatulus","XY","XYY")
 
@@ -239,7 +239,9 @@ TXFL <- c("TXFL","TX","FL")
 all_data <- data.frame(
   rbind(
 
-    stats_table(outgroup="rothschildianus",set="loose",chrom="A",pops=pop,popStr="mpop")
+    stats_table(outgroup="rothschildianus",set="loose",chrom="Y",pops=TXFL,popStr="TXFL")
+    
+  ,  stats_table(outgroup="rothschildianus",set="loose",chrom="A",pops=pop,popStr="mpop")
    , stats_table(outgroup="bucephalophorus",set="loose",chrom="A",pops=pop,popStr="mpop")
     
     ,stats_table(outgroup="rothschildianus",set="strict",chrom="X",pops=pop,popStr="mpop")

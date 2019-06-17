@@ -107,6 +107,8 @@ open (OUT2, '>', ($d2 . $ext . $outgroup_string . '_summarystats_' . $pop_file_n
 #open (OUT4, '>', ($d2 . $ext . $outgroup_string . '_mutationbias_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 open (OUT5, '>', ($d2 . $ext . $outgroup_string . '_interpop_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
 #open (OUT_DIFF, '>', ($d2 . $ext . $outgroup_string . '_outdiffcodons_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+open (OUT6, '>', ($d2 . $ext . $outgroup_string . '_poppol_' . $pop_file_name .  $chromName . '.txt')) or die "Could not open outfile\n";
+
 
 my @vars= ();
 $vars[0] = "sites";
@@ -147,6 +149,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 print OUT2 "\n";
 
 print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_dJC_syn\tpop0_d_rep\tpop0_dJC_rep\tpop0_d_rate\tpop0_d_sum\tpop0_dJC_sum\tpop0_da_NA\n";
+print OUT6 "locus\tpop\tposition\tcodon\tfrequency\ttotal_seq\talt_codon\tsub";
 
 $poly_set=0;
 
@@ -523,331 +526,199 @@ foreach $file (@files){
 				push @codons_unique, $sorted_codon_array[$x];
 
 				for ($x=0; $x<$numseqs-1; $x++){
-
-					if ($sorted_codon_array[$x] ne $sorted_codon_array[$x+1])
-
-						{$unique_codons++;
-
-						push @codons_unique, $sorted_codon_array[$x+1];}
-
-					if ($sorted_pos1_array[$x] ne $sorted_pos1_array[$x+1])
-
-						{$mut_pos1++;}
-
-					if ($sorted_pos2_array[$x] ne $sorted_pos2_array[$x+1])	
-
-						{$mut_pos2++;}
-
-					if ($sorted_pos3_array[$x] ne $sorted_pos3_array[$x+1])	
-
-						{$mut_pos3++;}
-
-
-
-					if ($codon_array[0] eq $codon_array[$x+1])	
-
-					    {$equal_outgroup++;}
-
-					if ((substr($codon_array[0],0,1)) eq (substr($codon_array[$x+1],0,1)))	
-
-					   {$equal_bases_pos1++;}
-
-					if ((substr($codon_array[0],1,1)) eq (substr($codon_array[$x+1],1,1)))	
-
-					   {$equal_bases_pos2++;}
-
-					if ((substr($codon_array[0],2,1)) eq (substr($codon_array[$x+1],2,1)))	
-
-					   {$equal_bases_pos3++;}
-
+					if ($sorted_codon_array[$x] ne $sorted_codon_array[$x+1]){
+						$unique_codons++;
+						push @codons_unique, $sorted_codon_array[$x+1];
 					}
+					if ($sorted_pos1_array[$x] ne $sorted_pos1_array[$x+1]){$mut_pos1++;}
+					if ($sorted_pos2_array[$x] ne $sorted_pos2_array[$x+1]){$mut_pos2++;}
+					if ($sorted_pos3_array[$x] ne $sorted_pos3_array[$x+1]){$mut_pos3++;}
 
-		# print "unique_codons: $unique_codons, equal to outgroup: $equal_outgroup\n";
+					if ($codon_array[0] eq $codon_array[$x+1]){$equal_outgroup++;}
 
-		# print " mut pos1, pos2, pos3    $mut_pos1, $mut_pos2, $mut_pos3\n";
+					if ((substr($codon_array[0],0,1)) eq (substr($codon_array[$x+1],0,1))){$equal_bases_pos1++;}
+					if ((substr($codon_array[0],1,1)) eq (substr($codon_array[$x+1],1,1))){$equal_bases_pos2++;}
+					if ((substr($codon_array[0],2,1)) eq (substr($codon_array[$x+1],2,1))){$equal_bases_pos3++;}
+				}
 
+		#print "unique_codons: $unique_codons, equal to outgroup: $equal_outgroup\n";
 		# print " equal_bases pos1, pos2, pos3   $equal_bases_pos1, $equal_bases_pos2, $equal_bases_pos3\n"; 
 
-
-
-
 		# $complex = 'nein';
-
-		# if ((($equal_bases_pos1 == 0) and ($mut_pos1 > 2)) or (($equal_bases_pos2 == 0) and ($mut_pos2 > 2)) or (($equal_bases_pos3 == 0) and ($mut_pos3 > 2)))
-
-		#   {
-
-		#   $complex = 'ja';
-
-		#   }
-
-
-
+		# if ((($equal_bases_pos1 == 0) and ($mut_pos1 > 2)) or (($equal_bases_pos2 == 0) and ($mut_pos2 > 2)) or (($equal_bases_pos3 == 0) and ($mut_pos3 > 2))){ $complex = 'ja'; }
 		# print "complex : $complex \n";
 
-
-
-
-
-		if ($unique_codons==2) # send data to subroutine codon_processor and get codon_processed 
-
-		 	{
+		if ($unique_codons==2){ # send data to subroutine codon_processor and get codon_processed 
 
 			$complex = 'nein';
+			@codon_array_processed = codon_processor(@codon_array, $complex); # if codon is complicated ($complex = ja) -- return a long list	
 
-			@codon_array_processed = codon_processor(@codon_array, $complex);          # if codon is complicated ($complex = ja) -- return a long list	
+		    #print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
+			#print "$codon_array[$pos]\t$codon_array_processed[$pos]\n";
 
-		    # print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
-
-
-
-		#	print "$codon_array[$pos]\t$codon_array_processed[$pos]\n";
-
-			for ($ind=0; $ind<$numseqs; $ind++)
-
-				{
-
-				$codon_processed[$ind][$pos]= $codon_array_processed[$ind];
-
-				# print "$codon_processed[$ind][$pos]\t"; 
-
-			    }   
-
-
+			for ($ind=0; $ind<$numseqs; $ind++){
+				$codon_processed[$ind][$pos] = $codon_array_processed[$ind];
+				#print "$codon_array_processed[$ind]\t"; 
+			}   
 
 		    # assing polymorphism and divergence
 
 			@position1 = (); @position2 = (); @position3 = ();
 
-			for ($ind=0; $ind<$numseqs; $ind++)
-
-				{
-
+			for ($ind=0; $ind<$numseqs; $ind++){
 		        push @position1, join ("", substr($codon_array_processed[$ind], 0, 3));
-
 				push @position2, join ("", substr($codon_array_processed[$ind], 3, 3));
-
 				push @position3, join ("", substr($codon_array_processed[$ind], 6, 3));
-
-				}
-
-				
+			}
 
 			$pos[0] = join ("", @position1);
-
 			$pos[1] = join ("", @position2);
-
 			$pos[2] = join ("", @position3);
 
-
-
-		#  	print "\n";
-
-		#	print "Poly at position: $pos\n";
-
-		#  	print "pos1: ", $pos[0], "\n";
-
-		#  	print "pos2: ", $pos[1], "\n";
-
-		#  	print "pos3: ", $pos[2], "\n";    
-
-			
+			#  	print "\n";
+			#	print "Poly at position: $pos\n";
+			# 	print "pos1: ", $pos[0], "\n";
+			#  	print "pos2: ", $pos[1], "\n";
+			#  	print "pos3: ", $pos[2], "\n";    
 
 			@freq_NNN = (0,0,0); @freq_R = (0,0,0); @freq_S = (0,0,0);
-
 			@freq_GR = (0,0,0); @freq_AR = (0,0,0); @freq_TR = (0,0,0); @freq_CR = (0,0,0);
-
 			@freq_GS = (0,0,0); @freq_AS = (0,0,0); @freq_TS = (0,0,0); @freq_CS = (0,0,0);
-
 			@freq_P = (0,0,0); @freq_U = (0,0,0); @freq_D = (0,0,0); @freq_B = (0,0,0);
 
-			
-
-			for $i (0..2)
-
-				{
-
+			for $i (0..2){
 				while ($pos[$i] =~ /NNN/g){$freq_NNN[$i]++;}
 
 				while ($pos[$i] =~ /S/g){$freq_S[$i]++;}
-
 				while ($pos[$i] =~ /R/g){$freq_R[$i]++}
 
 				while ($pos[$i] =~ /GR/g){$freq_GR[$i]++;}
-
 				while ($pos[$i] =~ /AR/g){$freq_AR[$i]++;}
-
 				while ($pos[$i] =~ /TR/g){$freq_TR[$i]++;}
-
 				while ($pos[$i] =~ /CR/g){$freq_CR[$i]++;}
 
 				while ($pos[$i] =~ /GS/g){$freq_GS[$i]++;}
-
 				while ($pos[$i] =~ /AS/g){$freq_AS[$i]++;}
-
 				while ($pos[$i] =~ /TS/g){$freq_TS[$i]++;}
-
 				while ($pos[$i] =~ /CS/g){$freq_CS[$i]++;}
 
 				while ($pos[$i] =~ /P/g){$freq_P[$i]++;}
-
 				while ($pos[$i] =~ /U/g){$freq_U[$i]++;}
-
 				while ($pos[$i] =~ /D/g){$freq_D[$i]++;}
-
 				while ($pos[$i] =~ /B/g){$freq_B[$i]++;}
+			}
 
-				}
+			#print "frequencies NNN: ", join (" ", @freq_NNN), "\t", "Syn: ", join (" ", @freq_S), "\t" , "Rep: ", join (" ", @freq_R),"\n";
+			#print "frequencies GR: ", join (" ", @freq_GR), "\t", "AR: ", join (" ", @freq_AR), "\t" , "TR: ", join (" ", @freq_TR), "\t", "CR: ", join (" ", @freq_CR), "\n";
+			#print "frequencies GS: ", join (" ", @freq_GS), "\t", "AS: ", join (" ", @freq_AS), "\t" , "TS: ", join (" ", @freq_TS), "\t", "CS: ", join (" ", @freq_CS), "\n";
 
+			#print "amino-acid: ", $aa_pos, " freq aa outgroup: $freq_aa_OG \n";
+			#print "codon_states: ", $codon_state_pos, "  freq P: $freq_P, freq U: $freq_U \n"; 
 
-
-		#	 print "frequencies NNN: ", join (" ", @freq_NNN), "\t", "Syn: ", join (" ", @freq_S), "\t" , "Rep: ", join (" ", @freq_R),"\n";
-
-		#	 print "frequencies GR: ", join (" ", @freq_GR), "\t", "AR: ", join (" ", @freq_AR), "\t" , "TR: ", join (" ", @freq_TR), "\t", "CR: ", join (" ", @freq_CR), "\n";
-
-		#	 print "frequencies GS: ", join (" ", @freq_GS), "\t", "AS: ", join (" ", @freq_AS), "\t" , "TS: ", join (" ", @freq_TS), "\t", "CS: ", join (" ", @freq_CS), "\n";
-
-
-
-
-
-		# print "amino-acid: ", $aa_pos, " freq aa outgroup: $freq_aa_OG \n";
-
-		# print "codon_states: ", $codon_state_pos, "  freq P: $freq_P, freq U: $freq_U \n"; 
-
-
-
-
-
-			for $i (0..2)	
-
-			   {
+			for $i (0..2){
 
 			   $nuc_OG=substr($codon[0][$pos],$i,1);
-
-			   if ($freq_NNN[$i] == $numseqs)   # monomorphic
-
-			     {
-
-				  # print "monomorphic\n";
-
-				 }
-
-			   elsif ($freq_NNN[$i] ==1)  # divergence
-
-				  {
-
-				   if ($freq_S[$i]>1)
-
-				      {
-
+			   
+			    if ($freq_NNN[$i] == $numseqs){   # monomorphic
+					# print "monomorphic\n";
+				}
+			   	elsif ($freq_NNN[$i] ==1){ # divergence
+				   if ($freq_S[$i]>1){
 					  $poly_freq_Syn[$numseqs]++;
-
 					  if (codon_fourfold($codon[0][$pos]) == 4) {$no_syn_fourfold_div++;}	#divergence at 4-fold degenerate site
-
+					  
 					  if ($freq_P[$i]>1) {$freq_P_P[$numseqs]++;}
-
 					  if ($freq_U[$i]>1) {$freq_U_U[$numseqs]++;}
-
 					  if ($freq_D[$i]>1) {$freq_P_U[$numseqs]++;}
-
 					  if ($freq_B[$i]>1) {$freq_U_P[$numseqs]++;}
 
-
-
 					  if (($freq_GS[$i]>1) or ($freq_CS[$i]>1))  {if (($nuc_OG eq 'G') or ($nuc_OG eq 'C')) {$freqS_GC_GC[$numseqs]++;} else {$freqS_AT_GC[$numseqs]++;}}
-
 					  if (($freq_AS[$i]>1) or ($freq_TS[$i]>1))  {if (($nuc_OG eq 'A') or ($nuc_OG eq 'T')) {$freqS_AT_AT[$numseqs]++;} else {$freqS_GC_AT[$numseqs]++;}}
 
 					#   print "one synonymous divergence\n";
+					}
+					elsif ($freq_R[$i]>1){
+						$poly_freq_Rep[$numseqs]++;
+						if (($freq_GR[$i]>1) or ($freq_CR[$i]>1))  {if (($nuc_OG eq 'G') or ($nuc_OG eq 'C')) {$freqR_GC_GC[$numseqs]++;} else {$freqR_AT_GC[$numseqs]++;}}
+						if (($freq_AR[$i]>1) or ($freq_TR[$i]>1))  {if (($nuc_OG eq 'A') or ($nuc_OG eq 'T')) {$freqR_AT_AT[$numseqs]++;} else {$freqR_GC_AT[$numseqs]++;}}
 
-					  }
+						# print "one replacement divergence\n";
 
-				   elsif ($freq_R[$i]>1)
+					}
 
-				      {
-
-					  $poly_freq_Rep[$numseqs]++;
-
-					  
-
-					  if (($freq_GR[$i]>1) or ($freq_CR[$i]>1))  {if (($nuc_OG eq 'G') or ($nuc_OG eq 'C')) {$freqR_GC_GC[$numseqs]++;} else {$freqR_AT_GC[$numseqs]++;}}
-
-					  if (($freq_AR[$i]>1) or ($freq_TR[$i]>1))  {if (($nuc_OG eq 'A') or ($nuc_OG eq 'T')) {$freqR_AT_AT[$numseqs]++;} else {$freqR_GC_AT[$numseqs]++;}}
-
-					  # print "one replacement divergence\n";
-
-					  }
-
-			       }
-
-			  elsif (($freq_NNN[$i] >1) and ($freq_NNN[$i] < $numseqs))	# polymorphic
-
-		           {
-
-				 #    print "polymorphic\n";
+			    }
+			  	elsif (($freq_NNN[$i] >1) and ($freq_NNN[$i] < $numseqs)){	# polymorphic
+					
+					$place = $pos*3 + $i;
+					my @spl_cod_zero = split(undef, $codons_unique[0]); 
+					my @spl_cod_one = split(undef, $codons_unique[1]); 
 
 					$poly_freq_Rep[$freq_GR[$i]]++;
+					if($freq_GR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_GR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+					}
 
 				    $poly_freq_Rep[$freq_AR[$i]]++;
+				    if($freq_AR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_AR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+					}
 
 				    $poly_freq_Rep[$freq_TR[$i]]++;
+				    if($freq_TR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_TR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+					}
 
 				    $poly_freq_Rep[$freq_CR[$i]]++;
+				   if($freq_CR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_CR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+					}
+
+
 
 					$poly_freq_Syn[$freq_GS[$i]]++;
+					if($freq_GS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_GS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+					}
 
 					$poly_freq_Syn[$freq_AS[$i]]++;
+					if($freq_AS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_AS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+					}
 
 					$poly_freq_Syn[$freq_TS[$i]]++;
+					if($freq_TS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_TS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+					}
 
 					$poly_freq_Syn[$freq_CS[$i]]++;
+					if($freq_CS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
+						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_CS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+					}
 
 					$freq_P_P[$freq_P[$i]]++;
-
 					$freq_U_U[$freq_U[$i]]++;
-
 					$freq_P_U[$freq_D[$i]]++;
-
 					$freq_U_P[$freq_B[$i]]++;
 
-					
-
 					if (($nuc_OG eq 'G') or ($nuc_OG eq 'C'))	{$freqS_GC_AT[$freq_AS[$i]]++;	$freqS_GC_AT[$freq_TS[$i]]++;	$freqS_GC_GC[$freq_GS[$i]]++;  $freqS_GC_GC[$freq_CS[$i]]++;  
-
 																 $freqR_GC_AT[$freq_AR[$i]]++;	$freqR_GC_AT[$freq_TR[$i]]++;	$freqR_GC_GC[$freq_GR[$i]]++;  $freqR_GC_GC[$freq_CR[$i]]++;}
-
 					if (($nuc_OG eq 'A') or ($nuc_OG eq 'T'))	{$freqS_AT_AT[$freq_AS[$i]]++;	$freqS_AT_AT[$freq_TS[$i]]++;	$freqS_AT_GC[$freq_GS[$i]]++;  $freqS_AT_GC[$freq_CS[$i]]++;  
-
 																 $freqR_AT_AT[$freq_AR[$i]]++;	$freqR_AT_AT[$freq_TR[$i]]++;	$freqR_AT_GC[$freq_GR[$i]]++;  $freqR_AT_GC[$freq_CR[$i]]++;}
 
-													 
+			    }  # polymorphic
 
-			       }  # polymorphic
+		    } # through all 3 codon positions
 
-		     } # through all 3 codon positions
+			#print "polytable Synonymous: ", join ("-", @poly_freq_Syn), "\n";
+			#print "polytable Replacement: ", join ("-", @poly_freq_Rep), "\n";
 
+			# print "polytable  U -> P: ", join ("-", @freq_U_P), "\n";
+			# print "polytable  P -> U: ", join ("-", @freq_P_U), "\n";
+			# print "polytable  P -> P: ", join ("-", @freq_P_P), "\n";
+			# print "polytable  U -> U: ", join ("-", @freq_U_U), "\n";
+			# print  "\n";
 
-
-			 
-
-		# print "polytable  Synonymous: ", join ("-", @poly_freq_Syn), "\n";
-
-		# print "polytable Replacement: ", join ("-", @poly_freq_Rep), "\n";
-
-
-
-		# print "polytable  U -> P: ", join ("-", @freq_U_P), "\n";
-
-		# print "polytable  P -> U: ", join ("-", @freq_P_U), "\n";
-
-		# print "polytable  P -> P: ", join ("-", @freq_P_P), "\n";
-
-		# print "polytable  U -> U: ", join ("-", @freq_U_U), "\n";
-
-		# print  "\n";
-
-		}   # end of if ($unique_codons==2)	
+		}   # end of if($unique_codons==2)	
 
 
 
@@ -855,23 +726,13 @@ foreach $file (@files){
 
 
 
-		 if ($unique_codons>2)	
-
-			{
+		 if ($unique_codons>2){
 
 			$complex = 'ja';
-
 			@codon_array_processed = codon_processor(@codon_array, $complex);          # if codon is complicated ($complex = ja) -- return a long list	
 
-		  
-
 			#print OUT_DIFF "\nlocus ", $file, "  COMPLEX CODON at positon " ,$pos, "\n";
-
-
-
-			
-
-			# print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
+			#print "# of entries in processed array: ", (scalar(@codon_array_processed)),"\n";
 
 			@codon_multipath_processed =();
 
@@ -1794,9 +1655,9 @@ foreach $file (@files){
 
 			$no_mut_min= $no_divS_min + $no_divR_min + $no_polyS_min + $no_polyR_min;
 
-			#print OUT_DIFF "Synonymous: poly: $no_polyS, divergence: $no_divS\n";
+		#	print "Synonymous: poly: $no_polyS, divergence: $no_divS\n";
 
-			#print OUT_DIFF "Replacement: poly: $no_polyR, divergence: $no_divR\n";
+		#	print "Replacement: poly: $no_polyR, divergence: $no_divR\n";
 
 		#	print "Synonymous min: poly: $no_polyS_min, divergence: $no_divS_min\n";
 
@@ -1929,9 +1790,10 @@ foreach $file (@files){
 
 		# add shortest path to @poly_freq_Syn and @poly_freq_Syn
 
-		for ($ind=0; $ind<($numseqs+1); $ind++)
 
-			{
+		for ($ind=0; $ind<($numseqs+1); $ind++){
+			
+			$poly_freq_site_Syn[$ind]=$poly_freq_site_Syn[$ind] + $path_min_Syn[$ind];
 
 			$poly_freq_Syn[$ind]=$poly_freq_Syn[$ind]+ $path_min_Syn[$ind];
 
@@ -1963,14 +1825,15 @@ foreach $file (@files){
 
 			}
 
-		#print OUT_DIFF "polytable Synonymous: ",	join ("-", @poly_freq_Syn), "\n";
+		#print  "polytable Synonymous: ",	join ("-", @poly_freq_Syn), "\n";
 
-		#print OUT_DIFF "polytable Replacement: ",	join ("-", @poly_freq_Rep), "\n";
+		#print  "polytable Replacement: ",	join ("-", @poly_freq_Rep), "\n";
 
 			  	  
 
-		} # if $unique_codons>2
+		} 
 
+		
 		        
 
 			   
