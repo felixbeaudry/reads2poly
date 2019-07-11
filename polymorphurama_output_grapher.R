@@ -355,7 +355,11 @@ scale_x_discrete(limits=c("A","X","Y","NX","NY")) #+
     '#00A550' #green #A
   ))
 
-
+ -log( 0.0002510100/ 0.0029188267 )
+  
+  
+  
+  
 #pop subsets (NCFL)
 #  all_data_pi_syn <- all_data[all_data$var == "pi" & all_data$cod == "syn" &  (all_data$pop == "XY" | all_data$pop == "XYY")  ,]
   

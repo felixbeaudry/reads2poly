@@ -1,2 +1,0 @@
-Locus_10211_Transcript_1_Length_1810_genewise_newlength_1810_CDSlength_1383.fasta.Syn	191	2	0	1	0	0	0	0	0	1	0	0	0	1	Locus_10211_Transcript_1_Length_1810_genewise_newlength_1810_CDSlength_1383.fasta.Rep	615	0	0	1	0	0	0	0	1	0	0	0	0	0
-Locus_10451_Transcript_3_Length_1333_genewise_newlength_1333_CDSlength_453.fasta.Syn	71	0	0	0	0	0	0	0	0	0	0	0	0	0	Locus_10451_Transcript_3_Length_1333_genewise_newlength_1333_CDSlength_453.fasta.Rep	279	1	0	0	0	0	0	0	0	0	0	0	0	0

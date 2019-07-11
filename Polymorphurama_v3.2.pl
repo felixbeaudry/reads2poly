@@ -149,7 +149,7 @@ for ($x=0; $x<$number_of_pops; ++$x){
 print OUT2 "\n";
 
 print OUT5 "locus\tpop0_Fst_syn\tpop0_d_syn\tpop0_dJC_syn\tpop0_d_rep\tpop0_dJC_rep\tpop0_d_rate\tpop0_d_sum\tpop0_dJC_sum\tpop0_da_NA\n";
-print OUT6 "locus\tpop\tposition\tcodon\tfrequency\ttotal_seq\talt_codon\tsub";
+print OUT6 "locus\tpop\tposition\tcodon\tbase\tfrequency\ttotal_seq\talt_codon\talt_base\tsub";
 
 $poly_set=0;
 
@@ -655,44 +655,46 @@ foreach $file (@files){
 
 					$poly_freq_Rep[$freq_GR[$i]]++;
 					if($freq_GR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_GR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+
+
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_GR[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\trep";
 					}
 
 				    $poly_freq_Rep[$freq_AR[$i]]++;
 				    if($freq_AR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_AR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_AR[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\trep";
 					}
 
 				    $poly_freq_Rep[$freq_TR[$i]]++;
 				    if($freq_TR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_TR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_TR[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\trep";
 					}
 
 				    $poly_freq_Rep[$freq_CR[$i]]++;
 				   if($freq_CR[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_CR[$i]\t$numseqs\t$spl_cod_one[$i]\trep";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_CR[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\trep";
 					}
 
 
 
 					$poly_freq_Syn[$freq_GS[$i]]++;
 					if($freq_GS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_GS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_GS[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\tsyn";
 					}
 
 					$poly_freq_Syn[$freq_AS[$i]]++;
 					if($freq_AS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_AS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_AS[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\tsyn";
 					}
 
 					$poly_freq_Syn[$freq_TS[$i]]++;
 					if($freq_TS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_TS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_TS[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\tsyn";
 					}
 
 					$poly_freq_Syn[$freq_CS[$i]]++;
 					if($freq_CS[$i] > 0 & $pop > 0 & $pop < $number_of_pops){
-						print OUT6 "\n$file\t$pop\t$place\t$spl_cod_zero[$i]\t$freq_CS[$i]\t$numseqs\t$spl_cod_one[$i]\tsyn";
+						print OUT6 "\n$file\t$pop\t$place\t$codons_unique[0]\t$spl_cod_zero[$i]\t$freq_CS[$i]\t$numseqs\t$codons_unique[1]\t$spl_cod_one[$i]\tsyn";
 					}
 
 					$freq_P_P[$freq_P[$i]]++;
