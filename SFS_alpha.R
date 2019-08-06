@@ -35,13 +35,13 @@ subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop
   synfz <- findInvar(fz=allelefz[,c(1,..numColsSyn)],sumstats=sumstats, pop = pop, site = "syn")
   nsfz <- findInvar(fz=allelefz[,c(1,..numColsRep)],sumstats=sumstats, pop = pop, site = "rep")
   
-  sAll <- synfz[synfz$locus %in% list,]
+  sAll <- synfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & synfz$locus %in% list,]
   
   sample_tot <- length(sAll$locus)
   sample_sub <- sample(1:sample_tot, sample_tot*sampSubSize, replace=FALSE)
   
   s <- sAll[sample_sub, ]
-  nsAll <- nsfz[nsfz$locus %in% list,]
+  nsAll <- nsfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & nsfz$locus %in% list,]
   ns <- nsAll[sample_sub, ]
   
   do.call(cat,list(c("1")))
