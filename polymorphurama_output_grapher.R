@@ -310,6 +310,10 @@ all_data_var$sex <- "male"
 
 chromSet <- c("A","X","Y","NX","NY")
 
+####sites####
+all_data_var_sites <- all_data_var[all_data_var$var == "sites" & all_data_var$cod == "syn" &  all_data_var$pop == "R.hastatulus" & all_data_var$outgroup == 
+           "rothschildianus",]
+sum(all_data_var_sites$value)
 
 ####theta####
 title_thetasyn <- expression(paste(theta, ""[syn]))

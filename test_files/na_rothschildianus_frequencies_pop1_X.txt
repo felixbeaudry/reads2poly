@@ -1,0 +1,1 @@
+Locus_9943_Transcript_1_Length_1322_genewise_newlength_1322_CDSlength_414.fasta.Syn	70	0	0	1	0	0	0	0	0	0	0	0	0	1	Locus_9943_Transcript_1_Length_1322_genewise_newlength_1322_CDSlength_414.fasta.Rep	256	2	0	1	0	0	0	0	0	0	0	0	0	0
