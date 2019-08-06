@@ -73,10 +73,10 @@ allelefz <- fread('na_rothschildianus_frequencies_pop1_X.txt',header=FALSE)
 sumstats_sep <- separate(sumstats, locus, c("locus","butt"), 
                          sep = ".fas", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
 
-#args <- commandArgs(trailingOnly = TRUE)
-#list <- fread(args,header = FALSE)
+args <- commandArgs(trailingOnly = TRUE)
+list <- fread(args,header = FALSE)
 
-list <- fread('pollen.list',header = FALSE)
+#list <- fread('pollen.list',header = FALSE)
 list <- list$V1
 
 #SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=0.8)

@@ -79,7 +79,7 @@ args <- commandArgs(trailingOnly = TRUE)
 list <- fread(args,header = FALSE)
 
 #list <- fread('pollen.list',header = FALSE)
-#list <- list$V1
+list <- list$V1
 
 SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=1)
 
