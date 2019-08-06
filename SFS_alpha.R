@@ -84,8 +84,9 @@ list <- list$V1
 ##alpha
 sumstats_out <- sumstats_sep[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list,]
 
-do.call(cat,list(c("1",sum(sumstats_out$pop1_sites_rep),sum(sumstats_out$pop1_k_rep*sumstats_out$pop1_sites_rep))))
-do.call(cat,list(c("0",sum(sumstats_out$pop1_sites_syn),sum(sumstats_out$pop1_k_syn*sumstats_out$pop1_sites_syn))))
+do.call(cat,list(c("1",sum(sumstats_out$pop1_sites_rep),sum(sumstats_out$pop1_k_rep*sumstats_out$pop1_sites_rep),"\n",
+                   "0",sum(sumstats_out$pop1_sites_syn),sum(sumstats_out$pop1_k_syn*sumstats_out$pop1_sites_syn))))
+
 
 
 
