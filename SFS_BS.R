@@ -79,6 +79,7 @@ list <- fread(args,header = FALSE)
 
 #list <- fread('pollen.list',header = FALSE)
 list <- list$V1
+list <- sumstats_sep$locus[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list]
 
 SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=0.8)
 
