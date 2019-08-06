@@ -16,7 +16,7 @@ subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop
     return(fold)
   }
   findInvar <- function(fz=NA,sumstats=NA, pop = pop, site = "syn"){
-    
+   
     numInds = length(fz) 
     numColsTemp <- c(2:numInds)
     fz$sums <- rowSums(fz[,..numColsTemp], na.rm = FALSE, dims = 1)
@@ -35,13 +35,13 @@ subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop
   synfz <- findInvar(fz=allelefz[,c(1,..numColsSyn)],sumstats=sumstats, pop = pop, site = "syn")
   nsfz <- findInvar(fz=allelefz[,c(1,..numColsRep)],sumstats=sumstats, pop = pop, site = "rep")
   
-  sAll <- synfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & synfz$locus %in% list,]
+  sAll <- synfz[synfz$locus %in% list,]
   
   sample_tot <- length(sAll$locus)
   sample_sub <- sample(1:sample_tot, sample_tot*sampSubSize, replace=FALSE)
   
   s <- sAll[sample_sub, ]
-  nsAll <- nsfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & nsfz$locus %in% list,]
+  nsAll <- nsfz[nsfz$locus %in% list,]
   ns <- nsAll[sample_sub, ]
   
   do.call(cat,list(c("1")))
@@ -80,6 +80,8 @@ list <- fread(args,header = FALSE)
 
 #list <- fread('pollen.list',header = FALSE)
 list <- list$V1
+list <- sumstats_sep$locus[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list]
+
 
 SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=1)
 

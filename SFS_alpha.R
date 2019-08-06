@@ -35,13 +35,13 @@ subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop
   synfz <- findInvar(fz=allelefz[,c(1,..numColsSyn)],sumstats=sumstats, pop = pop, site = "syn")
   nsfz <- findInvar(fz=allelefz[,c(1,..numColsRep)],sumstats=sumstats, pop = pop, site = "rep")
   
-  sAll <- synfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & synfz$locus %in% list,]
+  sAll <- synfz[synfz$locus %in% list,]
   
   sample_tot <- length(sAll$locus)
   sample_sub <- sample(1:sample_tot, sample_tot*sampSubSize, replace=FALSE)
   
   s <- sAll[sample_sub, ]
-  nsAll <- nsfz[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & nsfz$locus %in% list,]
+  nsAll <- nsfz[nsfz$locus %in% list,]
   ns <- nsAll[sample_sub, ]
   
   do.call(cat,list(c("1")))
@@ -83,6 +83,7 @@ list <- list$V1
 
 ##alpha
 sumstats_out <- sumstats_sep[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list,]
+list <- sumstats_sep$locus[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list]
 
 do.call(cat,list(c("1",sum(sumstats_out$pop1_sites_rep),sum(sumstats_out$pop1_k_rep*sumstats_out$pop1_sites_rep))))
 do.call(cat,list(c("\n")))
