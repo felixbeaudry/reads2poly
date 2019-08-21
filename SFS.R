@@ -1,6 +1,7 @@
 suppressMessages(library(data.table))
 suppressMessages(library(tidyr))
 suppressMessages(library(sqldf))
+options(warn=-1)
 
 subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop = NA,sampSubSize=0.8){
   foldSFS <- function(i=NA){
@@ -67,21 +68,32 @@ subsetSFS<-function(fz=NA,list=NA,listString="subset",numInds=NA,sumstats=NA,pop
 }
 
 #import
-sumstats <- fread('na_rothschildianus_summarystats_pop_X.txt',header=TRUE)
-allelefz <- fread('na_rothschildianus_frequencies_pop1_X.txt',header=FALSE)
 
-#sumstats$pop1_k_syn*sumstats$pop1_sites_syn
+args <- commandArgs(trailingOnly = TRUE)
+list <- fread(args[1],header = FALSE)
+sampSubSize <- as.numeric(args[2]) #percent bootstrap, 1 = full set
+set <- args[3] #subset loci, eg. A, H, XY
+
+filename_sumstats <- paste(set,"_rothschildianus_summarystats_pop_X.txt",sep="")
+filename_allelefz <- paste(set,"_rothschildianus_frequencies_pop1_X.txt",sep="")
+
+sumstats <- fread(filename_sumstats,header=TRUE)
+allelefz <- fread(filename_allelefz,header=FALSE)
 
 sumstats_sep <- separate(sumstats, locus, c("locus","butt"), 
                          sep = ".fas", remove = TRUE, convert = FALSE, extra = "merge", fill = "left")
 
-args <- commandArgs(trailingOnly = TRUE)
-list <- fread(args,header = FALSE)
-
 #list <- fread('pollen.list',header = FALSE)
 list <- list$V1
 list <- sumstats_sep$locus[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list]
+sumstats_out <- sumstats_sep[!is.na(sumstats_sep$pop1_k_syn) & !is.na(sumstats_sep$pop1_k_rep) & sumstats_sep$locus %in% list,]
 
+#output to SFS (allele fz print)
+SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=sampSubSize)
 
-SFS <-  subsetSFS(fz=allelefz,list=list,listString="Yes",numInds=14,sumstats=sumstats_sep,pop="1",sampSubSize=1)
+#output to divergence
+
+capture.output(
+  do.call(cat,list(c("1",sum(sumstats_out$pop1_sites_rep),sum(sumstats_out$pop1_k_rep*sumstats_out$pop1_sites_rep),"\n","0",sum(sumstats_out$pop1_sites_syn),sum(sumstats_out$pop1_k_syn*sumstats_out$pop1_sites_syn))))
+, file = "divergence.txt")
 
