@@ -2200,7 +2200,7 @@ foreach $file (@files){
 
 							$dxy_syn_tot = $Dxy_syn + $dxy_syn_tot;
 							$dxy_rep_tot = $Dxy_rep + $dxy_rep_tot;
-							$dxy_tot = $dxy_tot + $Dxy_syn + $Dxy_rep;
+							$dxy_tot = $dxy_tot + ((($Dxy_syn * $no_syn_codons) + ($Dxy_rep * $no_rep_codons))/($no_syn_codons+$no_rep_codons));
 							if ($Dxy_syn != 0 & $Dxy_rep != 0){
 								$dnds_tot = ($Dxy_rep / $Dxy_syn) + $dnds_tot;
 							}
